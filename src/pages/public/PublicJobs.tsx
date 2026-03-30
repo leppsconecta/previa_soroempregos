@@ -29,6 +29,20 @@ export const PublicJobs = () => {
         fetchJobs(true);
     }, [filterType, searchTerm]); // Refund when filter/search changes
 
+    // Realtime Subscription
+    useEffect(() => {
+        const channel = supabase.channel('public_jobs_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
+                // Whenever there is a change, refetch the jobs to keep UI synced
+                fetchJobs(true);
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
     const fetchJobs = async (reset = false) => {
         try {
             setLoading(true);

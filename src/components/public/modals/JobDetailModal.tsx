@@ -83,6 +83,26 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
         return String(item).replace(/\n/g, ' ');
     };
 
+    const checkVisible = (val?: string) => {
+        if (!val) return false;
+        const lower = val.toLowerCase().trim();
+        return !['não mencionado', 'nao mencionado'].includes(lower);
+    };
+
+    const hasCta = checkVisible(job.cta_public_contato) || 
+                   checkVisible(job.cta_public_email) || 
+                   checkVisible(job.cta_public_link) || 
+                   checkVisible(job.cta_public_endereco) || 
+                   job.status_anunciante === true;
+
+    const handleApplyClick = () => {
+        if (hasCta) {
+            setShowAdvertiserModal(true);
+        } else {
+            onApply();
+        }
+    };
+
     return (
         <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scaleIn ring-1 ring-slate-100 dark:ring-slate-800">
 
@@ -172,7 +192,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
                     <div className="flex flex-col gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
                         <div className="flex items-center gap-3">
                             <button
-                                onClick={onApply}
+                                onClick={handleApplyClick}
                                 className="flex-1 h-11 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-sm"
                                 style={brandColor ? { backgroundColor: brandColor } : {}}
                             >

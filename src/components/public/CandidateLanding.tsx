@@ -54,6 +54,17 @@ export const CandidateLanding = () => {
         };
 
         fetchRecentJobs();
+
+        // Realtime Subscription
+        const channel = supabase.channel('landing_jobs_realtime')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
+                fetchRecentJobs();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const handleSearch = async (e: React.FormEvent) => {

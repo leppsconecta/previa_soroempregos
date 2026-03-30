@@ -45,7 +45,14 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
 
-    const isExternalJob = isAdvertiser || !jobOwnerId;
+    const checkVisible = (val?: string) => {
+        if (!val) return false;
+        const lower = val.toLowerCase().trim();
+        return !['não mencionado', 'nao mencionado'].includes(lower);
+    };
+
+    const hasAnyCta = checkVisible(ctaContato) || checkVisible(ctaEmail) || checkVisible(ctaLink) || checkVisible(ctaEndereco);
+    const isExternalJob = isAdvertiser || !jobOwnerId || hasAnyCta;
 
     // City Autocomplete State
     const [cities, setCities] = useState<string[]>([]);
@@ -476,12 +483,6 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
     const renderAdvertiserCta = () => {
         if (!isExternalJob) return null;
-
-        const checkVisible = (val?: string) => {
-            if (!val) return false;
-            const lower = val.toLowerCase().trim();
-            return !['não mencionado', 'nao mencionado'].includes(lower);
-        };
 
         const hasPhone = checkVisible(ctaContato);
         const hasEmail = checkVisible(ctaEmail);
