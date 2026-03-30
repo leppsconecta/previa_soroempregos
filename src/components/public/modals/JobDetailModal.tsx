@@ -77,16 +77,28 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
         }
     };
 
+    const formatText = (item: any) => {
+        if (!item) return '';
+        if (Array.isArray(item)) return item.join(', ');
+        return String(item).replace(/\n/g, ' ');
+    };
+
     return (
         <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-scaleIn ring-1 ring-slate-100 dark:ring-slate-800">
 
             {/* Header */}
             <div className="p-6 pb-4 border-b border-slate-100 dark:border-slate-800 relative bg-white dark:bg-slate-900">
-                <div className="absolute top-4 left-6">
+                <div className="absolute top-4 left-6 flex items-center gap-2">
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold">
                         <Hash size={12} className="text-slate-400" />
                         {job.code}
                     </div>
+                    {job.postedAt && (
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[11px] font-medium">
+                            <Clock size={12} className="text-slate-400" />
+                            {job.postedAt}
+                        </div>
+                    )}
                 </div>
 
                 {onClose && (
@@ -120,47 +132,32 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
             <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar text-slate-600 dark:text-slate-300">
 
                 {/* Description */}
-                <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Sobre a vaga</h3>
-                    <div className="text-sm leading-relaxed whitespace-pre-line">
-                        {job.activities || job.observation}
+                {(job.description || (job as any).observation) && (
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Descrição</h3>
+                        <div className="text-sm leading-relaxed text-justify">
+                            {formatText(job.description || (job as any).observation)}
+                        </div>
                     </div>
-                </div>
+                )}
 
-                {/* Simple Lists Grid */}
-                <div className="grid sm:grid-cols-2 gap-6">
-                    {job.requirements && (
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                <CheckCircle2 size={16} className="text-indigo-500" /> Requisitos
-                            </h3>
-                            <ul className="space-y-2">
-                                {formatList(job.requirements).map((req, i) => (
-                                    <li key={i} className="text-sm flex items-start gap-2 leading-snug">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-200 mt-1.5 shrink-0" />
-                                        {req}
-                                    </li>
-                                ))}
-                            </ul>
+                {job.benefits && job.benefits.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Benefícios</h3>
+                        <div className="text-sm leading-relaxed text-justify">
+                            {formatText(job.benefits)}
                         </div>
-                    )}
+                    </div>
+                )}
 
-                    {job.benefits && (
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                                <Star size={16} className="text-yellow-500 fill-yellow-500" /> Benefícios
-                            </h3>
-                            <ul className="space-y-2">
-                                {formatList(job.benefits).map((benefit, i) => (
-                                    <li key={i} className="text-sm flex items-start gap-2 leading-snug">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-200 mt-1.5 shrink-0" />
-                                        {benefit}
-                                    </li>
-                                ))}
-                            </ul>
+                {job.requirements && job.requirements.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">Requisitos</h3>
+                        <div className="text-sm leading-relaxed text-justify">
+                            {formatText(job.requirements)}
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
 
