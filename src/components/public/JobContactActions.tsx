@@ -40,12 +40,22 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
         }
     };
 
-    if (!whatsapp && !email && !address) return null;
+    const checkVisible = (val?: string | null) => {
+        if (!val) return false;
+        const lower = val.toLowerCase().trim();
+        return !['não mencionado', 'nao mencionado'].includes(lower);
+    };
+
+    const hasWhatsApp = checkVisible(whatsapp);
+    const hasEmail = checkVisible(email);
+    const hasAddress = checkVisible(address);
+
+    if (!hasWhatsApp && !hasEmail && !hasAddress) return null;
 
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-                {whatsapp && (
+                {hasWhatsApp && (
                     <button
                         onClick={handleWhatsApp}
                         className="flex items-center justify-center gap-2 p-3 rounded-xl bg-[#25D366]/10 text-[#128C7E] hover:bg-[#25D366]/20 transition-colors font-bold text-xs uppercase tracking-wider"
@@ -54,7 +64,7 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
                     </button>
                 )}
 
-                {email && (
+                {hasEmail && (
                     <button
                         onClick={handleCopyEmail}
                         className="flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors font-bold text-xs uppercase tracking-wider"
@@ -63,7 +73,7 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
                     </button>
                 )}
 
-                {address && (
+                {hasAddress && (
                     <button
                         onClick={() => setIsAddressModalOpen(true)}
                         className="flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors font-bold text-xs uppercase tracking-wider"

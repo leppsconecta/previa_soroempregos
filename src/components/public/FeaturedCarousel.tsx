@@ -116,9 +116,11 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ jobs, onApply, onRe
                             )}
 
                             <div className="relative z-10">
-                                <span className="inline-block px-2 py-1 rounded-lg bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider mb-2 backdrop-blur-sm border border-white/10">
-                                    {job.type}
-                                </span>
+                                {job.type && job.type.trim() !== '' && !['Não informado', 'Nao informado', 'Não mencionado', 'Nao mencionado'].includes(job.type) && (
+                                    <span className="inline-block px-2 py-1 rounded-lg bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider mb-2 backdrop-blur-sm border border-white/10">
+                                        {job.type}
+                                    </span>
+                                )}
                                 <h4 className="text-white font-bold text-lg leading-tight line-clamp-2">
                                     {job.title}
                                 </h4>

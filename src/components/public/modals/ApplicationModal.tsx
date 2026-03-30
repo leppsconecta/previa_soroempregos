@@ -477,10 +477,16 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
     const renderAdvertiserCta = () => {
         if (!isExternalJob) return null;
 
-        const hasPhone = !!ctaContato;
-        const hasEmail = !!ctaEmail;
-        const hasLink = !!ctaLink;
-        const hasEndereco = !!ctaEndereco;
+        const checkVisible = (val?: string) => {
+            if (!val) return false;
+            const lower = val.toLowerCase().trim();
+            return !['não mencionado', 'nao mencionado'].includes(lower);
+        };
+
+        const hasPhone = checkVisible(ctaContato);
+        const hasEmail = checkVisible(ctaEmail);
+        const hasLink = checkVisible(ctaLink);
+        const hasEndereco = checkVisible(ctaEndereco);
 
         const handleCopy = (text: string, type: string) => {
             navigator.clipboard.writeText(text);
@@ -609,7 +615,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
                 {advertiserName && (
                     <p className="text-center text-xs text-slate-400 mt-8 pt-4 border-t border-slate-100 w-full select-none">
-                        Esta vaga foi anunciada por <strong>{advertiserName}</strong>
+                        Esta vaga foi anunciada por <strong>{advertiserName.split('@')[0]}</strong>
                     </p>
                 )}
             </div>

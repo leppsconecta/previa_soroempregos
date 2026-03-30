@@ -28,7 +28,7 @@ export const AdvertiserOrientationModal: React.FC<AdvertiserOrientationModalProp
             const req = Array.isArray(job.requirements) ? job.requirements.join(', ') : (job.requirements || 'Não informado');
             const ben = Array.isArray(job.benefits) ? job.benefits.join(', ') : (job.benefits || 'Não informado');
             const act = Array.isArray(job.activities) ? job.activities.join(', ') : (job.activities || 'Não informado');
-            const typeLine = job.type && job.type.trim() !== '' && job.type !== 'Não informado' ? `*Vínculo:* ${job.type}\n` : '';
+            const typeLine = job.type && job.type.trim() !== '' && !['Não informado', 'Nao informado', 'Não mencionado', 'Nao mencionado'].includes(job.type) ? `*Vínculo:* ${job.type}\n` : '';
             const message = encodeURIComponent(
                 `Olá, vi esta vaga na soroempregos.com e tenho interesse.
 ----------------------
@@ -48,9 +48,15 @@ ${typeLine}*Empresa:* ${job.company || 'Não informado'}
     };
 
 
-    const hasLink = !!job.cta_public_link;
-    const hasPhone = !!job.cta_public_contato;
-    const hasAddress = !!job.cta_public_endereco;
+    const checkVisible = (val?: string) => {
+        if (!val) return false;
+        const lower = val.toLowerCase().trim();
+        return !['não mencionado', 'nao mencionado'].includes(lower);
+    };
+
+    const hasLink = checkVisible(job.cta_public_link);
+    const hasPhone = checkVisible(job.cta_public_contato);
+    const hasAddress = checkVisible(job.cta_public_endereco);
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
@@ -160,7 +166,7 @@ ${typeLine}*Empresa:* ${job.company || 'Não informado'}
                     {/* Advertiser credit */}
                     {job.anunciante && (
                         <p className="text-center text-xs text-slate-400 dark:text-slate-600 pt-2">
-                            Anunciante da vaga: <span className="font-medium">{job.anunciante}</span>
+                            Anunciante da vaga: <span className="font-medium">{job.anunciante.split('@')[0]}</span>
                         </p>
                     )}
 

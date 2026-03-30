@@ -89,7 +89,7 @@ export const PublicJobs = () => {
                     schedule: j.work_schedule || 'Horário a combinar',
                     type: j.employment_type || null,
                     salary: j.salary ? `R$ ${j.salary}` : undefined,
-                    postedAt: new Date(j.created_at).toLocaleDateString(),
+                    postedAt: new Date(j.created_at).toLocaleDateString('pt-BR') + ' às ' + new Date(j.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
                     description: j.description || j.observation || '',
                     requirements: parseList(j.requirements),
                     benefits: parseList(j.benefits),

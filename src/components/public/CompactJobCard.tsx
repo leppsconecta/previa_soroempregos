@@ -57,7 +57,7 @@ const CompactJobCard: React.FC<CompactJobCardProps> = ({ job, onViewDetails }) =
 
 
                         {/* Type Badge */}
-                        {job.type && job.type.trim() !== '' && job.type !== 'Não informado' && (
+                        {job.type && job.type.trim() !== '' && !['Não informado', 'Nao informado', 'Não mencionado', 'Nao mencionado'].includes(job.type) && (
                             <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase border ${getTypeStyles(job.type)}`}>
                                 {job.type}
                             </span>

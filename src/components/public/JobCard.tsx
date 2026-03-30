@@ -75,7 +75,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onApply, onReport, onQuestion, s
                                 </div>
                             )}
 
-                            {job.type && job.type.trim() !== '' && job.type !== 'Não informado' && (
+                            {job.type && job.type.trim() !== '' && !['Não informado', 'Nao informado', 'Não mencionado', 'Nao mencionado'].includes(job.type) && (
                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getTypeStyles(job.type)}`}>
                                     {job.type}
                                 </span>

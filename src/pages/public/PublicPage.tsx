@@ -141,16 +141,19 @@ export const PublicPage = () => {
         const now = new Date();
         const diffMs = now.getTime() - date.getTime();
 
+        const timeStr = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = date.toLocaleDateString('pt-BR');
+
         const diffMinutes = Math.floor(diffMs / 60000);
         const diffHours = Math.floor(diffMs / 3600000);
         const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMinutes < 1) return 'Agora mesmo';
-        if (diffMinutes < 60) return `Há ${diffMinutes} min`;
-        if (diffHours < 24) return `Há ${diffHours} h`;
-        if (diffDays === 0) return 'Hoje';
-        if (diffDays === 1) return 'Ontem';
-        return `Há ${diffDays} dias`;
+        if (diffMinutes < 1) return `Agora mesmo às ${timeStr}`;
+        if (diffMinutes < 60) return `Há ${diffMinutes} min às ${timeStr}`;
+        if (diffHours < 24 && date.getDate() === now.getDate()) return `Hoje às ${timeStr}`;
+        if (diffHours < 48 && date.getDate() === now.getDate() - 1) return `Ontem às ${timeStr}`;
+        
+        return `${dateStr} às ${timeStr}`;
     };
 
     const filteredJobs = jobs.filter(job => {
