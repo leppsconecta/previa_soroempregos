@@ -31,12 +31,26 @@ export const CandidateLanding = () => {
                     .select('*')
                     .eq('status', 'active')
                     .order('created_at', { ascending: false })
-                    .limit(10);
+                    .limit(50);
 
                 if (error) throw error;
 
                 if (jobs) {
-                    const jobsWithCompany = await Promise.all(jobs.map(async (job) => {
+                    const checkVisible = (val?: string) => {
+                        if (!val) return false;
+                        const lower = val.toLowerCase().trim();
+                        return !['não mencionado', 'nao mencionado'].includes(lower);
+                    };
+
+                    const validJobs = jobs.filter(j => 
+                        checkVisible(j.cta_public_contato) ||
+                        checkVisible(j.cta_public_email) ||
+                        checkVisible(j.cta_public_link) ||
+                        checkVisible(j.cta_public_endereco) ||
+                        j.status_anunciante === true
+                    ).slice(0, 10);
+
+                    const jobsWithCompany = await Promise.all(validJobs.map(async (job) => {
                         const { data: company } = await supabase
                             .from('companies')
                             .select('*')

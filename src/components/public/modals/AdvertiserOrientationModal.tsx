@@ -57,6 +57,7 @@ ${typeLine}*Empresa:* ${job.company || 'Não informado'}
     const hasLink = checkVisible(job.cta_public_link);
     const hasPhone = checkVisible(job.cta_public_contato);
     const hasAddress = checkVisible(job.cta_public_endereco);
+    const hasEmail = checkVisible(job.cta_public_email);
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">

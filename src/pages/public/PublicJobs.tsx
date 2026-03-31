@@ -125,11 +125,25 @@ export const PublicJobs = () => {
                 };
             });
 
+            const checkVisible = (val?: string) => {
+                if (!val) return false;
+                const lower = val.toLowerCase().trim();
+                return !['não mencionado', 'nao mencionado'].includes(lower);
+            };
+
+            const validMappedJobs = mappedJobs.filter((job: any) => 
+                checkVisible(job.cta_public_contato) ||
+                checkVisible(job.cta_public_email) ||
+                checkVisible(job.cta_public_link) ||
+                checkVisible(job.cta_public_endereco) ||
+                job.status_anunciante === true
+            );
+
             if (reset) {
-                setJobs(mappedJobs);
+                setJobs(validMappedJobs);
                 setPage(1);
             } else {
-                setJobs(prev => [...prev, ...mappedJobs]);
+                setJobs(prev => [...prev, ...validMappedJobs]);
                 setPage(prev => prev + 1);
             }
 

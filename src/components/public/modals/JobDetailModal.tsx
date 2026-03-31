@@ -140,10 +140,6 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
                             <MapPin size={14} className="text-red-500" />
                             {job.city} - {job.region}
                         </span>
-                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                            <DollarSign size={14} className="text-green-500" />
-                            {job.salary || 'A combinar'}
-                        </span>
                     </div>
                 </div>
             </div>

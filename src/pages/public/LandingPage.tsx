@@ -50,10 +50,11 @@ const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number, className?
 );
 
 const MOCK_GRUPOS: Grupo[] = [
-  { id: 'm1', nome_grupo: 'SoroEmpregos - Vagas CLT 01', descricao_grupo: 'Vagas fixas em Sorocaba e região', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 245, link_convite: 'https://chat.whatsapp.com/test-clt-1' },
-  { id: 'm2', nome_grupo: 'Logística & Indústria', descricao_grupo: 'Foco em vagas operacionais', vinculo: 'CLT', categoria: 'Logística', cidade: 'Itu', total_participantes: 180, link_convite: 'https://chat.whatsapp.com/test-clt-2' },
-  { id: 'm3', nome_grupo: 'Bicos Sorocaba & Votorantim', descricao_grupo: 'Trabalhos rápidos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/test-free-1' },
-  { id: 'm4', nome_grupo: 'Garçons & Eventos VIP', descricao_grupo: 'Freelance para buffets e festas', vinculo: 'FREELANCE', categoria: 'Eventos', cidade: 'Sorocaba', total_participantes: 120, link_convite: 'https://chat.whatsapp.com/test-free-2' },
+  { id: 'm1', nome_grupo: 'Vagas CLT, Estágio, PJ - Itu', descricao_grupo: 'Vagas fixas e estágios na região de Itu', vinculo: 'CLT', categoria: 'Geral', cidade: 'Itu', total_participantes: 245, link_convite: 'https://chat.whatsapp.com/H4rn9lidzcuGaTcnptSpQ7' },
+  { id: 'm2', nome_grupo: 'Vagas CLT, Estágio, PJ - Votorantim', descricao_grupo: 'Vagas fixas e estágios em Votorantim', vinculo: 'CLT', categoria: 'Geral', cidade: 'Votorantim', total_participantes: 180, link_convite: 'https://chat.whatsapp.com/GiZa4i3hPeOBvWuQfsdHoN' },
+  { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/HlQ1hLjAAbR35e5OFrNCvM' },
+  { id: 'm4', nome_grupo: 'Vagas CLT, Estágio, PJ - Araçoiaba', descricao_grupo: 'Vagas fixas e estágios em Araçoiaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Araçoiaba da Serra', total_participantes: 120, link_convite: 'https://chat.whatsapp.com/CZvybKFy9cI0PkqkkdcCLX' },
+  { id: 'm5', nome_grupo: 'Vagas Freelancer - Geral', descricao_grupo: 'Trabalhos rápidos, bicos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Região', total_participantes: 200, link_convite: 'https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH' },
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false }) => {
@@ -770,14 +771,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border ${selectedGroupVinculo === 'CLT' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
               >
                 <Briefcase size={20} />
-                <p className="text-[10px] tracking-wide">Vagas CLT</p>
+                <p className="text-[10px] tracking-wide text-center leading-tight">Vagas CLT,<br/>Estágio, Pj</p>
               </button>
               <button
                 onClick={() => { setSelectedGroupVinculo('FREELANCE'); }}
-                className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border ${selectedGroupVinculo === 'FREELANCE' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
+                className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border ${selectedGroupVinculo === 'FREELANCE' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
               >
                 <Zap size={20} />
-                <p className="text-[10px] tracking-wide">Freelance</p>
+                <p className="text-[10px] tracking-wide text-center leading-tight">Freelancer</p>
               </button>
             </div>
 

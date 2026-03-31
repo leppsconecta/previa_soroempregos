@@ -132,7 +132,7 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ jobs, onApply, onRe
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
                                     <MapPin size={16} className="text-indigo-500 shrink-0" />
-                                    <span className="truncate">{job.location}</span>
+                                    <span className="truncate">{job.city || ''}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
                                     <DollarSign size={16} className="text-emerald-500 shrink-0" />

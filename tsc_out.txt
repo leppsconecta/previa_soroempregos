@@ -1,0 +1,1 @@
+﻿src/hooks/useWhatsAppRealtime.ts(3,57): error TS2307: Cannot find module '../components/chat/types' or its corresponding type declarations.

@@ -125,7 +125,22 @@ export const PublicPage = () => {
                         cta_public_observations_endereco: j.cta_public_observations_endereco
                     };
                 });
-                setJobs(mappedJobs);
+                
+                const checkVisible = (val?: string) => {
+                    if (!val) return false;
+                    const lower = val.toLowerCase().trim();
+                    return !['não mencionado', 'nao mencionado'].includes(lower);
+                };
+
+                const validMappedJobs = mappedJobs.filter((job: any) => 
+                    checkVisible(job.cta_public_contato) ||
+                    checkVisible(job.cta_public_email) ||
+                    checkVisible(job.cta_public_link) ||
+                    checkVisible(job.cta_public_endereco) ||
+                    job.status_anunciante === true
+                );
+
+                setJobs(validMappedJobs);
             }
         } catch (err: any) {
             console.error(err);

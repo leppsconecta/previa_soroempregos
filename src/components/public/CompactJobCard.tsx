@@ -74,15 +74,10 @@ const CompactJobCard: React.FC<CompactJobCardProps> = ({ job, onViewDetails }) =
                         <h3 className="text-lg font-bold text-slate-800 leading-tight group-hover:text-indigo-600 transition-colors mb-1">
                             {job.title}
                         </h3>
-                        <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
-                            <span className="flex items-center gap-1">
-                                <Briefcase size={12} className="text-indigo-400" />
-                                {job.company}
-                            </span>
-                            <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 text-xs font-medium text-slate-400">
                             <span className="flex items-center gap-1">
                                 <MapPin size={12} className="text-slate-400" />
-                                {job.location}
+                                {job.city || ''}
                             </span>
                         </div>
                     </div>
