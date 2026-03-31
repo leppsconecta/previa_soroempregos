@@ -372,6 +372,8 @@ export const CandidateLanding = () => {
                         ctaObservationsEmail={(foundJob as any).cta_public_observations_email}
                         ctaObservationsLink={(foundJob as any).cta_public_observations_link}
                         ctaObservationsEndereco={(foundJob as any).cta_public_observations_endereco}
+                        jobLocation={foundJob.location}
+                        jobPostedAt={foundJob.postedAt}
                     />
                     <ReportModal
                         isOpen={isReportModalOpen}

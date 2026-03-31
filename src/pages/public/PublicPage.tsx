@@ -368,6 +368,8 @@ export const PublicPage = () => {
                             ctaObservationsEmail={(selectedJob as any).cta_public_observations_email}
                             ctaObservationsLink={(selectedJob as any).cta_public_observations_link}
                             ctaObservationsEndereco={(selectedJob as any).cta_public_observations_endereco}
+                            jobLocation={selectedJob.location}
+                            jobPostedAt={selectedJob.postedAt}
                         />
 
                         <JobDetailModal
