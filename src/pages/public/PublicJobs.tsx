@@ -92,13 +92,14 @@ export const PublicJobs = () => {
 
             const mappedJobs: Job[] = (jobsData || []).map((j: any) => {
                 const company = companiesMap.get(j.user_id);
+                const cleanCity = (j.city || '').replace(/\s*[-\/]?\s*SP\s*$/i, '').trim();
                 return {
                     id: j.id,
                     code: j.code || j.id.slice(0, 8).toUpperCase(),
                     title: j.title || j.role,
                     company: company?.name || 'Confidencial',
-                    location: j.city || 'Local não informado',
-                    city: j.city,
+                    location: cleanCity || 'Local não informado',
+                    city: cleanCity,
                     region: j.state || 'SP',
                     schedule: j.work_schedule || 'Horário a combinar',
                     type: j.employment_type || null,
@@ -128,15 +129,16 @@ export const PublicJobs = () => {
             const checkVisible = (val?: string) => {
                 if (!val) return false;
                 const lower = val.toLowerCase().trim();
-                return !['não mencionado', 'nao mencionado'].includes(lower);
+                return !['não mencionado', 'nao mencionado', 'não informado', 'nao informado', 'vazio', 'empty', 'null', ''].includes(lower);
             };
 
             const validMappedJobs = mappedJobs.filter((job: any) => 
-                checkVisible(job.cta_public_contato) ||
+                (checkVisible(job.cta_public_contato) ||
                 checkVisible(job.cta_public_email) ||
                 checkVisible(job.cta_public_link) ||
                 checkVisible(job.cta_public_endereco) ||
-                job.status_anunciante === true
+                job.status_anunciante === true) &&
+                checkVisible(job.city)
             );
 
             if (reset) {

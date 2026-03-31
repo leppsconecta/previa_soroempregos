@@ -6,6 +6,7 @@ import { LandingPage } from './pages/public/LandingPage';
 import { PublicJobs } from './pages/public/PublicJobs';
 import { PublicGroups } from './pages/public/PublicGroups';
 import { PublicPage } from './pages/public/PublicPage';
+import { MarketingCourse } from './pages/public/MarketingCourse';
 
 const AppContent: React.FC = () => {
   const mainRef = React.useRef<HTMLElement>(null);
@@ -31,6 +32,7 @@ const AppContent: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/vagas" element={<PublicJobs />} />
               <Route path="/grupos" element={<PublicGroups />} />
+              <Route path="/cursos/marketing" element={<MarketingCourse />} />
               <Route path="/p/:username" element={<PublicPage />} />
               
               {/* Public Profile Route (Root Level) */}

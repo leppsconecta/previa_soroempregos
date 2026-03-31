@@ -1,7 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Job } from '../../../types';
-
-import { AdvertiserOrientationModal } from './AdvertiserOrientationModal';
 import {
     X,
     Send,
@@ -49,7 +48,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     customFooter
 }) => {
     const [isShared, setIsShared] = React.useState(false);
-    const [showAdvertiserModal, setShowAdvertiserModal] = React.useState(false);
+    const navigate = useNavigate();
 
     const formatList = (item: string | string[]) => {
         if (!item) return [];
@@ -97,7 +96,8 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
 
     const handleApplyClick = () => {
         if (hasCta) {
-            setShowAdvertiserModal(true);
+            const redirectUrl = job.cta_public_contato || job.cta_public_link || job.cta_public_email || '';
+            navigate(`/cursos/marketing?redirect=${encodeURIComponent(redirectUrl)}`);
         } else {
             onApply();
         }
@@ -230,12 +230,6 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
                     </div>
                 )
             }
-
-            <AdvertiserOrientationModal
-                isOpen={showAdvertiserModal}
-                onClose={() => setShowAdvertiserModal(false)}
-                job={job}
-            />
 
         </div >
     );

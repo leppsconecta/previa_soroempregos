@@ -39,15 +39,16 @@ export const CandidateLanding = () => {
                     const checkVisible = (val?: string) => {
                         if (!val) return false;
                         const lower = val.toLowerCase().trim();
-                        return !['não mencionado', 'nao mencionado'].includes(lower);
+                        return !['não mencionado', 'nao mencionado', 'não informado', 'nao informado', 'vazio', 'empty', 'null', ''].includes(lower);
                     };
 
                     const validJobs = jobs.filter(j => 
-                        checkVisible(j.cta_public_contato) ||
+                        (checkVisible(j.cta_public_contato) ||
                         checkVisible(j.cta_public_email) ||
                         checkVisible(j.cta_public_link) ||
                         checkVisible(j.cta_public_endereco) ||
-                        j.status_anunciante === true
+                        j.status_anunciante === true) &&
+                        checkVisible(j.city)
                     ).slice(0, 10);
 
                     const jobsWithCompany = await Promise.all(validJobs.map(async (job) => {
@@ -175,7 +176,6 @@ export const CandidateLanding = () => {
             setLoading(false);
         }
     };
-
     const mapJob = (j: any, company: any): Job => {
         const parseList = (field: any) => {
             if (!field) return [];
@@ -198,13 +198,15 @@ export const CandidateLanding = () => {
             return [];
         }
 
+        const cleanCity = (j.city || '').replace(/\s*[-\/]?\s*SP\s*$/i, '').trim();
+
         return {
             id: j.id,
             code: j.code || j.id.slice(0, 8).toUpperCase(),
             title: j.title || j.role,
             company: company?.name || 'Confidencial',
-            location: j.city || 'Local não informado',
-            city: j.city,
+            location: cleanCity || 'Local não informado',
+            city: cleanCity,
             region: j.state || 'SP',
             schedule: j.work_schedule || 'Horário a combinar',
             type: j.employment_type || null,

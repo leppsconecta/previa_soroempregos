@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
   Megaphone,
@@ -58,6 +59,7 @@ const MOCK_GRUPOS: Grupo[] = [
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false }) => {
+  const navigate = useNavigate();
   const [landingMode, setLandingMode] = useState<'EMP' | 'CAND'>('CAND');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
@@ -810,6 +812,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                       </div>
                       <button
                         onClick={() => {
+                          if (landingMode === 'CAND') {
+                            navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
+                            return;
+                          }
                           setSelectedGroup(g);
                           setIsGroupModalOpen(false);
                           setLeadStep(1);
