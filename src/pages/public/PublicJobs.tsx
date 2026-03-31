@@ -24,10 +24,18 @@ export const PublicJobs = () => {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [isInactiveJobModalOpen, setIsInactiveJobModalOpen] = useState(false);
 
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Debounce search term (400ms)
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchTerm), 400);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
     useEffect(() => {
         window.scrollTo(0, 0);
         fetchJobs(true);
-    }, [filterType, searchTerm]); // Refund when filter/search changes
+    }, [filterType, debouncedSearch]);
 
     // Realtime Subscription
     useEffect(() => {
@@ -64,8 +72,8 @@ export const PublicJobs = () => {
                 query = query.eq('employment_type', filterType);
             }
 
-            if (searchTerm) {
-                const safeTerm = searchTerm.replace(/[%_(),]/g, '').trim();
+            if (debouncedSearch) {
+                const safeTerm = debouncedSearch.replace(/[%_(),]/g, '').trim();
                 if (safeTerm) {
                     query = query.or(`title.ilike.%${safeTerm}%,code.ilike.%${safeTerm}%,city.ilike.%${safeTerm}%,region.ilike.%${safeTerm}%,employment_type.ilike.%${safeTerm}%,salary.ilike.%${safeTerm}%`);
                 }

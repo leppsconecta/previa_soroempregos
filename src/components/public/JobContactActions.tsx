@@ -27,7 +27,7 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
 
     const openWhatsApp = () => {
         if (!whatsapp) return;
-        const message = encodeURIComponent(`Olá, vi a vaga de *${jobTitle}* na SoroEmpregos e gostaria de mais informações.`);
+        const message = encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na SoroEmpregos.com.br\n—————————————\nFunção: *${jobTitle}*\n—————————————\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`);
         window.open(`https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
         setIsWhatsModalOpen(false);
     };

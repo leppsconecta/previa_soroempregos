@@ -51,14 +51,23 @@ export const CandidateLanding = () => {
                         checkVisible(j.city)
                     ).slice(0, 10);
 
-                    const jobsWithCompany = await Promise.all(validJobs.map(async (job) => {
-                        const { data: company } = await supabase
+                    // Batch fetch companies (single query instead of N individual ones)
+                    const userIds = [...new Set(validJobs.map(j => j.user_id).filter(Boolean))];
+                    let companiesMap = new Map();
+                    if (userIds.length > 0) {
+                        const { data: companiesData } = await supabase
                             .from('companies')
                             .select('*')
-                            .eq('owner_id', job.user_id)
-                            .single();
+                            .in('owner_id', userIds);
+                        if (companiesData) {
+                            companiesData.forEach((c: any) => companiesMap.set(c.owner_id, c));
+                        }
+                    }
+
+                    const jobsWithCompany = validJobs.map(job => {
+                        const company = companiesMap.get(job.user_id) || null;
                         return mapJob(job, company);
-                    }));
+                    });
                     setRecentJobs(jobsWithCompany);
                 }
             } catch (err) {

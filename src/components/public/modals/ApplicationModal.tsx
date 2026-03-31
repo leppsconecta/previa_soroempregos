@@ -324,24 +324,20 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
             if (codeError || !serverCode) throw new Error('Falha ao gerar código de verificação.');
 
-            // 3. Send Webhook with the server-generated code
-            const response = await fetch('https://webhook.leppsconecta.com.br/webhook/1b3c5fe0-68c9-4c9f-b8b0-2afce5e08718', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    type: 'solicita_codigo',
-                    user_id: jobOwnerId,
-                    job_id: jobId,
-                    phone: formattedPhone,
-                    code: serverCode,   // server-generated — not stored in state
-                    id_candidate: currCandidateId,
-                    formato: '55+ddd+numero'
-                })
-            });
+            // 3. Insert lead into captura.leads
+            const { error: insertError } = await supabase
+              .rpc('insert_lead', {
+                p_name: formData.name,
+                p_whatsapp: formattedPhone,
+                p_email: formData.email,
+                p_type: 'marketing_course',
+                p_metadata: {
+                  job_id: jobId,
+                  candidate_id: currCandidateId
+                }
+              });
 
-            if (!response.ok) {
-                throw new Error(`Falha ao enviar solicitação: ${response.status}`);
-            }
+            if (insertError) throw new Error('Falha ao salvar lead.');
 
             setStep('verification');
             startTimer();
@@ -520,7 +516,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </p>
                             </div>
                             <a
-                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na *SoroEmpregos.com.br*\nFunção: *${jobTitle}*\nCódigo: *${jobCode || ''}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
+                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na SoroEmpregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || ''}*\n—————————————\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
