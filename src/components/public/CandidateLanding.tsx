@@ -26,10 +26,16 @@ export const CandidateLanding = () => {
     React.useEffect(() => {
         const fetchRecentJobs = async () => {
             try {
+                const thresholdDate = new Date();
+                thresholdDate.setDate(thresholdDate.getDate() - 2);
+                thresholdDate.setHours(0, 0, 0, 0);
+                const threshold = thresholdDate.toISOString();
+
                 const { data: jobs, error } = await supabase
                     .from('jobs')
                     .select('*')
                     .eq('status', 'active')
+                    .gte('created_at', threshold)
                     .order('created_at', { ascending: false })
                     .limit(50);
 

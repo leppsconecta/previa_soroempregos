@@ -58,13 +58,17 @@ export const PublicJobs = () => {
             const from = currentPage * JOBS_PER_PAGE;
             const to = from + JOBS_PER_PAGE - 1;
 
-            const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+            const now = new Date();
+            const twoDaysAgo = new Date(now);
+            twoDaysAgo.setDate(now.getDate() - 2);
+            twoDaysAgo.setHours(0, 0, 0, 0);
+            const threshold = twoDaysAgo.toISOString();
 
             let query = supabase
                 .from('jobs')
                 .select('*')
                 .eq('status', 'active')
-                .gte('created_at', fortyEightHoursAgo)
+                .gte('created_at', threshold)
                 .order('created_at', { ascending: false })
                 .range(from, to);
 

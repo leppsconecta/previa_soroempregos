@@ -71,12 +71,18 @@ export const PublicPage = () => {
                 phone: companyData.whatsapp || companyData.phone // Ensure WhatsApp is used for contact
             });
 
+            const thresholdDate = new Date();
+            thresholdDate.setDate(thresholdDate.getDate() - 2);
+            thresholdDate.setHours(0, 0, 0, 0);
+            const threshold = thresholdDate.toISOString();
+
             // Fetch Jobs
             const { data: jobsData, error: jobsError } = await supabase
                 .from('jobs')
                 .select('*')
                 .eq('user_id', companyData.owner_id) // Map via user_id as jobs use folder_company_id/user_id
                 .eq('status', 'active')
+                .gte('created_at', threshold)
                 .order('created_at', { ascending: false });
 
             if (!jobsError && jobsData) {
