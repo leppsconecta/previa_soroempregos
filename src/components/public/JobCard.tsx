@@ -103,7 +103,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onApply, onReport, onQuestion, s
                                 </span>
                                 <span className="text-gray-300">•</span>
                                 <span className="font-medium text-gray-400 flex items-center gap-1.5">
-                                    <MapPin size={14} /> {job.city && job.region ? `${job.city} - ${job.region}` : job.city || job.region}
+                                    <MapPin size={14} /> {job.city || job.location}
                                 </span>
                             </div>
                         </div>

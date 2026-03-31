@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { Job } from '../../../types';
 import {
     X,
@@ -48,7 +48,6 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     customFooter
 }) => {
     const [isShared, setIsShared] = React.useState(false);
-    const navigate = useNavigate();
 
     const formatList = (item: string | string[]) => {
         if (!item) return [];
@@ -57,7 +56,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
     };
 
     const handleShare = async () => {
-        const text = `*${job.title}*\n* Vaga publicada ${job.date}\n* ${job.city} - ${job.region}\nAcesse: soroempregos.com e insira o código da vaga para se candidatar.\nCódigo: *${job.jobCode}*\n\nBoa sorte 🍀`;
+        const text = `*${job.title}*\n* Vaga publicada ${job.date}\n* ${job.city}\nAcesse: soroempregos.com e insira o código da vaga para se candidatar.\nCódigo: *${job.jobCode}*\n\nBoa sorte 🍀`;
 
         if (navigator.share) {
             try {
@@ -82,25 +81,8 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
         return String(item).replace(/\n/g, ' ');
     };
 
-    const checkVisible = (val?: string) => {
-        if (!val) return false;
-        const lower = val.toLowerCase().trim();
-        return !['não mencionado', 'nao mencionado'].includes(lower);
-    };
-
-    const hasCta = checkVisible(job.cta_public_contato) || 
-                   checkVisible(job.cta_public_email) || 
-                   checkVisible(job.cta_public_link) || 
-                   checkVisible(job.cta_public_endereco) || 
-                   job.status_anunciante === true;
-
     const handleApplyClick = () => {
-        if (hasCta) {
-            const redirectUrl = job.cta_public_contato || job.cta_public_link || job.cta_public_email || '';
-            navigate(`/cursos/marketing?redirect=${encodeURIComponent(redirectUrl)}`);
-        } else {
-            onApply();
-        }
+        onApply();
     };
 
     return (
@@ -138,7 +120,7 @@ export const JobDetailContent: React.FC<JobDetailContentProps> = ({
                     <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500 font-medium">
                         <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300">
                             <MapPin size={14} className="text-red-500" />
-                            {job.city} - {job.region}
+                            {job.city}
                         </span>
                     </div>
                 </div>

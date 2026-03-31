@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Briefcase, Rocket, Target, Users, CheckCircle2 } from "lucide-react";
 
@@ -50,7 +50,8 @@ const steps = [
 
 export const MarketingCourse: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/grupos";
+  const navigateTo = useNavigate();
+  const redirectUrl = searchParams.get("redirect") || "";
   const [name, setName] = useState("");
   const [showModal, setShowModal] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
@@ -58,6 +59,13 @@ export const MarketingCourse: React.FC = () => {
   const [countdown, setCountdown] = useState(5);
   const [isCourseClicked, setIsCourseClicked] = useState(false);
   const [isGroupClicked, setIsGroupClicked] = useState(false);
+
+  // Guard: only allow access when coming from a group click (with valid redirect)
+  useEffect(() => {
+    if (!redirectUrl) {
+      navigateTo("/", { replace: true });
+    }
+  }, [redirectUrl, navigateTo]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
