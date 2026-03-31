@@ -349,6 +349,7 @@ export const CandidateLanding = () => {
                         isOpen={isApplicationModalOpen}
                         onClose={() => setIsApplicationModalOpen(false)}
                         jobTitle={foundJob.title}
+                        jobCode={(foundJob as any).code}
                         jobOwnerId={(foundJob as any).ownerId}
                         jobId={foundJob.id}
                         companyId={(foundJob as any).companyId}

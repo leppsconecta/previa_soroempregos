@@ -134,10 +134,6 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ jobs, onApply, onRe
                                     <MapPin size={16} className="text-indigo-500 shrink-0" />
                                     <span className="truncate">{job.city || ''}</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
-                                    <DollarSign size={16} className="text-emerald-500 shrink-0" />
-                                    <span className="truncate">{job.salary || 'A combinar'}</span>
-                                </div>
                             </div>
 
                             <button className="w-full py-3 rounded-xl bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider group-hover:bg-blue-600 group-hover:text-white transition-colors flex items-center justify-center gap-2">

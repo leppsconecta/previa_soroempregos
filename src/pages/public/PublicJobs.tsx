@@ -286,6 +286,7 @@ export const PublicJobs = () => {
                         isOpen={isApplicationModalOpen}
                         onClose={() => setIsApplicationModalOpen(false)}
                         jobTitle={selectedJob.title}
+                        jobCode={(selectedJob as any).code}
                         jobOwnerId={(selectedJob as any).ownerId}
                         jobId={selectedJob.id}
                         companyId={(selectedJob as any).companyId}

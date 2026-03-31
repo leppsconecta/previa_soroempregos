@@ -7,6 +7,7 @@ interface ApplicationModalProps {
     isOpen: boolean;
     onClose: () => void;
     jobTitle: string;
+    jobCode?: string;
     jobOwnerId: string;
     jobId: string;
     companyId: string; // Added companyId prop
@@ -24,7 +25,7 @@ interface ApplicationModalProps {
 
 type Step = 'contact_info' | 'personal_info' | 'professional_info' | 'verification' | 'success';
 
-const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jobTitle, jobOwnerId, jobId, companyId, isAdvertiser, advertiserName, ctaContato, ctaEmail, ctaLink, ctaEndereco, ctaObservationsWhatsapp, ctaObservationsEmail, ctaObservationsLink, ctaObservationsEndereco }) => {
+const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jobTitle, jobCode, jobOwnerId, jobId, companyId, isAdvertiser, advertiserName, ctaContato, ctaEmail, ctaLink, ctaEndereco, ctaObservationsWhatsapp, ctaObservationsEmail, ctaObservationsLink, ctaObservationsEndereco }) => {
     const [step, setStep] = useState<Step>('contact_info');
     const [formData, setFormData] = useState({
         name: '',
@@ -519,7 +520,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </p>
                             </div>
                             <a
-                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}`}
+                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na *SoroEmpregos.com.br*\nFunção: *${jobTitle}*\nCódigo: *${jobCode || ''}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
