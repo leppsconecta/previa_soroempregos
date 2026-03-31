@@ -139,13 +139,15 @@ export const CandidateLanding = () => {
                 return [];
             };
 
+            const cleanCity = (data.city || '').replace(/\s*[-\/]?\s*SP\s*$/i, '').trim();
+
             const mappedJob: Job = {
                 id: data.id,
                 code: data.code || data.id.slice(0, 8).toUpperCase(),
                 title: data.title,
                 company: data.company_name || 'Confidencial',
-                location: data.city || 'Local não informado',
-                city: data.city,
+                location: cleanCity || 'Local não informado',
+                city: cleanCity,
                 region: data.state || 'SP',
                 schedule: data.work_schedule || 'Horário a combinar',
                 type: data.type || null,

@@ -10,7 +10,10 @@ import {
   Copy,
   Check,
   X,
-  Send
+  Send,
+  ChevronDown,
+  ChevronUp,
+  Mail
 } from 'lucide-react';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
 
@@ -53,6 +56,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 }) => {
   const [step, setStep] = useState<ModalStep>('intro');
   const [copied, setCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (!isOpen) return null;
 
@@ -130,7 +134,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.05, y: -20 }}
             transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md bg-[#EA580C] rounded-[40px] overflow-hidden shadow-2xl border border-white/20 min-h-[520px] flex flex-col z-10"
+            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 min-h-[520px] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center">
               <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
@@ -149,22 +153,22 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               >
                 <h2 className="text-3xl font-black text-white mb-3 leading-none tracking-tighter uppercase">
                   Seja dono do seu <br/>
-                  <span className="text-purple-950">próprio negócio</span>
+                  <span className="text-orange-500">próprio negócio</span>
                 </h2>
                 <p className="text-white/90 text-lg font-bold italic tracking-tight">
                   "Alimente seu sonho, e não do seu patrão"
                 </p>
               </motion.div>
 
-              <div className="mt-6 flex flex-col items-center gap-4">
+              <div className="mt-6 flex flex-col items-center gap-4 w-full">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setStep('exclusive')}
-                  className="px-8 py-2.5 bg-white/10 border border-white/20 rounded-full text-white text-sm font-bold tracking-tight transition-colors flex items-center gap-2 hover:bg-white/20"
+                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
                 >
-                  Enviar Currículo
-                  <Send size={14} />
+                  Enviar currículo
+                  <Send size={16} />
                 </motion.button>
               </div>
             </div>
@@ -209,9 +213,10 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setStep('final')}
-                  className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-900/20"
+                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
                 >
-                  Enviar curriculo
+                  Enviar currículo
+                  <Send size={16} />
                 </motion.button>
 
                 <div className="flex gap-2">
@@ -250,92 +255,138 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               </button>
             </div>
 
-            <div className="p-10 flex flex-col items-center text-center flex-1 justify-center min-h-[440px]">
-              <div className="w-20 h-20 bg-blue-50 rounded-[28px] flex items-center justify-center mb-6 shadow-inner relative">
-                <Briefcase className="text-blue-600" size={36} />
-                <div className="absolute -bottom-1.5 -right-1.5 bg-green-500 w-7 h-7 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
+            <div className="p-8 flex flex-col items-center text-center flex-1">
+              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 shadow-inner relative shrink-0">
+                <Briefcase className="text-blue-600" size={28} />
+                <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
                 </div>
               </div>
 
-              <h3 className="text-xl font-bold text-zinc-900 mb-1 tracking-tight">
+              <h3 className="text-xl font-bold text-zinc-900 mb-1 tracking-tight leading-none">
                 {jobTitle}
               </h3>
-              <p className="text-xs text-zinc-400 font-medium mb-6">
-                {jobLocation} / {jobPostedAt}
+              <p className="text-xs text-zinc-400 mb-6">
+                {jobLocation} • {jobPostedAt}
               </p>
 
-              <div className="w-full space-y-2.5 mb-6">
+              <div className="w-full space-y-4 mb-8">
+                {/* Primary CTA: WhatsApp */}
                 {hasPhone && (
-                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3">
-                    <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                      <OfficialWhatsAppIcon size={18} />
+                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 shadow-sm">
+                    <div className="p-2 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                      <OfficialWhatsAppIcon size={20} />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       {checkVisible(ctaObservationsWhatsapp) && (
-                        <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsWhatsapp}</p>
+                        <p className="text-zinc-500 text-[10px] mb-1 italic leading-tight">{ctaObservationsWhatsapp}</p>
                       )}
-                      <div className="flex items-center gap-3">
-                        <p className="text-zinc-900 font-black text-xl select-text tracking-tight">
+                      <div className="flex items-center gap-2">
+                        <p className="text-zinc-900 font-black text-xl select-text tracking-tight flex-1 truncate">
                           {ctaContato}
                         </p>
                         <button
                           onClick={() => handleCopy(ctaContato || '')}
-                          className="p-1.5 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 flex items-center gap-1.5"
+                          className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
                           title="Copiar número"
                         >
                           {copied ? (
                             <Check size={14} className="text-green-500" />
                           ) : (
-                            <Copy size={14} className="text-zinc-400 hover:text-blue-500" />
+                            <Copy size={14} />
                           )}
                         </button>
                       </div>
                     </div>
                   </div>
                 )}
-                {hasEmail && (
-                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3">
-                    <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                      <Send size={18} className="text-blue-500" />
-                    </div>
-                    <div>
-                      {checkVisible(ctaObservationsEmail) && (
-                        <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEmail}</p>
-                      )}
-                      <p className="text-zinc-900 font-bold text-sm select-text">{ctaEmail}</p>
-                    </div>
-                  </div>
+
+                {/* Secondaries Action - Show More */}
+                {(hasPhone && (hasEmail || hasLink || hasEndereco)) && (
+                  <button 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center justify-center gap-2 w-full py-1 text-zinc-400 hover:text-blue-600 transition-colors text-[10px] font-bold uppercase tracking-widest"
+                  >
+                    {isExpanded ? (
+                      <>Ocultar outras formas <ChevronUp size={12} /></>
+                    ) : (
+                      <>Mais formas de enviar <ChevronDown size={12} /></>
+                    )}
+                  </button>
                 )}
-                {hasLink && (
-                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3">
-                    <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                      <Rocket size={18} className="text-purple-500" />
-                    </div>
-                    <div>
-                      {checkVisible(ctaObservationsLink) && (
-                        <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsLink}</p>
+
+                {/* Expanded Sections */}
+                <AnimatePresence>
+                  {(isExpanded || !hasPhone) && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="space-y-3 overflow-hidden"
+                    >
+                      {hasEmail && (
+                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
+                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
+                            <Mail size={12} className="text-blue-500" />
+                            <span className="text-[8px] font-black uppercase tracking-widest">E-mail</span>
+                          </div>
+                          {checkVisible(ctaObservationsEmail) && (
+                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEmail}</p>
+                          )}
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-zinc-900 font-bold text-xs select-text truncate flex-1">
+                              {ctaEmail}
+                            </p>
+                            <button onClick={() => handleCopy(ctaEmail || '')} className="p-1 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
+                              <Copy size={12} />
+                            </button>
+                          </div>
+                        </div>
                       )}
-                      <p className="text-zinc-900 font-bold text-sm truncate max-w-[200px] select-text">{ctaLink}</p>
-                    </div>
-                  </div>
-                )}
-                {hasEndereco && (
-                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3">
-                    <div className="p-1.5 bg-white rounded-lg shadow-sm">
-                      <MapPin size={18} className="text-red-500" />
-                    </div>
-                    <div>
-                      {checkVisible(ctaObservationsEndereco) && (
-                        <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEndereco}</p>
+
+                      {hasEndereco && (
+                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
+                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
+                            <MapPin size={12} className="text-red-500" />
+                            <span className="text-[8px] font-black uppercase tracking-widest">Endereço</span>
+                          </div>
+                          {checkVisible(ctaObservationsEndereco) && (
+                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEndereco}</p>
+                          )}
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-zinc-900 font-bold text-xs select-text truncate flex-1 leading-tight">
+                              {ctaEndereco}
+                            </p>
+                            <button onClick={() => handleCopy(ctaEndereco || '')} className="p-1 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
+                              <Copy size={12} />
+                            </button>
+                          </div>
+                        </div>
                       )}
-                      <p className="text-zinc-900 font-bold text-sm select-text">{ctaEndereco}</p>
-                    </div>
-                  </div>
-                )}
+
+                      {hasLink && (
+                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
+                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
+                            <Rocket size={12} className="text-purple-500" />
+                            <span className="text-[8px] font-black uppercase tracking-widest">Link Externo</span>
+                          </div>
+                          {checkVisible(ctaObservationsLink) && (
+                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsLink}</p>
+                          )}
+                          <button 
+                            onClick={() => window.open(ctaLink, '_blank')}
+                            className="w-full py-2 bg-blue-600 text-white font-bold rounded-lg text-[10px] hover:bg-blue-700 transition-colors shadow-sm"
+                          >
+                            Abrir Link de Candidatura
+                          </button>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
-              <div className="w-full flex flex-col gap-3">
+              <div className="w-full flex flex-col gap-3 mt-auto">
                 {hasPhone && (
                   <motion.button 
                     whileHover={{ scale: 1.02 }}
@@ -360,21 +411,8 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                     <span className="leading-tight">Enviar Currículo via WhatsApp</span>
                   </motion.button>
                 )}
-                
-                {hasLink && (
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => window.open(ctaLink, '_blank')}
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-100 text-sm"
-                  >
-                    <Rocket size={18} />
-                    <span className="leading-tight">Acessar Site da Vaga</span>
-                  </motion.button>
-                )}
 
                 <div className="relative group w-full">
-                  {/* Glowing Pulse Ring */}
                   <motion.div
                     animate={{
                       scale: [1, 1.25, 1.4],
@@ -409,8 +447,8 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
               </div>
 
               {advertiserName && (
-                <p className="mt-8 text-zinc-400 text-[10px] font-medium select-none pointer-events-none">
-                  Esta vaga foi anunciada por <span className="text-zinc-500">{cleanAdvertiserName}</span>
+                <p className="mt-8 text-zinc-400 text-[8px] font-black uppercase tracking-widest select-none pointer-events-none opacity-40">
+                  Vaga anunciada por {cleanAdvertiserName}
                 </p>
               )}
             </div>
