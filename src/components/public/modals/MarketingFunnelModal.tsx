@@ -13,9 +13,14 @@ import {
   Send,
   ChevronDown,
   ChevronUp,
-  Mail
+  Mail,
+  User,
+  Loader2,
+  CheckCircle2
 } from 'lucide-react';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
+import { InputMask } from "@react-input/mask";
+import { supabase } from '../../../lib/supabase';
 
 interface MarketingFunnelModalProps {
   isOpen: boolean;
@@ -35,7 +40,7 @@ interface MarketingFunnelModalProps {
   advertiserName?: string;
 }
 
-type ModalStep = 'intro' | 'exclusive' | 'final';
+type ModalStep = 'intro' | 'exclusive' | 'final' | 'capture' | 'success';
 
 export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({ 
   isOpen, 
@@ -58,10 +63,67 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Form states
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorHeader, setErrorHeader] = useState("");
+
   if (!isOpen) return null;
 
   const handleMudarDeVida = () => {
-    window.open(`/cursos/marketing?redirect=${window.location.href}`, '_blank');
+    setStep('capture');
+  };
+
+  const handleCaptureSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorHeader("");
+    
+    if (!phone || phone.length < 14) {
+      setErrorHeader("Telefone inválido");
+      return;
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setErrorHeader("E-mail inválido");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const cleanPhone = phone.replace(/\D/g, '');
+      const ddd = cleanPhone.substring(0, 2);
+      const number = cleanPhone.substring(2);
+      const formattedPhone = `55${ddd}${number}`;
+
+      const { error } = await supabase
+        .rpc('insert_lead', {
+          p_name: name,
+          p_whatsapp: formattedPhone,
+          p_email: email.toLowerCase(),
+          p_type: 'marketing_course',
+          p_metadata: { 
+            source: 'marketing_funnel_modal',
+            job_title: jobTitle,
+            job_code: jobCode
+          }
+        });
+
+      if (error) {
+        console.error(error);
+        setErrorHeader('erro ao processar, tente novamente');
+        setIsSubmitting(false);
+        return;
+      }
+
+      setStep('success');
+    } catch (err) {
+      console.error(err);
+      setErrorHeader("erro ao processar, tente novamente");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const checkVisible = (val?: string) => {
@@ -187,9 +249,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center">
               <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img 
-                  src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Empresário de sucesso comemorando"
-                  className="w-full h-full object-cover brightness-105"
+                  src="/real_brasileiro.png" 
+                  alt="Cédulas de Real brasileiro, notas de 100, 50 e 20"
+                  className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -451,6 +513,163 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                   Vaga anunciada por {cleanAdvertiserName}
                 </p>
               )}
+            </div>
+          </motion.div>
+        )}
+
+        {step === 'capture' && (
+          <motion.div
+            key="capture"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 min-h-[520px] flex flex-col z-10"
+          >
+            {/* Background Blur Effects */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              <div className="absolute -top-32 -right-32 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl" />
+              <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+            </div>
+
+            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center relative z-10">
+              <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+                <img 
+                  src="/pessoa_com_dinheiro.png" 
+                  alt="Pessoa feliz comemorando com real brasileiro"
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+
+              <div className="space-y-1 mb-6">
+                <h2 className="text-2xl font-black text-white leading-none tracking-tighter uppercase px-2">
+                  Você fez a melhor <span className="text-orange-500">escolha da sua vida!</span>
+                </h2>
+                <p className="text-orange-400 text-xs font-bold leading-tight">
+                  Acredite em você, seja um empresário de sucesso!
+                </p>
+              </div>
+              
+              {errorHeader && (
+                <div className="mb-4 p-2 bg-red-500/20 text-red-200 border border-red-500/30 rounded-xl text-center text-[10px] font-medium w-full">
+                  {errorHeader}
+                </div>
+              )}
+
+              <form onSubmit={handleCaptureSubmit} className="space-y-3 w-full">
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    value={name}
+                    required
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      const formatted = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
+                      setName(formatted);
+                    }}
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
+                    placeholder="Seu nome completo"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <InputMask
+                    mask="(__) _ ____-____"
+                    replacement={{ _: /\d/ }}
+                    placeholder="Seu WhatsApp"
+                    type="tel"
+                    inputMode="tel"
+                    value={phone}
+                    required
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
+                  />
+                </div>
+
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="email"
+                    value={email}
+                    required
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
+                    placeholder="Seu melhor e-mail"
+                  />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-black rounded-xl text-sm transition-all shadow-xl shadow-orange-950/40 flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      Acessar curso agora
+                      <Send size={16} />
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </div>
+          </motion.div>
+        )}
+
+        {step === 'success' && (
+          <motion.div
+            key="success"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 min-h-[520px] flex flex-col z-10"
+          >
+            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center relative z-10">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", damping: 12, stiffness: 200, delay: 0.2 }}
+                className="w-24 h-24 bg-orange-500/20 rounded-full flex items-center justify-center mb-8"
+              >
+                <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/20">
+                  <CheckCircle2 className="text-white" size={32} />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-4"
+              >
+                <h2 className="text-2xl font-black text-white leading-tight uppercase tracking-tight">
+                  Tudo certo!
+                </h2>
+                <div className="space-y-1">
+                  <p className="text-white/90 text-sm font-bold leading-relaxed px-4">
+                    Em breve você receberá as informações completas sobre este curso.
+                  </p>
+                  <p className="text-orange-500 text-xs font-black uppercase tracking-widest">
+                    Não fique ansioso
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                onClick={onClose}
+                className="mt-12 text-white/40 text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors"
+              >
+                Fechar janela
+              </motion.button>
             </div>
           </motion.div>
         )}
