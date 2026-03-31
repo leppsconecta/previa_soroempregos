@@ -131,6 +131,44 @@ ${typeLine}*Empresa:* ${job.company || 'Não informado'}
                     )}
 
                     {/* Divider if multiple items */}
+                    {(hasLink || hasPhone) && hasEmail && (
+                        <div className="h-px bg-slate-100 dark:bg-slate-800" />
+                    )}
+
+                    {/* Email Section */}
+                    {hasEmail && (
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-lg shrink-0">
+                                    <MessageCircle size={20} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-slate-900 dark:text-white">
+                                        O interessado deve enviar o currículo para o E-mail abaixo
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    if (job.cta_public_email) {
+                                        navigator.clipboard.writeText(job.cta_public_email);
+                                        // A simple visual feedback could be done, but keeping it simple for now
+                                        alert('E-mail copiado para a área de transferência!');
+                                    }
+                                }}
+                                className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors shadow-sm"
+                            >
+                                <Copy size={18} />
+                                Copiar E-mail
+                            </button>
+                            <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-center border border-slate-100 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 mb-1">E-mail de contato</p>
+                                <p className="text-sm font-bold text-slate-900 dark:text-white font-mono break-all">{job.cta_public_email}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Divider if multiple items */}
                     {(hasLink || hasPhone) && hasAddress && (
                         <div className="h-px bg-slate-100 dark:bg-slate-800" />
                     )}
