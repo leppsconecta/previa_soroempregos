@@ -54,10 +54,10 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   jobPostedAt,
   advertiserName
 }) => {
-  const [step, setStep] = useState<ModalStep>('final');
+  const [step, setStep] = useState<ModalStep>('intro');
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(10);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const courseSectionRef = useRef<HTMLDivElement>(null);
@@ -86,8 +86,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   // Reset timer if reopened
   React.useEffect(() => {
     if (isOpen) {
-      setTimeLeft(0);
-      setStep('final');
+      setTimeLeft(10);
+      setStep('intro');
       setIsTransitioning(false);
     }
   }, [isOpen]);
@@ -156,7 +156,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
         onClick={onClose}
       />
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {step === 'intro' && (
           <motion.div
             key="intro"

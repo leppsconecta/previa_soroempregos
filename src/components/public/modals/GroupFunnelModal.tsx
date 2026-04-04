@@ -56,7 +56,7 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
         onClick={onClose}
       />
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {step === 'question' && (
           <motion.div
             key="question"
