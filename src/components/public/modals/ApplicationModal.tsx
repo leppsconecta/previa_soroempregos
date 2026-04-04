@@ -463,10 +463,10 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
     const getStepTitle = () => {
         switch (step) {
-            case 'contact_info': return 'Informações de Contato';
-            case 'personal_info': return 'Dados Pessoais';
-            case 'professional_info': return 'Informações Profissionais';
-            case 'verification': return 'Verificação de Segurança';
+            case 'contact_info': return 'Informações de contato';
+            case 'personal_info': return 'Dados pessoais';
+            case 'professional_info': return 'Informações profissionais';
+            case 'verification': return 'Verificação de segurança';
             default: return 'Candidatar-se';
         }
     };
@@ -519,7 +519,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </p>
                             </div>
                             <a
-                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na SoroEmpregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || ''}*\n—————————————\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
+                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nfunção: *${jobTitle}*\ncódigo: *${jobCode || ''}*\n—————————————\n\nposso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
@@ -545,10 +545,10 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </p>
                             </div>
                             <button
-                                onClick={() => handleCopy(ctaEmail, 'E-mail')}
+                                onClick={() => handleCopy(ctaEmail, 'e-mail')}
                                 className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold tracking-wide shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
                             >
-                                <MessageCircle size={18} /> Copiar E-mail
+                                <MessageCircle size={18} /> Copiar e-mail
                             </button>
                         </div>
                     )}
@@ -563,7 +563,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </div>
                             )}
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500"/> Link Externo:</p>
+                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500"/> Link externo:</p>
                                 <p className="text-sm text-slate-600 leading-relaxed font-mono break-all line-clamp-2" title={ctaLink}>
                                     {ctaLink}
                                 </p>
@@ -574,7 +574,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 rel="noopener noreferrer"
                                 className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
                             >
-                                <Briefcase size={18} /> Acessar Link Externo
+                                <Briefcase size={18} /> Acessar link externo
                             </a>
                         </div>
                     )}
@@ -596,10 +596,10 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                             </div>
                             <div className="flex gap-2 w-full mt-1">
                                 <button
-                                    onClick={() => handleCopy(ctaEndereco, 'Endereço')}
+                                    onClick={() => handleCopy(ctaEndereco, 'endereço')}
                                     className="flex-1 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-sm"
                                 >
-                                    Copiar Endereço
+                                    Copiar endereço
                                 </button>
                                 <a
                                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco)}`}
@@ -607,7 +607,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                     rel="noopener noreferrer"
                                     className="flex-1 py-3.5 rounded-xl bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm"
                                 >
-                                    <MapPin size={18} /> Ver no Mapa
+                                    <MapPin size={18} /> Ver no mapa
                                 </a>
                             </div>
                         </div>
@@ -671,17 +671,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                             )}
                             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                                 {isExternalJob ? <Briefcase size={20} className="text-blue-600" /> : step === 'verification' ? <Lock size={20} className="text-blue-600" /> : <Send size={20} className="text-blue-600" />}
-                                {isExternalJob ? 'Instruções da Vaga' : getStepTitle()}
+                                {isExternalJob ? 'Instruções da vaga' : getStepTitle()}
                             </h2>
                         </div>
-                        {(!isExternalJob && step !== 'success') && (
-                            <div className="w-full h-1 bg-slate-100 rounded-full mt-2 overflow-hidden">
-                                <div
-                                    className="h-full bg-blue-600 transition-all duration-500 ease-out"
-                                    style={{ width: `${getStepProgress()}%` }}
-                                />
-                            </div>
-                        )}
                     </div>
                     <button
                         onClick={onClose}
@@ -700,15 +692,15 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                         <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-6 animate-bounce-slow">
                             <CheckCircle size={40} />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-2">Candidatura Enviada!</h3>
-                        <p className="text-gray-500 max-w-xs mx-auto mb-8 text-sm">
-                            Seu número foi verificado e sua candidatura foi enviada com sucesso.
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2 lowercase first-letter:uppercase">candidatura enviada!</h3>
+                        <p className="text-gray-500 max-w-xs mx-auto mb-8 text-sm lowercase first-letter:uppercase">
+                            seu número foi verificado e sua candidatura foi enviada com sucesso.
                         </p>
                         <button
                             onClick={onClose}
-                            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 text-sm"
+                            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 text-sm lowercase first-letter:uppercase"
                         >
-                            Fechar
+                            fechar
                         </button>
                     </div>
                 ) : (
@@ -725,7 +717,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                         {step === 'contact_info' && (
                             <form onSubmit={handleNextStep} className="space-y-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Seu Nome *</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Seu nome *</label>
                                     <div className="relative">
                                         <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                         <input
@@ -791,12 +783,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                             {resumeFile ? (
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-semibold truncate">{resumeFile.name}</span>
-                                                    <span className="text-xs opacity-70">{(resumeFile.size / 1024 / 1024).toFixed(2)}MB - Clique para alterar</span>
+                                                    <span className="text-xs opacity-70">{(resumeFile.size / 1024 / 1024).toFixed(2)}mb - Clique para alterar</span>
                                                 </div>
                                             ) : (
                                                 <div className="flex flex-col">
-                                                    <span className="text-sm font-medium">Anexar Currículo</span>
-                                                    <span className="text-xs opacity-60">PDF, Word ou Imagem (Máx 5MB)</span>
+                                                    <span className="text-sm font-medium">Anexar currículo</span>
+                                                    <span className="text-xs opacity-60">pdf, word ou imagem (máx 5mb)</span>
                                                 </div>
                                             )}
                                         </div>
@@ -809,7 +801,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                         type="submit"
                                         className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold tracking-wide shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 text-sm"
                                     >
-                                        Próxima Etapa <ArrowRight size={16} />
+                                        Próxima etapa <ArrowRight size={16} />
                                     </button>
                                 </div>
                             </form>
@@ -909,7 +901,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Data de Nascimento *</label>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Data de nascimento *</label>
                                         <div className="relative">
                                             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                             <InputMask
@@ -953,12 +945,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                             <form onSubmit={handleNextStep} className="space-y-6">
                                 {/* Cargos - Main Role */}
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Cargo Principal / Atual *</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Cargo principal / atual *</label>
                                     <div className="relative">
                                         <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                         <input
                                             type="text"
-                                            placeholder="Função principal. Ex: Aux. Administrativo"
+                                            placeholder="Função principal. Ex: Aux. administrativo"
                                             className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all placeholder:text-slate-400 text-slate-800 text-sm"
                                             value={formData.mainRole}
                                             onChange={e => setFormData({ ...formData, mainRole: e.target.value })}
@@ -978,7 +970,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                                 onClick={handleAddExtraRole}
                                                 className="text-blue-600 text-xs font-bold hover:underline flex items-center gap-1"
                                             >
-                                                <Plus size={14} /> Adicionar Função
+                                                <Plus size={14} /> Adicionar função
                                             </button>
                                         )}
                                     </div>
@@ -1071,7 +1063,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                                 Verificando...
                                             </>
                                         ) : (
-                                            'Validar Código'
+                                            'Validar código'
                                         )}
                                     </button>
 
@@ -1083,7 +1075,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                                 className="text-slate-500 font-medium hover:text-blue-600 transition-colors flex items-center gap-1.5 py-1"
                                             >
                                                 <RefreshCw size={12} />
-                                                Reenviar Código
+                                                Reenviar código
                                             </button>
                                         ) : (
                                             <span className="text-slate-400 font-medium cursor-not-allowed opacity-70 py-1">

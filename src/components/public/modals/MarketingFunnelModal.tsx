@@ -213,7 +213,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
-              <div className="w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+              <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img 
                   src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop" 
                   alt="pessoa estressada no trabalho"
@@ -222,26 +222,23 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 />
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <h2 className="text-3xl font-bold text-white mb-3 leading-none tracking-tight">
-                  Seja dono do seu <br/>
-                  <span className="text-orange-500">próprio negócio</span>
-                </h2>
-                <p className="text-white/90 text-lg font-medium italic tracking-tight">
-                  "Alimente seu sonho, e não do seu patrão"
-                </p>
-                <div className="mt-4 flex flex-col items-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold text-white leading-tight tracking-tight">
+                    Seja dono do seu <br/>
+                    <span className="text-orange-500 text-4xl">próprio negócio</span>
+                  </h2>
+                  <p className="text-white/90 text-lg font-medium italic tracking-tight">
+                    "Alimente seu sonho, e não do seu patrão"
+                  </p>
+                </div>
+
+                <div className="pt-4 flex flex-col items-center">
                     <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
                         {timeLeft}
                     </div>
                 </div>
-              </motion.div>
-
-              <div className="mt-6 flex flex-col items-center gap-4 w-full h-14" />
+              </div>
             </div>
           </motion.div>
         )}
@@ -256,7 +253,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
-              <div className="w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+              <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img 
                   src="/real_brasileiro.png" 
                   alt="cédulas de real brasileiro, notas de 100, 50 e 20"
@@ -265,36 +262,20 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 />
               </div>
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-4"
-              >
-                <h2 className="text-2xl font-bold text-white leading-[1.1] tracking-tight">
-                  Preparamos um <span className="text-orange-500">curso exclusivo</span><br/> para quem quer mudar de vida.
-                </h2>
-                <p className="text-white/80 text-sm font-normal leading-relaxed">
-                  Clique no botão "Quero mudar de vida."
-                </p>
-                <div className="mt-4 flex flex-col items-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold text-white leading-[1.2] tracking-tight">
+                    Preparamos um <span className="text-orange-500">curso exclusivo</span><br/> para quem quer mudar de vida.
+                  </h2>
+                  <p className="text-white/80 text-sm font-normal leading-relaxed">
+                    Clique no botão "Quero mudar de vida."
+                  </p>
+                </div>
+
+                <div className="pt-4 flex flex-col items-center">
                     <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
                         {timeLeft}
                     </div>
-                </div>
-              </motion.div>
-
-              <div className="mt-8 flex flex-col items-center gap-6 w-full">
-                <div className="h-14" /> {/* Spacer for delayed button */}
-
-                <div className="flex gap-2">
-                  <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
-                  <motion.div 
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }} 
-                    transition={{ duration: 1.2, repeat: Infinity }}
-                    className="w-1.5 h-1.5 bg-orange-500 rounded-full" 
-                  />
-                  <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
                 </div>
               </div>
             </div>
@@ -331,9 +312,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   </h3>
                   
                   <div className="flex items-center justify-center gap-3 text-zinc-500 text-xs font-medium">
-                    <span>{jobLocation}</span>
+                    <span className="capitalize">{jobLocation}</span>
                     <span className="w-1 h-1 bg-zinc-300 rounded-full" />
-                    <span>Publicada {jobPostedAt}</span>
+                    <span>{jobPostedAt}</span>
                   </div>
                 </div>
 
@@ -345,22 +326,39 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   
                   <div className="w-full space-y-3">
                     {hasPhone && (
-                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
-                        <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                          <OfficialWhatsAppIcon size={20} />
+                      <div className="w-full space-y-3">
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
+                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                            <OfficialWhatsAppIcon size={20} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
+                            <p className="text-zinc-900 font-black text-xl select-text tracking-tight truncate leading-none">
+                              {ctaContato}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => handleCopy(ctaContato || '')}
+                            className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
+                          >
+                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                          </button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
-                          <p className="text-zinc-900 font-black text-xl select-text tracking-tight truncate leading-none">
-                            {ctaContato}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => handleCopy(ctaContato || '')}
-                          className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
+
+                        <motion.button 
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                              const msg = `olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nfunção: *${jobTitle}*\ncódigo: *${jobCode || 'n/a'}*\n--------------------------\n\nposso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+                              const encodedMsg = encodeURIComponent(msg);
+                              const phone = normalizeWhatsAppNumber(ctaContato || '');
+                              window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                          }}
+                          className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm"
                         >
-                          {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                        </button>
+                          <OfficialWhatsAppIcon size={20} />
+                          <span>Enviar currículo agora</span>
+                        </motion.button>
                       </div>
                     )}
 
@@ -429,30 +427,6 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                         </AnimatePresence>
                       </div>
                     )}
-
-                    {hasPhone && (
-                      <motion.button 
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                            const msg = `Olá, tudo bem ?
-Vivi esta vaga na SoroEmpregos.com.br
-—————————————
-Função: *${jobTitle}*
-Código: *${jobCode || 'n/a'}*
---------------------------
-
-Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
-                            const encodedMsg = encodeURIComponent(msg);
-                            const phone = normalizeWhatsAppNumber(ctaContato || '');
-                            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                        }}
-                        className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm"
-                      >
-                        <OfficialWhatsAppIcon size={20} />
-                        <span>Enviar currículo agora</span>
-                      </motion.button>
-                    )}
                   </div>
                 </div>
 
@@ -510,7 +484,7 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                 </div>
                 
                 <p className="mt-8 text-white/20 text-[10px] font-semibold tracking-[0.2em] uppercase">
-                  SoroEmpregos exclusivo
+                  Soroempregos exclusivo
                 </p>
               </div>
             </div>

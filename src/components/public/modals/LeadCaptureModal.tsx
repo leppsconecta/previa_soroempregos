@@ -118,7 +118,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
               <Rocket size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white leading-none">Último passo!</h2>
+              <h2 className="text-lg font-bold text-white leading-none uppercase">Último passo!</h2>
               <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">Garantir acesso ao curso</p>
             </div>
           </div>
@@ -150,7 +150,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
                 
                 <div className="flex flex-col items-center gap-6">
                   <div className="flex flex-col items-center gap-2">
-                    <div className="w-12 h-12 bg-white/10 rounded-full border-2 border-white/20 flex items-center justify-center text-white font-bold text-xl animate-pulse">
+                    <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
                       {countdown}
                     </div>
                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Retornando em instantes...</p>
@@ -174,7 +174,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">Seu Nome</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">Seu nome</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                       <input
@@ -253,7 +253,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
                   </div>
 
                   <p className="text-center text-[10px] text-white/20 pt-2 tracking-wide uppercase font-bold">
-                    Segurança SoroEmpregos 🔒
+                    Segurança Soroempregos 🔒
                   </p>
                 </form>
               </motion.div>
