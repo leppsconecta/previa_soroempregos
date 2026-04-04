@@ -165,12 +165,14 @@ export const PublicGroups = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <Link
-                                            to={`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`}
+                                        <a
+                                            href={g.link_convite || '#'}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="ml-3 shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs font-bold uppercase rounded-xl hover:bg-[#128C7E] transition-colors shadow-md shadow-green-500/20 text-center"
                                         >
                                             Entrar
-                                        </Link>
+                                        </a>
                                     </div>
                                 ))}
                             </div>

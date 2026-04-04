@@ -604,7 +604,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
       {showFloatingWa && (
         <div className="fixed bottom-8 right-8 z-[90] flex items-center gap-2 animate-scaleUp">
           <button
-            onClick={() => setIsEmpGroupGuideOpen(true)}
+            onClick={() => {
+              setWhatsappTabAction('ANUNCIAR');
+              setIsGroupModalOpen(true);
+            }}
             className="bg-blue-600 text-white px-6 py-4 rounded-2xl shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 animate-pulse-subtle group border border-blue-400/20"
           >
             <div className="w-6 h-6 flex items-center justify-center">
@@ -649,8 +652,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                   <p>
                     Para garantir a qualidade, <strong>todas as vagas são analisadas</strong>. Elas precisam ter no mínimo a cidade informada, com isso conseguimos filtrar e ajudar você a divulgar a vaga para as pessoas certas.
                   </p>
-                  <p className="text-xs">
-                    * A Soroempregos possui grupos segmentados (estamos em constante expansão).
+                  <p className="font-bold text-blue-600 animate-pulse">
+                    Não esqueça de adicionar a CIDADE na sua vaga.
                   </p>
                 </div>
                 <button
@@ -688,58 +691,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 </div>
 
                 <button
-                  onClick={() => setEmpGroupGuideStep(3)}
-                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors shadow-lg active:scale-95"
+                  onClick={() => {
+                    const url = selectedGroupVinculo === 'CLT' 
+                      ? "https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
+                      : "https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH?mode=gi_t";
+                    window.open(url, '_blank');
+                    setIsEmpGroupGuideOpen(false);
+                    setTimeout(() => setEmpGroupGuideStep(1), 300);
+                  }}
+                  className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold text-sm hover:bg-green-600 transition-colors shadow-lg active:scale-95"
                 >
-                  Entendi as regras
+                  Entrar no grupo
                 </button>
               </div>
             )}
 
-            {empGroupGuideStep === 3 && (
-              <div className="flex flex-col animate-fadeIn">
-                <button
-                  onClick={() => setEmpGroupGuideStep(2)}
-                  className="inline-flex items-center gap-1 text-[10px] text-slate-400 mb-4 hover:text-blue-950 transition-colors w-fit"
-                >
-                  <ChevronLeft size={14} /> Voltar
-                </button>
-                <div className="w-16 h-16 bg-[#25D366]/10 rounded-2xl flex items-center justify-center mb-6 text-[#25D366] shadow-sm mx-auto">
-                  <WhatsAppIcon size={32} />
-                </div>
-                <h4 className="text-2xl font-bold text-blue-950 text-center mb-8">
-                  Escolha o grupo
-                </h4>
 
-                <div className="space-y-3">
-                  <a
-                    href="https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      setIsEmpGroupGuideOpen(false);
-                      setTimeout(() => setEmpGroupGuideStep(1), 300);
-                    }}
-                    className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
-                  >
-                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors">Anunciar vaga clt</span>
-                  </a>
-
-                  <a
-                    href="https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH?mode=gi_t"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      setIsEmpGroupGuideOpen(false);
-                      setTimeout(() => setEmpGroupGuideStep(1), 300);
-                    }}
-                    className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
-                  >
-                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors">Anunciar freelance ou bico</span>
-                  </a>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -788,14 +755,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                                  </div>
                                  <button
                                    onClick={() => {
-                                     if (landingMode === 'CAND') {
-                                       navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
-                                       return;
+                                     if (g.link_convite) {
+                                       window.open(g.link_convite, '_blank');
                                      }
-                                     setSelectedGroup(g);
-                                     setIsGroupModalOpen(false);
-                                     setLeadStep(1);
-                                     setIsLeadModalOpen(true);
                                    }}
                                    className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold"
                                  >
@@ -810,35 +772,43 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 ) : (
                    <div className="flex flex-col flex-1 overflow-hidden space-y-3 px-1">
                       {selectedGroupVinculo === 'CLT' ? (
-                          <a
-                            href="https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group"
+                          <button
+                            onClick={() => {
+                              setIsGroupModalOpen(false);
+                              setEmpGroupGuideStep(1);
+                              setIsEmpGroupGuideOpen(true);
+                            }}
+                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group w-full text-left"
                           >
                             <div>
                                <p className="text-slate-800 font-bold text-sm">Grupo Anúncios CLT</p>
                                <p className="text-slate-500 font-medium text-xs mt-1">Para vagas formais, estágio e PJ.</p>
                             </div>
-                            <div className="w-10 h-10 bg-[#25D366]/10 text-[#25D366] rounded-full flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors shadow-sm">
-                               <ArrowRight size={18} />
+                            <div
+                               className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold uppercase"
+                            >
+                               Entrar
                             </div>
-                          </a>
+                          </button>
                       ) : (
-                          <a
-                            href="https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH?mode=gi_t"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group"
+                          <button
+                            onClick={() => {
+                              setIsGroupModalOpen(false);
+                              setEmpGroupGuideStep(1);
+                              setIsEmpGroupGuideOpen(true);
+                            }}
+                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group w-full text-left"
                           >
                             <div>
                                <p className="text-slate-800 font-bold text-sm">Grupo Anúncios Freelance</p>
                                <p className="text-slate-500 font-medium text-xs mt-1">Para oportunidades rápidas e bicos.</p>
                             </div>
-                            <div className="w-10 h-10 bg-[#25D366]/10 text-[#25D366] rounded-full flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors shadow-sm">
-                               <ArrowRight size={18} />
+                            <div
+                               className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold uppercase"
+                            >
+                               Entrar
                             </div>
-                          </a>
+                          </button>
                       )}
                    </div>
                 )}
