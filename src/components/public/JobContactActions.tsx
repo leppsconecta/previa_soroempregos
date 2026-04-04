@@ -79,7 +79,7 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
                         onClick={() => setIsAddressModalOpen(true)}
                         className="flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors font-bold text-xs uppercase tracking-wider"
                     >
-                        <MapPin size={18} /> Ver Endereço
+                        <MapPin size={18} /> Abrir mapa
                     </button>
                 )}
             </div>

@@ -411,14 +411,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                           onClick={() => {
                             if (isTransitioning) return;
                             setIsTransitioning(true);
-                            handleCopy(ctaEndereco || '');
+                            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco || '')}`, '_blank');
                             setTimeout(() => setIsTransitioning(false), 2000);
                           }}
                           disabled={isTransitioning}
-                          className="w-full h-16 bg-zinc-800 text-white font-bold rounded-2xl hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 group shadow-xl disabled:opacity-50"
+                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50"
                         >
-                          {copied ? 'Copiado!' : 'Copiar endereço'}
-                          <Copy size={18} className="group-hover:scale-110 transition-transform" />
+                          <MapPin size={20} className="group-hover:scale-110 transition-transform" />
+                          <span>Abrir mapa</span>
                         </button>
                       </div>
                     )}

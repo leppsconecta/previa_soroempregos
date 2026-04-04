@@ -601,21 +601,21 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                     {ctaEndereco}
                                 </p>
                             </div>
-                            <div className="flex gap-2 w-full mt-1">
-                                <button
-                                    onClick={() => handleCopy(ctaEndereco, 'endereço')}
-                                    className="flex-1 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-sm"
-                                >
-                                    Copiar endereço
-                                </button>
+                            <div className="flex flex-col gap-2 w-full mt-1">
                                 <a
                                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex-1 py-3.5 rounded-xl bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm"
+                                    className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm"
                                 >
-                                    <MapPin size={18} /> Ver no mapa
+                                    <MapPin size={18} /> Abrir mapa
                                 </a>
+                                <button
+                                    onClick={() => handleCopy(ctaEndereco, 'endereço')}
+                                    className="w-full py-2 rounded-xl text-slate-400 font-bold hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider"
+                                >
+                                    Copiar endereço
+                                </button>
                             </div>
                         </div>
                     )}
