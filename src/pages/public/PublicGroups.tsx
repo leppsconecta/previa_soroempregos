@@ -22,6 +22,14 @@ const WaIcon = ({ size = 24, color = 'currentColor' }: { size?: number; color?: 
     </svg>
 );
 
+const MOCK_GRUPOS: Grupo[] = [
+    { id: 'm1', nome_grupo: 'Vagas CLT, Estágio, PJ - Itu', descricao_grupo: 'Vagas fixas e estágios na região de Itu', vinculo: 'CLT', categoria: 'Geral', cidade: 'Itu', total_participantes: 245, link_convite: 'https://chat.whatsapp.com/H4rn9lidzcuGaTcnptSpQ7' },
+    { id: 'm2', nome_grupo: 'Vagas CLT, Estágio, PJ - Votorantim', descricao_grupo: 'Vagas fixas e estágios em Votorantim', vinculo: 'CLT', categoria: 'Geral', cidade: 'Votorantim', total_participantes: 180, link_convite: 'https://chat.whatsapp.com/GiZa4i3hPeOBvWuQfsdHoN' },
+    { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/B7GoXsfaWGLJQaqxmYDfON?mode=gi_t' },
+    { id: 'm4', nome_grupo: 'Vagas CLT, Estágio, PJ - Araçoiaba', descricao_grupo: 'Vagas fixas e estágios em Araçoiaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Araçoiaba da Serra', total_participantes: 120, link_convite: 'https://chat.whatsapp.com/CZvybKFy9cI0PkqkkdcCLX' },
+    { id: 'm5', nome_grupo: 'Vagas Freelancer - Geral', descricao_grupo: 'Trabalhos rápidos, bicos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Região', total_participantes: 200, link_convite: 'https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH' },
+];
+
 export const PublicGroups = () => {
     const [selectedVinculo, setSelectedVinculo] = useState<Vinculo | null>(null);
     const [grupos, setGrupos] = useState<Grupo[]>([]);
@@ -33,16 +41,28 @@ export const PublicGroups = () => {
         setLoading(true);
         setSearch('');
 
-        supabase
-            .from('grupos')
-            .select('id, nome_grupo, descricao_grupo, vinculo, categoria, cidade, total_participantes, link_convite')
-            .eq('vinculo', selectedVinculo)
-            .eq('apoio', true)
-            .order('nome_grupo', { ascending: true })
-            .then(({ data }) => {
-                setGrupos((data as Grupo[]) || []);
+        const fetchGroups = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('grupos')
+                    .select('id, nome_grupo, descricao_grupo, vinculo, categoria, cidade, total_participantes, link_convite')
+                    .eq('vinculo', selectedVinculo)
+                    .order('nome_grupo', { ascending: true });
+
+                if (data && data.length > 0) {
+                    setGrupos(data as Grupo[]);
+                } else {
+                    setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedVinculo));
+                }
+            } catch (err) {
+                console.error(err);
+                setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedVinculo));
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchGroups();
     }, [selectedVinculo]);
 
     const filtered = grupos.filter(g => {

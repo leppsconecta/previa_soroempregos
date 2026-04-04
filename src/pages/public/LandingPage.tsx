@@ -73,23 +73,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   // Employer Group Guide States
   const [isEmpGroupGuideOpen, setIsEmpGroupGuideOpen] = useState(false);
   const [empGroupGuideStep, setEmpGroupGuideStep] = useState(1);
-  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
-  const [groupStep, setGroupStep] = useState<'type' | 'list' | 'lead'>('type');
-  const [selectedGroupVinculo, setSelectedGroupVinculo] = useState<'CLT' | 'FREELANCE' | null>('CLT'); // Default to CLT
-  const [selectedGroup, setSelectedGroup] = useState<Grupo | null>(null);
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [groupsLoading, setGroupsLoading] = useState(false);
   const [groupSearch, setGroupSearch] = useState('');
-
-  // Lead Capture States
-  const [leadStep, setLeadStep] = useState(1);
-  const [leadName, setLeadName] = useState('');
-  const [leadProfile, setLeadProfile] = useState<'empresa' | 'voluntário' | 'agência' | ''>('');
-  const [leadPhone, setLeadPhone] = useState('');
-  const [leadEmail, setLeadEmail] = useState('');
-  const [candidateRole, setCandidateRole] = useState('');
-  const [additionalAreas, setAdditionalAreas] = useState<string[]>(['']);
-  const [leadLoading, setLeadLoading] = useState(false);
 
   // Waitlist States
   const [waitlistName, setWaitlistName] = useState('');
@@ -114,89 +100,41 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
     }
   }, [landingMode]);
 
-  // Fetch Groups (Mocked or handled locally if needed)
+
+
+  const [selectedGroupVinculo, setSelectedGroupVinculo] = useState<'CLT' | 'FREELANCE' | null>('CLT'); // Default to CLT
+  const [selectedGroup, setSelectedGroup] = useState<Grupo | null>(null);
+
+  // Fetch Groups
   React.useEffect(() => {
-    // We could still use supabase for public data, but the user requested removing connections.
-    // Keeping it simple with mocks for now or a very basic fetch if necessary for public data.
-    setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
-  }, [selectedGroupVinculo]);
+    const fetchGroups = async () => {
+      try {
+        setGroupsLoading(true);
+        const { data, error } = await supabase
+          .from('grupos')
+          .select('*')
+          .eq('vinculo', selectedGroupVinculo)
+          .order('nome_grupo', { ascending: true });
 
-  const handleLeadPhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, '');
-    let numeric = rawValue.slice(0, 11);
+        if (error) throw error;
 
-    // Prevent DDD starting with 0
-    if (numeric.length > 0 && numeric[0] === '0') {
-      numeric = numeric.slice(1);
-    }
-
-    let formatted = numeric;
-    if (numeric.length > 2) formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2)}`;
-    // format as (XX) 9 XXXX-XXXX if 11 digits
-    if (numeric.length === 11) {
-      formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2, 3)} ${numeric.slice(3, 7)}-${numeric.slice(7)}`;
-    } else if (numeric.length > 7) {
-      formatted = `(${numeric.slice(0, 2)}) ${numeric.slice(2, 7)}-${numeric.slice(7)}`;
-    }
-    setLeadPhone(formatted);
-  };
-
-  const handleLeadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const phoneDigits = leadPhone.replace(/\D/g, '');
-
-    if (!leadName || (landingMode === 'EMP' && !leadProfile) || phoneDigits.length < 10 || !leadEmail || !selectedGroup) {
-      alert("Preencha todos os campos corretamente.");
-      return;
-    }
-
-    if (landingMode === 'CAND' && !candidateRole) {
-      alert("Informe sua área de atuação.");
-      return;
-    }
-
-    const ddd = phoneDigits.slice(0, 2);
-    if (ddd.length < 2 || ddd[0] === '0') {
-      alert("Por favor, insira um DDD válido (não pode começar com 0).");
-      return;
-    }
-
-    setLeadLoading(true);
-    try {
-      await supabase.rpc('registrar_lead', {
-        p_name: leadName,
-        p_phone: leadPhone,
-        p_email: leadEmail,
-        p_type: `Lead - ${landingMode === 'EMP' ? leadProfile : 'Candidato'}`,
-        p_metadata: {
-          target_group: selectedGroup.nome_grupo,
-          group_id: selectedGroup.id,
-          profile: leadProfile,
-          area_principal: landingMode === 'CAND' ? candidateRole : undefined,
-          areas_adicionais: landingMode === 'CAND' ? additionalAreas.filter(a => a.trim() !== '') : undefined
+        if (data && data.length > 0) {
+          setGrupos(data);
+        } else {
+          // Fallback to MOCK_GRUPOS if database is empty
+          setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
         }
-      });
+      } catch (err) {
+        console.error("Error fetching groups:", err);
+        // Fallback on error
+        setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
+      } finally {
+        setGroupsLoading(false);
+      }
+    };
 
-      // Redirect to group link
-      window.open(selectedGroup.link_convite || '#', '_blank');
-
-      // Reset and close
-      setIsLeadModalOpen(false);
-      setLeadStep(1);
-      setLeadName('');
-      setLeadProfile('');
-      setLeadPhone('');
-      setLeadEmail('');
-      setCandidateRole('');
-      setAdditionalAreas(['']);
-      setSelectedGroup(null);
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao processar lead. Tente novamente.");
-    } finally {
-      setLeadLoading(false);
-    }
-  };
+    fetchGroups();
+  }, [selectedGroupVinculo]);
 
   const filteredGroups = grupos.filter(g => {
     if (groupSearch.trim() === '') return true;
@@ -839,169 +777,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         </div>
       )}
 
-      {/* Lead Capture Modal (Simplified & Multi-step) */}
-      {isLeadModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-blue-950/40" onClick={() => setIsLeadModalOpen(false)} />
-          <div className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[95vh] overflow-y-auto">
-            <button
-              onClick={() => setIsLeadModalOpen(false)}
-              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              <X size={24} />
-            </button>
-
-            {leadStep === 1 ? (
-              <div className="flex flex-col">
-                <div className="text-center mb-6 pt-2">
-                  <h4 className="text-2xl font-bold text-blue-950 tracking-tight">Dados de acesso</h4>
-                </div>
-
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (landingMode === 'CAND') {
-                      setLeadStep(2);
-                    } else {
-                      handleLeadSubmit(e);
-                    }
-                  }}
-                  className="space-y-4"
-                >
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-blue-950 ml-1">Nome</label>
-                    <input
-                      required
-                      type="text"
-                      value={leadName}
-                      onChange={e => setLeadName(e.target.value)}
-                      placeholder="Seu nome"
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 ring-green-500 transition-all text-slate-800 placeholder:font-normal"
-                    />
-                  </div>
-
-                  {landingMode === 'EMP' && (
-                    <div className="space-y-1">
-                      <label className="text-[10px] text-blue-950 ml-1">Você é:</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { id: 'empresa', label: 'Empresa' },
-                          { id: 'voluntário', label: 'Voluntário' },
-                          { id: 'agência', label: 'Agência' }
-                        ].map(opt => (
-                          <button
-                            key={opt.id}
-                            type="button"
-                            onClick={() => setLeadProfile(opt.id as any)}
-                            className={`py-2.5 rounded-xl border text-[10px] transition-all ${leadProfile === opt.id ? 'border-green-500 bg-green-50 text-green-700' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-blue-950 ml-1">WhatsApp</label>
-                    <input
-                      required
-                      type="text"
-                      inputMode="numeric"
-                      value={leadPhone}
-                      onChange={handleLeadPhoneChange}
-                      placeholder="(15) 9 9999-9999"
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 ring-green-500 transition-all text-slate-800 placeholder:font-normal"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-blue-950 ml-1">E-mail</label>
-                    <input
-                      required
-                      type="email"
-                      value={leadEmail}
-                      onChange={e => setLeadEmail(e.target.value)}
-                      placeholder="email@exemplo.com"
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 ring-green-500 transition-all text-slate-800 placeholder:font-normal"
-                    />
-                  </div>
-
-                  <button
-                    disabled={leadLoading}
-                    type="submit"
-                    className="w-full py-4 mt-2 bg-[#25D366] text-white rounded-xl text-xs font-bold shadow-lg shadow-green-500/10 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-                  >
-                    {landingMode === 'CAND' ? 'Próxima Etapa' : (leadLoading ? 'Processando...' : 'Entrar no Grupo')}
-                  </button>
-                </form>
-              </div>
-            ) : (
-              <div className="flex flex-col">
-                <button
-                  onClick={() => setLeadStep(1)}
-                  className="inline-flex items-center gap-1 text-[10px] text-slate-400 mb-4 hover:text-blue-950 transition-colors w-fit"
-                >
-                  <ChevronLeft size={14} /> Voltar
-                </button>
-
-                <div className="text-center mb-6">
-                  <h4 className="text-xl text-blue-950 tracking-tight">Dados Profissionais</h4>
-                </div>
-
-                <form onSubmit={handleLeadSubmit} className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] text-blue-950 ml-1">Em qual área procura emprego?</label>
-                    <input
-                      required
-                      type="text"
-                      value={candidateRole}
-                      onChange={e => setCandidateRole(e.target.value)}
-                      placeholder="Ex: Auxiliar Administrativo"
-                      className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 ring-green-500 transition-all text-slate-800"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] text-blue-950 ml-1">Áreas Adicionais (opcional)</label>
-                    {additionalAreas.map((area, index) => (
-                      <input
-                        key={index}
-                        type="text"
-                        value={area}
-                        onChange={e => {
-                          const newAreas = [...additionalAreas];
-                          newAreas[index] = e.target.value;
-                          setAdditionalAreas(newAreas);
-                        }}
-                        placeholder={`Área extra ${index + 1}`}
-                        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 ring-green-500 transition-all text-slate-800 mb-2"
-                      />
-                    ))}
-                    {additionalAreas.length < 3 && (
-                      <button
-                        type="button"
-                        onClick={() => setAdditionalAreas([...additionalAreas, ''])}
-                        className="text-[10px] text-blue-600 hover:underline ml-1"
-                      >
-                        + Adicionar outra área
-                      </button>
-                    )}
-                  </div>
-
-                  <button
-                    disabled={leadLoading}
-                    type="submit"
-                    className="w-full py-4 mt-4 bg-[#25D366] text-white rounded-xl text-xs shadow-xl shadow-green-500/20 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
-                  >
-                    {leadLoading ? 'Processando...' : 'Entrar no Grupo'}
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
