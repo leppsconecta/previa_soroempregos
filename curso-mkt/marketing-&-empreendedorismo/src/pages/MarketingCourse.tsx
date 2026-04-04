@@ -188,9 +188,12 @@ export default function MarketingCourse() {
                     <Rocket className="w-6 h-6" />
                     CONHECER CURSO
                   </button>
-                  <button className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-6 rounded-2xl text-xl transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3">
-                    <Users className="w-6 h-6" />
-                    Entrar no grupo
+                  <button 
+                    onClick={() => window.location.href = '/vagas'}
+                    className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-6 rounded-2xl text-xl transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3"
+                  >
+                    <Briefcase className="w-6 h-6" />
+                    Voltar para as vagas
                   </button>
                 </div>
 

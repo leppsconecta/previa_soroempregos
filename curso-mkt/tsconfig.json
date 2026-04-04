@@ -15,12 +15,13 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
     "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./marketing-&-empreendedorismo/src/*"]
+    }
+  },
+  "include": ["marketing-&-empreendedorismo/src/**/*", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }
