@@ -216,9 +216,10 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                         <OfficialWhatsAppIcon size={18} />
                       </div>
                       <InputMask
-                        mask="(__) _ ____-____"
+                        mask="(__) _____-____"
                         replacement={{ _: /\d/ }}
-                        placeholder="(15) 9 1234-1234"
+                        placeholder="(15) 99999-9999"
+                        name="whatsapp"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.whatsapp}
                         onChange={handleChange}

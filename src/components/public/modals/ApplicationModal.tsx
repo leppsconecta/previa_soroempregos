@@ -745,9 +745,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                         <div className="relative">
                                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                             <InputMask
-                                                mask="(__) _ ____-____"
-                                                replacement={{ _: /\d/ }}
-                                                placeholder="(15) 9 1234-1234"
+                                                mask="(00) 00000-0000"
+                                                replacement={{ 0: /\d/ }}
+                                                placeholder="(15) 99999-9999"
                                                 type="tel"
                                                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:outline-none transition-all placeholder:text-slate-400 text-slate-800 text-sm"
                                                 value={formData.phone}
