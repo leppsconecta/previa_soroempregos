@@ -4,6 +4,7 @@ import { X, User, Mail, CheckCircle2, Rocket, ArrowRight, AlertCircle, Send } fr
 import { InputMask } from '@react-input/mask';
 import { supabase } from '../../../lib/supabase';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
+import { useNavigate } from 'react-router-dom';
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -22,10 +23,11 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
   onSuccess,
   fonte,
   tipo,
-  title = "antes de continuar...",
-  subtitle = "preencha seus dados para entrar na lista oficial.",
-  submitButtonText = "quero mudar de vida agora"
+  title = "Antes de continuar...",
+  subtitle = "Preencha seus dados para entrar na lista oficial.",
+  submitButtonText = "Quero mudar de vida agora"
 }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ name: '', whatsapp: '', email: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -39,6 +41,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
           if (prev <= 1) {
             clearInterval(timer);
             onSuccess();
+            navigate('/vagas');
             return 0;
           }
           return prev - 1;
@@ -46,7 +49,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [isSuccess, onSuccess]);
+  }, [isSuccess, onSuccess, navigate]);
 
   useEffect(() => {
     if (isOpen) {
@@ -162,10 +165,10 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                 <div className="w-20 h-20 bg-white/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                   <CheckCircle2 size={40} />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">tudo pronto!</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">Tudo pronto!</h3>
                 <p className="text-white/60 text-sm leading-relaxed mb-6 px-4">
-                  em breve você receberá todas as informações em seu whatsapp e e-mail. <br/>
-                  <span className="font-bold text-white">agradecemos o seu interesse!</span>
+                  Em breve você receberá todas as informações em seu whatsapp e e-mail. <br/>
+                  <span className="font-bold text-white">Agradecemos o seu interesse!</span>
                 </p>
                 
                 <div className="flex flex-col items-center gap-6">
@@ -173,14 +176,14 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                     <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
                       {countdown}
                     </div>
-                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">retornando em instantes...</p>
+                    <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Retornando em instantes...</p>
                   </div>
 
                   <button
-                    onClick={onSuccess}
+                    onClick={() => { onSuccess(); navigate('/vagas'); }}
                     className="w-full h-16 bg-white text-purple-950 font-bold rounded-2xl hover:bg-zinc-100 transition-all flex items-center justify-center gap-2 group shadow-xl"
                   >
-                    voltar para o início
+                    Voltar para as vagas
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -194,13 +197,13 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">seu nome</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">Seu nome</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                       <input
                         type="text"
                         name="name"
-                        placeholder="como deseja ser chamado?"
+                        placeholder="Como deseja ser chamado?"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.name}
                         onChange={handleChange}
@@ -210,7 +213,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">whatsapp</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">Whatsapp</label>
                     <div className="relative">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 scale-90 opacity-40 grayscale brightness-200">
                         <OfficialWhatsAppIcon size={18} />
@@ -229,13 +232,13 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">e-mail</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest ml-1">E-mail</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                       <input
                         type="email"
                         name="email"
-                        placeholder="seu@email.com"
+                        placeholder="Seu@email.com"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.email}
                         onChange={handleChange}
@@ -264,7 +267,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                       {isSubmitting ? (
                         <>
                           <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>salvando...</span>
+                          <span>Salvando...</span>
                         </>
                       ) : (
                         <>
