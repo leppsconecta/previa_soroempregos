@@ -59,6 +59,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState(10);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const courseSectionRef = useRef<HTMLDivElement>(null);
   const modalScrollRef = useRef<HTMLDivElement>(null);
 
@@ -95,9 +96,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
     if (step === 'final' && isOpen) {
       const timer = setTimeout(() => {
         if (courseSectionRef.current) {
-          customSmoothScroll(courseSectionRef.current, 2000); // Slower, 2 seconds duration
+          customSmoothScroll(courseSectionRef.current, 1000); // Faster scroll
         }
-      }, 1200); // Slightly more delay to let the user see the job info first
+      }, 500); 
       return () => clearTimeout(timer);
     }
   }, [step, isOpen]);
@@ -125,6 +126,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
     if (isOpen) {
       setTimeLeft(10);
       setStep('intro');
+      setIsTransitioning(false);
     }
   }, [isOpen]);
 
@@ -133,11 +135,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   if (!isOpen) return null;
 
   const handleMudarDeVida = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     setIsLeadModalOpen(true);
   };
 
   const handleLeadSuccess = () => {
     setIsLeadModalOpen(false);
+    setIsTransitioning(false);
   };
 
   const checkVisible = (val?: string) => {
@@ -189,38 +194,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
         onClick={onClose}
       />
 
-      {/* Immersive Background Effects (only active for intro and exclusive steps) */}
-      {(step === 'intro' || step === 'exclusive') && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              rotate: [0, 45, 0],
-              opacity: [0.3, 0.5, 0.3]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-64 -left-64 w-[800px] h-[800px] bg-purple-900/40 rounded-full blur-[140px]" 
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1.2, 1, 1.2],
-              rotate: [0, -45, 0],
-              opacity: [0.2, 0.4, 0.2]
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-64 -right-64 w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px]" 
-          />
-        </div>
-      )}
-
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {step === 'intro' && (
           <motion.div
             key="intro"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.05, y: -20 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.2 }}
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
@@ -257,10 +238,10 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
         {step === 'exclusive' && (
           <motion.div
             key="exclusive"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.2 }}
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
@@ -318,7 +299,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     Informações da vaga
                   </div>
                   
-                  <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 leading-[1.1] tracking-tight">
+                  <h3 className="text-2xl md:text-3xl font-black text-zinc-950 mb-2 leading-[1.1] tracking-tight">
                     {jobTitle}
                   </h3>
                   
@@ -361,12 +342,16 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
+                              if (isTransitioning) return;
+                              setIsTransitioning(true);
                               const msg = `olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nfunção: *${jobTitle}*\ncódigo: *${jobCode || 'n/a'}*\n--------------------------\n\nposso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                               const encodedMsg = encodeURIComponent(msg);
                               const phone = normalizeWhatsAppNumber(ctaContato || '');
                               window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                              setTimeout(() => setIsTransitioning(false), 2000);
                           }}
-                          className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm"
+                          disabled={isTransitioning}
+                          className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm disabled:opacity-50"
                         >
                           <OfficialWhatsAppIcon size={20} />
                           <span>Enviar currículo agora</span>
@@ -391,8 +376,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                           </button>
                         </div>
                         <button 
-                          onClick={() => handleCopy(ctaEmail || '')}
-                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10"
+                          onClick={() => {
+                            if (isTransitioning) return;
+                            setIsTransitioning(true);
+                            handleCopy(ctaEmail || '');
+                            setTimeout(() => setIsTransitioning(false), 2000);
+                          }}
+                          disabled={isTransitioning}
+                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50"
                         >
                           {copied ? 'Copiado!' : 'Copiar e-mail'}
                           <Copy size={18} className="group-hover:scale-110 transition-transform" />
@@ -417,8 +408,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                           </button>
                         </div>
                         <button 
-                          onClick={() => handleCopy(ctaEndereco || '')}
-                          className="w-full h-16 bg-zinc-800 text-white font-bold rounded-2xl hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 group shadow-xl"
+                          onClick={() => {
+                            if (isTransitioning) return;
+                            setIsTransitioning(true);
+                            handleCopy(ctaEndereco || '');
+                            setTimeout(() => setIsTransitioning(false), 2000);
+                          }}
+                          disabled={isTransitioning}
+                          className="w-full h-16 bg-zinc-800 text-white font-bold rounded-2xl hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 group shadow-xl disabled:opacity-50"
                         >
                           {copied ? 'Copiado!' : 'Copiar endereço'}
                           <Copy size={18} className="group-hover:scale-110 transition-transform" />
@@ -428,8 +425,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
                     {primaryCTA === 'link' && (
                       <button 
-                        onClick={() => window.open(ctaLink, '_blank')}
-                        className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm"
+                        onClick={() => {
+                           if (isTransitioning) return;
+                           setIsTransitioning(true);
+                           window.open(ctaLink, '_blank');
+                           setTimeout(() => setIsTransitioning(false), 2000);
+                        }}
+                        disabled={isTransitioning}
+                        className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm disabled:opacity-50"
                       >
                         <Rocket size={20} />
                         <span>Abrir link de candidatura</span>
@@ -507,8 +510,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                                   )}
                                   {cta.type === 'link' && (
                                     <button 
-                                      onClick={() => window.open(ctaLink, '_blank')}
-                                      className="w-full h-12 bg-zinc-100 text-zinc-800 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+                                      onClick={() => {
+                                         if (isTransitioning) return;
+                                         setIsTransitioning(true);
+                                         window.open(ctaLink, '_blank');
+                                         setTimeout(() => setIsTransitioning(false), 2000);
+                                      }}
+                                      disabled={isTransitioning}
+                                      className="w-full h-12 bg-zinc-100 text-zinc-800 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                     >
                                       <Rocket size={14} /> Abrir link de candidatura
                                     </button>
@@ -568,10 +577,11 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleMudarDeVida}
-                      className="relative w-full h-16 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-2xl shadow-orange-950/40 text-base z-10"
+                      disabled={isTransitioning}
+                      className="relative w-full h-16 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-2xl shadow-orange-950/40 text-base z-10 disabled:opacity-50"
                     >
                       <Rocket size={20} />
-                      <span className="leading-tight">Quero mudar de vida.</span>
+                      <span className="leading-tight">quero mudar de vida.</span>
                     </motion.button>
                   </div>
                 </div>
@@ -591,7 +601,10 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
         {isLeadModalOpen && (
           <LeadCaptureModal 
             isOpen={isLeadModalOpen}
-            onClose={() => setIsLeadModalOpen(false)}
+            onClose={() => {
+              setIsLeadModalOpen(false);
+              setIsTransitioning(false);
+            }}
             onSuccess={handleLeadSuccess}
             fonte="vagas"
             tipo={jobTitle.toLowerCase()}

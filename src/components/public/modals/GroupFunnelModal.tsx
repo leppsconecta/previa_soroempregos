@@ -23,20 +23,29 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
 }) => {
   const [step, setStep] = useState<ModalStep>('question');
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   if (!isOpen) return null;
 
   const handleNextStep = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     setStep('pitch');
+    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   const handleJoinGroup = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     window.open(groupLink, '_blank');
     onClose();
   };
 
   const handleConhecerCurso = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
     setIsLeadModalOpen(true);
+    setTimeout(() => setIsTransitioning(false), 300);
   };
 
   return (
@@ -47,36 +56,14 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
         onClick={onClose}
       />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            rotate: [0, 45, 0],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-64 -left-64 w-[800px] h-[800px] bg-purple-900/40 rounded-full blur-[140px]" 
-        />
-        <motion.div 
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            rotate: [0, -45, 0],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-64 -right-64 w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px]" 
-        />
-      </div>
-
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {step === 'question' && (
           <motion.div
             key="question"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 1.05, y: -20 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.2 }}
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto pt-12">
@@ -101,13 +88,15 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
                 <div className="flex flex-col gap-3 w-full pt-4">
                     <button 
                         onClick={handleNextStep}
-                        className="w-full h-14 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all border border-white/20 flex items-center justify-center gap-2"
+                        disabled={isTransitioning}
+                        className="w-full h-14 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all border border-white/20 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         Trabalhando pra alguém
                     </button>
                     <button 
                         onClick={handleNextStep}
-                        className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-950/40 flex items-center justify-center gap-2"
+                        disabled={isTransitioning}
+                        className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-950/40 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         <TrendingUp size={20} />
                         Trabalhando no meu negócio.
@@ -128,10 +117,10 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
         {step === 'pitch' && (
           <motion.div
             key="pitch"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.2 }}
             className="relative w-full max-w-md bg-white rounded-[40px] overflow-hidden shadow-2xl border border-zinc-100 max-h-[85vh] flex flex-col z-10"
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto py-12">
@@ -159,7 +148,8 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
                     </p>
                     <button 
                       onClick={handleConhecerCurso}
-                      className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-black px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-200"
+                      disabled={isTransitioning}
+                      className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-black px-6 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-orange-200 disabled:opacity-50"
                     >
                       <Rocket size={18} />
                       <span>Conhecer o curso</span>
@@ -170,7 +160,8 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
                 <div className="w-full pt-2">
                   <button 
                     onClick={handleJoinGroup}
-                    className="w-full h-16 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-2xl transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3"
+                    disabled={isTransitioning}
+                    className="w-full h-16 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold rounded-2xl transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     <OfficialWhatsAppIcon size={24} />
                     <span>Entrar no grupo</span>
@@ -198,8 +189,14 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
         {isLeadModalOpen && (
           <LeadCaptureModal 
             isOpen={isLeadModalOpen}
-            onClose={() => setIsLeadModalOpen(false)}
-            onSuccess={() => setIsLeadModalOpen(false)}
+            onClose={() => {
+              setIsLeadModalOpen(false);
+              setIsTransitioning(false);
+            }}
+            onSuccess={() => {
+              setIsLeadModalOpen(false);
+              setIsTransitioning(false);
+            }}
             fonte="grupo"
             tipo={(groupName || groupCity || 'grupo geral').toLowerCase()}
           />

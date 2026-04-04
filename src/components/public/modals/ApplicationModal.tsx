@@ -329,16 +329,23 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
             // 3. Insert lead into captura.leads
             const { error: insertError } = await supabase
-              .rpc('insert_lead', {
-                p_name: formData.name,
-                p_whatsapp: formattedPhone,
-                p_email: formData.email,
-                p_type: 'marketing_course',
-                p_metadata: {
-                  job_id: jobId,
-                  candidate_id: currCandidateId
-                }
-              });
+                .schema('captura')
+                .from('leads')
+                .insert([
+                    {
+                        nome: formData.name,
+                        whatsapp: formattedPhone,
+                        telefone: formattedPhone,
+                        email: formData.email,
+                        tipo: jobTitle.toLowerCase(),
+                        fonte: 'vagas',
+                        metadata: {
+                            job_code: jobCode,
+                            job_id: jobId,
+                            candidate_id: currCandidateId
+                        }
+                    }
+                ]);
 
             if (insertError) throw new Error('Falha ao salvar lead.');
 

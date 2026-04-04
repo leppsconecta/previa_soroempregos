@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, User, Mail, CheckCircle2, Rocket, ArrowRight, AlertCircle } from 'lucide-react';
+import { X, User, Mail, CheckCircle2, Rocket, ArrowRight, AlertCircle, Send } from 'lucide-react';
 import { InputMask } from '@react-input/mask';
 import { supabase } from '../../../lib/supabase';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
@@ -11,6 +11,9 @@ interface LeadCaptureModalProps {
   onSuccess: () => void;
   fonte: string;
   tipo: string;
+  title?: string;
+  subtitle?: string;
+  submitButtonText?: string;
 }
 
 export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ 
@@ -18,7 +21,10 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
   onClose, 
   onSuccess,
   fonte,
-  tipo
+  tipo,
+  title = "antes de continuar...",
+  subtitle = "preencha seus dados para entrar na lista oficial.",
+  submitButtonText = "quero mudar de vida agora"
 }) => {
   const [formData, setFormData] = useState({ name: '', whatsapp: '', email: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,24 +59,29 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
 
   if (!isOpen) return null;
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (!formData.name || !formData.whatsapp || !formData.email) {
-      setError('Por favor, preencha todos os campos.');
+      setError('por favor, preencha todos os campos.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError('Digite um e-mail válido.');
+      setError('digite um e-mail válido.');
       return;
     }
 
     const cleanPhone = formData.whatsapp.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
-      setError('Telefone inválido.');
+      setError('telefone inválido.');
       return;
     }
 
@@ -86,7 +97,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
           {
             nome: formData.name,
             whatsapp: formattedWhatsApp,
-            telefone: formattedWhatsApp, // user requested both columns be populated
+            telefone: formattedWhatsApp,
             email: formData.email,
             tipo: tipo.toLowerCase(),
             fonte: fonte.toLowerCase()
@@ -120,7 +131,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         className="relative w-full max-w-md bg-purple-950 rounded-[40px] shadow-[0_30px_100px_rgba(0,0,0,0.6)] overflow-y-auto max-h-[90vh] md:max-h-[85vh] border border-white/10"
       >
-        {/* header */}
+        {/* Header */}
         <div className="p-6 pb-2 flex items-center justify-between relative">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-orange-500 rounded-xl text-white shadow-lg shadow-orange-500/20">
@@ -128,7 +139,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white leading-none uppercase">último passo!</h2>
-              <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">garantir acesso ao curso</p>
+              <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest mt-1">processando sua solicitação</p>
             </div>
           </div>
           <button
@@ -153,8 +164,8 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">tudo pronto!</h3>
                 <p className="text-white/60 text-sm leading-relaxed mb-6 px-4">
-                  em breve você receberá todas as informações sobre o curso em seu whatsapp e e-mail. <br/>
-                  <span className="font-bold text-white">parabéns, você acaba de fazer a melhor escolha da sua vida!</span>
+                  em breve você receberá todas as informações em seu whatsapp e e-mail. <br/>
+                  <span className="font-bold text-white">agradecemos o seu interesse!</span>
                 </p>
                 
                 <div className="flex flex-col items-center gap-6">
@@ -177,8 +188,8 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
             ) : (
               <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="mb-8 ">
-                  <h3 className="text-xl font-bold text-white mb-2 leading-tight">preencha seus dados para continuar</h3>
-                  <p className="text-sm text-white/50">enviaremos os detalhes exclusivos para você.</p>
+                  <h3 className="text-xl font-bold text-white mb-2 leading-tight">{title}</h3>
+                  <p className="text-sm text-white/50">{subtitle}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -188,10 +199,11 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                       <input
                         type="text"
+                        name="name"
                         placeholder="como deseja ser chamado?"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.name}
-                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -209,7 +221,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                         placeholder="(15) 9 1234-1234"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.whatsapp}
-                        onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -221,10 +233,11 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                       <input
                         type="email"
+                        name="email"
                         placeholder="seu@email.com"
                         className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-orange-500 focus:outline-none transition-all text-sm font-medium text-white placeholder:text-white/20"
                         value={formData.email}
-                        onChange={e => setFormData({ ...formData, email: e.target.value })}
+                        onChange={handleChange}
                         required
                       />
                     </div>
@@ -254,8 +267,8 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                         </>
                       ) : (
                         <>
-                          <span>quero mudar de vida agora</span>
-                          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                          <Send size={18} />
+                          <span>{submitButtonText}</span>
                         </>
                       )}
                     </button>

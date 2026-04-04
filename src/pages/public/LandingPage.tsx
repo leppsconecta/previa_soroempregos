@@ -28,6 +28,7 @@ import {
 import { Logo } from '../../components/ui/Logo';
 import { CandidateLanding } from '../../components/public/CandidateLanding';
 import { GroupFunnelModal } from '../../components/public/modals/GroupFunnelModal';
+import { LeadCaptureModal } from '../../components/public/modals/LeadCaptureModal';
 
 // Removed Supabase/Auth imports as they are no longer needed for public landing
 
@@ -196,20 +197,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!waitlistName || !waitlistWhatsapp || !waitlistEmail) {
-      alert("Por favor, preencha todos os campos.");
+      alert("por favor, preencha todos os campos.");
       return;
     }
     setWaitlistLoading(true);
     try {
-      await supabase.rpc('registrar_lead', {
-        p_name: waitlistName,
-        p_whatsapp: waitlistWhatsapp,
-        p_email: waitlistEmail,
-        p_type: 'Waitlist Empresa',
-        p_metadata: {
-          original_type: 'waitlist_empresa'
-        }
-      });
+      const { error } = await supabase
+        .schema('captura')
+        .from('leads')
+        .insert([{
+          nome: waitlistName.toLowerCase(),
+          whatsapp: waitlistWhatsapp,
+          telefone: waitlistWhatsapp,
+          email: waitlistEmail.toLowerCase(),
+          fonte: 'empresa',
+          tipo: 'comum'
+        }]);
+
+      if (error) throw error;
 
       setWaitlistSuccess(true);
       setWaitlistName('');
@@ -217,7 +222,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
       setWaitlistEmail('');
     } catch (error) {
       console.error(error);
-      alert("Erro ao entrar na lista. Tente novamente.");
+      alert("erro ao entrar na lista. tente novamente.");
     } finally {
       setWaitlistLoading(false);
     }
@@ -269,23 +274,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
             <section className="flex flex-col lg:flex-row items-center justify-center px-6 md:px-12 lg:px-24 py-12 lg:py-20 gap-16 max-w-7xl mx-auto w-full relative">
               <div className="flex-1 space-y-8 text-center lg:text-left animate-fadeIn">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-[11px] font-bold uppercase tracking-widest border border-blue-200">
-                  <Zap size={14} className="animate-pulse" /> Novidade a caminho
+                  <Zap size={14} className="animate-pulse" /> novidade a caminho
                 </div>
                 <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-blue-950 leading-[1.05] tracking-tight">
-                  O futuro do <span className="text-blue-600">Recrutamento</span> está chegando.
+                  o futuro do <span className="text-blue-600">recrutamento</span> está chegando.
                 </h2>
                 <p className="text-xl text-slate-500 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                  Estamos construindo a plataforma mais inteligente para gestão de vagas e automação de grupos do Brasil.
-                  <span className="block mt-4 text-blue-950 font-bold">Inscrições abertas para o acesso antecipado.</span>
+                  estamos construindo a plataforma mais inteligente para gestão de vagas e automação de grupos do brasil.
+                  <span className="block mt-4 text-blue-950 font-bold">inscrições abertas para o acesso antecipado.</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-4">
                   <div className="flex items-center gap-3 px-5 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
                     <WhatsAppIcon size={24} className="text-green-500" />
-                    <span className="text-sm font-bold text-slate-700">Fichas Automatizadas</span>
+                    <span className="text-sm font-bold text-slate-700">fichas automatizadas</span>
                   </div>
                   <div className="flex items-center gap-3 px-5 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
                     <CheckCircle2 size={24} className="text-blue-600" />
-                    <span className="text-sm font-bold text-slate-700">Disparos em Massa</span>
+                    <span className="text-sm font-bold text-slate-700">disparos em massa</span>
                   </div>
                 </div>
               </div>
@@ -302,28 +307,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                           <CheckCircle2 size={40} />
                         </div>
                         <div className="space-y-2">
-                          <h3 className="text-2xl font-black text-blue-950">Você está na lista!</h3>
-                          <p className="text-slate-500 font-medium">Você será o primeiro a saber quando liberarmos as novas funcionalidades.</p>
+                          <h3 className="text-2xl font-black text-blue-950">você está na lista!</h3>
+                          <p className="text-slate-500 font-medium">você será o primeiro a saber quando liberarmos as novas funcionalidades.</p>
                         </div>
                         <button
                           onClick={() => setWaitlistSuccess(false)}
-                          className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
+                          className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all font-sans"
                         >
-                          Voltar
+                          voltar
                         </button>
                       </div>
                     ) : (
                       <>
                         <div className="text-center lg:text-left mb-8">
-                          <h3 className="text-2xl font-black text-blue-950 mb-2">Lista de Espera</h3>
+                          <h3 className="text-2xl font-black text-blue-950 mb-2">lista de espera</h3>
                           <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                            Entre para o grupo exclusivo e receba acesso antecipado às ferramentas de automação.
+                            entre para o grupo exclusivo e receba acesso antecipado às ferramentas de automação.
                           </p>
                         </div>
 
                         <form onSubmit={handleWaitlistSubmit} className="space-y-4">
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome Completo</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">nome completo</label>
                             <div className="relative">
                               <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
                               <input
@@ -331,14 +336,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                                 type="text"
                                 value={waitlistName}
                                 onChange={e => setWaitlistName(e.target.value)}
-                                placeholder="Nome da sua empresa ou seu nome"
+                                placeholder="nome da sua empresa ou seu nome"
                                 className="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-4 py-4 text-sm font-medium outline-none focus:ring-4 ring-blue-500/10 transition-all text-slate-800 placeholder:font-normal"
                               />
                             </div>
                           </div>
 
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-1">WhatsApp</label>
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-1">whatsapp</label>
                             <div className="relative">
                               <Smartphone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
                               <input
@@ -359,7 +364,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                           </div>
 
                           <div className="space-y-1.5">
-                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-1">E-mail Corporativo</label>
+                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest ml-1">e-mail corporativo</label>
                             <div className="relative">
                               <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" />
                               <input
@@ -376,14 +381,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                           <button
                             disabled={waitlistLoading}
                             type="submit"
-                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-600/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-70"
+                            className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-600/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-70 font-sans"
                           >
-                            {waitlistLoading ? 'Processando...' : (<>Garantir Acesso Antecipado <ArrowRight size={18} /></>)}
+                            {waitlistLoading ? 'processando...' : (<>garantir acesso antecipado <ArrowRight size={18} /></>)}
                           </button>
 
-                          <p className="text-[10px] text-slate-400 text-center font-medium mt-4">
-                            Ao se inscrever, você concorda em receber atualizações sobre o lançamento.
-                          </p>
                         </form>
                       </>
                     )}
@@ -420,6 +422,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
 
       {/* Unified WhatsApp CTA Section (CAND & EMP) */}
       <section id="grupos-whatsapp" className="py-16 md:py-24 px-6 md:px-12 lg:px-24 bg-[#25D366] border-t border-slate-100">
+
         <div className="max-w-3xl mx-auto text-center">
           <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3">
             <WhatsAppIcon size={40} className="text-white" />
