@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 // Static Imports for Performance and Stability (Fixing Blank Screen)
 import { LandingPage } from './pages/public/LandingPage';
 import { PublicJobs } from './pages/public/PublicJobs';
-import { PublicGroups } from './pages/public/PublicGroups';
 import { PublicPage } from './pages/public/PublicPage';
 
 
@@ -32,7 +31,6 @@ const AppContent: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/vagas" element={<PublicJobs />} />
               <Route path="/vagas/:code" element={<LandingPage />} />
-              <Route path="/grupos" element={<PublicGroups />} />
 
               <Route path="/p/:username" element={<PublicPage />} />
               

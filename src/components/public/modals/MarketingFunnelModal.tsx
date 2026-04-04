@@ -593,6 +593,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             isOpen={isLeadModalOpen}
             onClose={() => setIsLeadModalOpen(false)}
             onSuccess={handleLeadSuccess}
+            fonte="Vagas"
+            tipo={jobTitle}
           />
         )}
       </AnimatePresence>

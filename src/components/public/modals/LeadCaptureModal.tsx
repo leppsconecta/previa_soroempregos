@@ -9,9 +9,17 @@ interface LeadCaptureModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  fonte: string;
+  tipo: string;
 }
 
-export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, onSuccess }) => {
+export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  onSuccess,
+  fonte,
+  tipo
+}) => {
   const [formData, setFormData] = useState({ name: '', whatsapp: '', email: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -76,11 +84,11 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
         .from('leads')
         .insert([
           {
-            name: formData.name,
+            nome: formData.name,
             whatsapp: formattedWhatsApp,
             email: formData.email,
-            type: 'curso_marketing',
-            metadata: { source: 'marketing_funnel_modal' }
+            tipo: tipo,
+            fonte: fonte
           }
         ]);
 
@@ -160,7 +168,7 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onCl
                     onClick={onSuccess}
                     className="w-full h-16 bg-white text-purple-950 font-bold rounded-2xl hover:bg-zinc-100 transition-all flex items-center justify-center gap-2 group shadow-xl"
                   >
-                    Voltar para a vaga
+                    Voltar para o início
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>

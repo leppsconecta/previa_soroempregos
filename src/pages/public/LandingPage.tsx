@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '../../components/ui/Logo';
 import { CandidateLanding } from '../../components/public/CandidateLanding';
+import { GroupFunnelModal } from '../../components/public/modals/GroupFunnelModal';
 
 // Removed Supabase/Auth imports as they are no longer needed for public landing
 
@@ -96,6 +97,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistLoading, setWaitlistLoading] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
+
+  // New Group Funnel States
+  const [isFunnelModalOpen, setIsFunnelModalOpen] = useState(false);
+  const [funnelGroupLink, setFunnelGroupLink] = useState('');
+  const [funnelGroupCity, setFunnelGroupCity] = useState('');
+  const [funnelGroupName, setFunnelGroupName] = useState('');
 
   // Floating WhatsApp Group Button States
   React.useEffect(() => {
@@ -511,6 +518,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         </div>
       </footer>
 
+      {isFunnelModalOpen && (
+        <GroupFunnelModal 
+          isOpen={isFunnelModalOpen}
+          onClose={() => setIsFunnelModalOpen(false)}
+          groupLink={funnelGroupLink}
+          groupCity={funnelGroupCity}
+          groupName={funnelGroupName}
+        />
+      )}
+
+
       {/* Contact Modal */}
       {isContactModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -756,7 +774,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                                  <button
                                    onClick={() => {
                                      if (g.link_convite) {
-                                       window.open(g.link_convite, '_blank');
+                                       setSelectedGroup(g);
+                                       setFunnelGroupLink(g.link_convite);
+                                       setFunnelGroupCity(g.cidade || '');
+                                       setFunnelGroupName(g.nome_grupo || '');
+                                       setIsFunnelModalOpen(true);
                                      }
                                    }}
                                    className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold"
