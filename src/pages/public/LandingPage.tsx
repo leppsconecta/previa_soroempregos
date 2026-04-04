@@ -67,8 +67,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   // Floating WhatsApp Group Button States
   const [showFloatingWa, setShowFloatingWa] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
-  const [groupSelectionStep, setGroupSelectionStep] = useState<'choice' | 'view'>('choice');
-  
+  const [whatsappTabAction, setWhatsappTabAction] = useState<'VER' | 'ANUNCIAR'>('VER');
+
   // Employer Group Guide States
   const [isEmpGroupGuideOpen, setIsEmpGroupGuideOpen] = useState(false);
   const [empGroupGuideStep, setEmpGroupGuideStep] = useState(1);
@@ -330,7 +330,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                   O futuro do <span className="text-blue-600">Recrutamento</span> está chegando.
                 </h2>
                 <p className="text-xl text-slate-500 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                  Estamos construindo a plataforma mais inteligente para gestão de vagas e automação de grupos do Brasil. 
+                  Estamos construindo a plataforma mais inteligente para gestão de vagas e automação de grupos do Brasil.
                   <span className="block mt-4 text-blue-950 font-bold">Inscrições abertas para o acesso antecipado.</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start pt-4">
@@ -349,7 +349,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
               <div className="w-full max-w-md animate-scaleUp">
                 <div className="bg-white p-8 md:p-10 rounded-[3rem] shadow-3xl shadow-blue-900/10 border border-slate-100 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50 -mr-16 -mt-16"></div>
-                  
+
                   <div className="relative z-10">
                     {waitlistSuccess ? (
                       <div className="text-center py-8 space-y-6">
@@ -360,7 +360,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                           <h3 className="text-2xl font-black text-blue-950">Você está na lista!</h3>
                           <p className="text-slate-500 font-medium">Você será o primeiro a saber quando liberarmos as novas funcionalidades.</p>
                         </div>
-                        <button 
+                        <button
                           onClick={() => setWaitlistSuccess(false)}
                           className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
                         >
@@ -428,14 +428,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                             </div>
                           </div>
 
-                          <button 
+                          <button
                             disabled={waitlistLoading}
                             type="submit"
                             className="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-600/20 active:scale-95 transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-70"
                           >
                             {waitlistLoading ? 'Processando...' : (<>Garantir Acesso Antecipado <ArrowRight size={18} /></>)}
                           </button>
-                          
+
                           <p className="text-[10px] text-slate-400 text-center font-medium mt-4">
                             Ao se inscrever, você concorda em receber atualizações sobre o lançamento.
                           </p>
@@ -474,24 +474,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
       }
 
       {/* Unified WhatsApp CTA Section (CAND & EMP) */}
-      <section id="grupos-whatsapp" className="py-10 md:py-16 px-6 md:px-12 lg:px-24 bg-[#25D366]">
+      <section id="grupos-whatsapp" className="py-16 md:py-24 px-6 md:px-12 lg:px-24 bg-[#25D366] border-t border-slate-100">
         <div className="max-w-3xl mx-auto text-center">
           <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3">
             <WhatsAppIcon size={40} className="text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
-            {landingMode === 'EMP' ? 'Milhares de candidatos esperando por você' : 'Centenas de vagas diariamente te esperando!'}
+          <h2 className="text-3xl md:text-4xl text-white mb-4 font-bold tracking-tight">
+            Centenas de vagas diariamente te esperando
           </h2>
-          <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-            Acesse nossos grupos oficiais e {landingMode === 'EMP' ? 'anuncie suas vagas agora mesmo.' : 'confira as melhores oportunidades.'}
+          <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto font-medium">
+            Acesse nossos grupos oficiais e confira as melhores oportunidades.
           </p>
 
           <button
-            onClick={() => landingMode === 'EMP' ? setIsEmpGroupGuideOpen(true) : setIsGroupModalOpen(true)}
-            className="inline-flex items-center gap-3 bg-white text-[#25D366] font-black text-sm uppercase tracking-widest px-10 py-4 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-green-900/20 active:scale-95"
+            onClick={() => {
+              setWhatsappTabAction('VER');
+              setIsGroupModalOpen(true);
+            }}
+            className="inline-flex items-center gap-3 bg-white text-[#25D366] text-sm px-8 py-3.5 rounded-2xl hover:scale-105 transition-all font-bold shadow-xl shadow-green-900/20 active:scale-95"
           >
             <WhatsAppIcon size={20} />
-            Ver Grupos
+            Entrar Nos Grupos
           </button>
         </div>
       </section>
@@ -673,7 +676,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <h4 className="text-2xl font-bold text-blue-950 text-center mb-6">
                   Estrutura dos anúncios
                 </h4>
-                
+
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs text-slate-600 space-y-3 mb-8">
                   <div className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" /><div><strong>Título:</strong> Nome claro da vaga.</div></div>
                   <div className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" /><div><strong>Vínculo:</strong> Se é CLT, PJ ou Freelance.</div></div>
@@ -707,15 +710,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <h4 className="text-2xl font-bold text-blue-950 text-center mb-8">
                   Escolha o grupo
                 </h4>
-                
+
                 <div className="space-y-3">
                   <a
                     href="https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
-                       setIsEmpGroupGuideOpen(false);
-                       setTimeout(() => setEmpGroupGuideStep(1), 300);
+                      setIsEmpGroupGuideOpen(false);
+                      setTimeout(() => setEmpGroupGuideStep(1), 300);
                     }}
                     className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
                   >
@@ -727,8 +730,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
-                       setIsEmpGroupGuideOpen(false);
-                       setTimeout(() => setEmpGroupGuideStep(1), 300);
+                      setIsEmpGroupGuideOpen(false);
+                      setTimeout(() => setEmpGroupGuideStep(1), 300);
                     }}
                     className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
                   >
@@ -745,142 +748,101 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-blue-950/40" onClick={() => setIsGroupModalOpen(false)} />
           <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[90vh]">
-            <button
-              onClick={() => setIsGroupModalOpen(false)}
-              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors z-10"
-            >
-              <X size={24} />
-            </button>
 
-            {groupSelectionStep === 'choice' ? (
-              <div className="flex flex-col animate-fadeIn">
-                <div className="text-center mb-8 pt-4">
-                  <h4 className="text-2xl font-black text-blue-950 tracking-tight">O que você deseja?</h4>
+
+            <div className="flex flex-col h-full animate-fadeIn">
+                <div className="flex w-full mb-6 gap-2">
+                   <button onClick={() => setWhatsappTabAction('VER')} className={`flex-1 py-3 border-b-2 font-bold text-sm transition-colors ${whatsappTabAction === 'VER' ? 'text-yellow-500 border-yellow-500' : 'text-slate-400 border-slate-200 hover:text-slate-600'}`}>Ver Vagas</button>
+                   <button onClick={() => setWhatsappTabAction('ANUNCIAR')} className={`flex-1 py-3 border-b-2 font-bold text-sm transition-colors ${whatsappTabAction === 'ANUNCIAR' ? 'text-blue-500 border-blue-500' : 'text-slate-400 border-slate-200 hover:text-slate-600'}`}>Anunciar Vagas</button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 mb-4">
-                  <button
-                    onClick={() => {
-                      setIsGroupModalOpen(false);
-                      setEmpGroupGuideStep(1);
-                      setIsEmpGroupGuideOpen(true);
-                      setGroupSelectionStep('choice');
-                    }}
-                    className="group p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 hover:border-blue-600 hover:bg-blue-50 transition-all text-left flex items-center gap-6"
-                  >
-                    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
-                      <Megaphone size={30} />
-                    </div>
-                    <div className="flex-1">
-                      <h5 className="text-lg font-bold text-blue-950">Anunciar vagas de emprego</h5>
-                    </div>
-                    <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-600 transition-colors" />
-                  </button>
-
-                  <button
-                    onClick={() => setGroupSelectionStep('view')}
-                    className="group p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 hover:border-green-600 hover:bg-green-50 transition-all text-left flex items-center gap-6"
-                  >
-                    <div className="w-16 h-16 bg-[#25D366] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-600/20 group-hover:scale-110 transition-transform">
-                      <Search size={30} />
-                    </div>
-                    <div className="flex-1">
-                      <h5 className="text-lg font-bold text-blue-950">Ver vagas de emprego</h5>
-                    </div>
-                    <ChevronRight size={20} className="text-slate-300 group-hover:text-green-600 transition-colors" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col animate-fadeIn h-full">
-                <button
-                  onClick={() => setGroupSelectionStep('choice')}
-                  className="inline-flex items-center gap-1 text-[10px] text-slate-400 mb-6 hover:text-blue-950 transition-colors w-fit"
-                >
-                  <ChevronLeft size={14} /> Voltar para o início
-                </button>
-
-                <div className="flex items-center justify-between mb-8 px-1">
-                  <h4 className="text-2xl font-bold text-blue-950 tracking-tight">Escolha a categoria</h4>
-                  <button 
-                    onClick={() => {
-                      setIsGroupModalOpen(false);
-                      setEmpGroupGuideStep(1);
-                      setIsEmpGroupGuideOpen(true);
-                      setGroupSelectionStep('choice');
-                    }}
-                    className="text-[10px] font-bold text-blue-600 hover:text-blue-700 underline"
-                  >
-                    Quero anunciar vagas
-                  </button>
+                <div className="flex gap-2 mb-6 px-1">
+                    <button onClick={() => setSelectedGroupVinculo('CLT')} className={`px-4 py-2 rounded-full text-xs font-bold border transition-colors ${selectedGroupVinculo === 'CLT' ? 'bg-slate-800 text-white border-slate-800' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>Vagas CLT</button>
+                    <button onClick={() => setSelectedGroupVinculo('FREELANCE')} className={`px-4 py-2 rounded-full text-xs font-bold border transition-colors ${selectedGroupVinculo === 'FREELANCE' ? 'bg-slate-800 text-white border-slate-800' : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'}`}>Freelance</button>
                 </div>
 
-                {/* Categories */}
-                <div className="grid grid-cols-2 gap-3 mb-6 px-1 shrink-0">
-                  <button
-                    onClick={() => { setSelectedGroupVinculo('CLT'); }}
-                    className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border ${selectedGroupVinculo === 'CLT' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
-                  >
-                    <Briefcase size={20} />
-                    <p className="text-[10px] tracking-wide text-center leading-tight">Vagas clt,<br/>estágio, pj</p>
-                  </button>
-                  <button
-                    onClick={() => { setSelectedGroupVinculo('FREELANCE'); }}
-                    className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border ${selectedGroupVinculo === 'FREELANCE' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
-                  >
-                    <Zap size={20} />
-                    <p className="text-[10px] tracking-wide text-center leading-tight">Freelancer</p>
-                  </button>
-                </div>
+                {whatsappTabAction === 'VER' ? (
+                   <div className="flex flex-col flex-1 overflow-hidden">
+                       <div className="relative mb-4 px-1 shrink-0">
+                         <Search size={16} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" />
+                         <input
+                           type="text"
+                           value={groupSearch}
+                           onChange={e => setGroupSearch(e.target.value)}
+                           placeholder="Pesquisar Cidade..."
+                           className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 ring-yellow-500/20 focus:border-yellow-500 transition-all text-slate-800 font-medium"
+                         />
+                       </div>
 
-                {/* Search */}
-                <div className="relative mb-4 px-1 shrink-0">
-                  <Search size={16} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
-                  <input
-                    type="text"
-                    value={groupSearch}
-                    onChange={e => setGroupSearch(e.target.value)}
-                    placeholder="Pesquisar cidade..."
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 ring-green-500 transition-all text-slate-800"
-                  />
-                </div>
-
-                {/* List */}
-                <div className="flex-1 overflow-y-auto space-y-2 px-1 pb-2">
-                  {groupsLoading && filteredGroups.length === 0 ? (
-                    <div className="text-center py-10 text-slate-400 text-[10px] tracking-widest">Carregando...</div>
-                  ) : filteredGroups.length === 0 ? (
-                    <div className="text-center py-10 text-slate-400 text-xs italic">Nenhum grupo encontrado.</div>
-                  ) : (
-                    <div className={`space-y-2 transition-opacity ${groupsLoading ? 'opacity-50' : 'opacity-100'}`}>
-                      {filteredGroups.map(g => (
-                        <div key={g.id} className="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-transparent hover:border-slate-200 transition-colors">
-                          <div className="min-w-0 pr-2">
-                            <p className="text-blue-950 text-xs truncate tracking-tight">{g.nome_grupo}</p>
-                            <p className="text-[9px] text-slate-400 leading-none mt-0.5">{g.cidade || 'Geral'}</p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              if (landingMode === 'CAND') {
-                                navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
-                                return;
-                              }
-                              setSelectedGroup(g);
-                              setIsGroupModalOpen(false);
-                              setLeadStep(1);
-                              setIsLeadModalOpen(true);
-                            }}
-                            className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-[9px] rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95"
+                       <div className="flex-1 overflow-y-auto space-y-2 px-1 pb-2">
+                         {groupsLoading && filteredGroups.length === 0 ? (
+                           <div className="text-center py-10 text-slate-400 text-xs font-medium">Carregando...</div>
+                         ) : filteredGroups.length === 0 ? (
+                           <div className="text-center py-10 text-slate-400 text-xs font-medium">Nenhum Grupo Encontrado.</div>
+                         ) : (
+                           <div className={`space-y-2 transition-opacity ${groupsLoading ? 'opacity-50' : 'opacity-100'}`}>
+                             {filteredGroups.map(g => (
+                               <div key={g.id} className="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-transparent hover:border-yellow-200 hover:bg-yellow-50/30 transition-colors">
+                                 <div className="min-w-0 pr-2">
+                                   <p className="text-slate-800 text-sm truncate tracking-tight font-bold">{g.cidade || 'Geral'}</p>
+                                 </div>
+                                 <button
+                                   onClick={() => {
+                                     if (landingMode === 'CAND') {
+                                       navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
+                                       return;
+                                     }
+                                     setSelectedGroup(g);
+                                     setIsGroupModalOpen(false);
+                                     setLeadStep(1);
+                                     setIsLeadModalOpen(true);
+                                   }}
+                                   className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold"
+                                 >
+                                   Entrar
+                                 </button>
+                               </div>
+                             ))}
+                           </div>
+                         )}
+                       </div>
+                   </div>
+                ) : (
+                   <div className="flex flex-col flex-1 overflow-hidden space-y-3 px-1">
+                      {selectedGroupVinculo === 'CLT' ? (
+                          <a
+                            href="https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group"
                           >
-                            Entrar
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                            <div>
+                               <p className="text-slate-800 font-bold text-sm">Grupo Anúncios CLT</p>
+                               <p className="text-slate-500 font-medium text-xs mt-1">Para vagas formais, estágio e PJ.</p>
+                            </div>
+                            <div className="w-10 h-10 bg-[#25D366]/10 text-[#25D366] rounded-full flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors shadow-sm">
+                               <ArrowRight size={18} />
+                            </div>
+                          </a>
+                      ) : (
+                          <a
+                            href="https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH?mode=gi_t"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/50 transition-all flex items-center justify-between group"
+                          >
+                            <div>
+                               <p className="text-slate-800 font-bold text-sm">Grupo Anúncios Freelance</p>
+                               <p className="text-slate-500 font-medium text-xs mt-1">Para oportunidades rápidas e bicos.</p>
+                            </div>
+                            <div className="w-10 h-10 bg-[#25D366]/10 text-[#25D366] rounded-full flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors shadow-sm">
+                               <ArrowRight size={18} />
+                            </div>
+                          </a>
+                      )}
+                   </div>
+                )}
+            </div>
           </div>
         </div>
       )}
