@@ -200,8 +200,8 @@ export const GroupFunnelModal: React.FC<GroupFunnelModalProps> = ({
             isOpen={isLeadModalOpen}
             onClose={() => setIsLeadModalOpen(false)}
             onSuccess={() => setIsLeadModalOpen(false)}
-            fonte="Grupo"
-            tipo={groupName || groupCity || 'Grupo Geral'}
+            fonte="grupo"
+            tipo={(groupName || groupCity || 'grupo geral').toLowerCase()}
           />
         )}
       </AnimatePresence>
