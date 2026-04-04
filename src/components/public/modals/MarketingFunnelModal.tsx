@@ -54,54 +54,16 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   jobPostedAt,
   advertiserName
 }) => {
-  const [step, setStep] = useState<ModalStep>('intro');
+  const [step, setStep] = useState<ModalStep>('final');
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const courseSectionRef = useRef<HTMLDivElement>(null);
   const modalScrollRef = useRef<HTMLDivElement>(null);
 
-  // Custom smooth scroll for controlled speed
-  const customSmoothScroll = (target: HTMLElement, duration: number) => {
-    const container = modalScrollRef.current;
-    if (!container) return;
-
-    const start = container.scrollTop;
-    const targetTop = target.offsetTop;
-    const distance = targetTop - start;
-    let startTime: number | null = null;
-
-    const animation = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const timeElapsed = currentTime - startTime;
-      const run = easeOutQuint(timeElapsed, start, distance, duration);
-      container.scrollTo(0, run);
-      if (timeElapsed < duration) requestAnimationFrame(animation);
-    };
-
-    // Easing function for a premium feel
-    function easeOutQuint(t: number, b: number, c: number, d: number) {
-      t /= d;
-      t--;
-      return c * (t * t * t * t * t + 1) + b;
-    }
-
-    requestAnimationFrame(animation);
-  };
-
-  // Auto-scroll to course section in final step (for mobile/whatsapp mode)
-  useEffect(() => {
-    if (step === 'final' && isOpen) {
-      const timer = setTimeout(() => {
-        if (courseSectionRef.current) {
-          customSmoothScroll(courseSectionRef.current, 1000); // Faster scroll
-        }
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [step, isOpen]);
+  // Removed auto-scroll functionality per user request
 
   // Timer logic
   React.useEffect(() => {
@@ -124,8 +86,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   // Reset timer if reopened
   React.useEffect(() => {
     if (isOpen) {
-      setTimeLeft(10);
-      setStep('intro');
+      setTimeLeft(0);
+      setStep('final');
       setIsTransitioning(false);
     }
   }, [isOpen]);
@@ -320,123 +282,152 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     {/* Primary CTA */}
                     {primaryCTA === 'whatsapp' && (
                       <div className="w-full space-y-3">
-                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
-                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                            <OfficialWhatsAppIcon size={20} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
-                            <p className="text-zinc-900 font-black text-xl select-text tracking-tight truncate leading-none">
-                              {ctaContato}
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3 transition-all hover:border-blue-200">
+                          {ctaObservationsWhatsapp && (
+                            <p className="text-[11px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                              {ctaObservationsWhatsapp}
                             </p>
+                          )}
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                              <OfficialWhatsAppIcon size={20} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
+                              <p className="text-zinc-900 font-black text-xl select-text tracking-tight truncate leading-none">
+                                {ctaContato}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => handleCopy(ctaContato || '')}
+                              className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
+                            >
+                              {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                            </button>
                           </div>
-                          <button
-                            onClick={() => handleCopy(ctaContato || '')}
-                            className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                              if (isTransitioning) return;
+                              setIsTransitioning(true);
+                              const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+                              const encodedMsg = encodeURIComponent(msg);
+                              const phone = normalizeWhatsAppNumber(ctaContato || '');
+                              window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                              setTimeout(() => setIsTransitioning(false), 2000);
+                            }}
+                            disabled={isTransitioning}
+                            className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm disabled:opacity-50 mt-2"
                           >
-                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                          </button>
+                            <OfficialWhatsAppIcon size={20} />
+                            <span>Enviar currículo agora</span>
+                          </motion.button>
                         </div>
-
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            if (isTransitioning) return;
-                            setIsTransitioning(true);
-                            const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
-                            const encodedMsg = encodeURIComponent(msg);
-                            const phone = normalizeWhatsAppNumber(ctaContato || '');
-                            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                            setTimeout(() => setIsTransitioning(false), 2000);
-                          }}
-                          disabled={isTransitioning}
-                          className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm disabled:opacity-50"
-                        >
-                          <OfficialWhatsAppIcon size={20} />
-                          <span>Enviar currículo agora</span>
-                        </motion.button>
                       </div>
                     )}
 
                     {primaryCTA === 'email' && (
                       <div className="w-full space-y-3">
-                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
-                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                            <Mail className="text-blue-500" size={20} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
-                            <p className="text-zinc-800 font-bold text-sm select-text truncate">
-                              {ctaEmail}
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3 transition-all hover:border-blue-200">
+                          {ctaObservationsEmail && (
+                            <p className="text-[11px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                              {ctaObservationsEmail}
                             </p>
+                          )}
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                              <Mail className="text-blue-500" size={20} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
+                              <p className="text-zinc-800 font-bold text-sm select-text truncate">
+                                {ctaEmail}
+                              </p>
+                            </div>
+                            <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                              {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                            </button>
                           </div>
-                          <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                          <button
+                            onClick={() => {
+                              if (isTransitioning) return;
+                              setIsTransitioning(true);
+                              handleCopy(ctaEmail || '');
+                              setTimeout(() => setIsTransitioning(false), 2000);
+                            }}
+                            disabled={isTransitioning}
+                            className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50 mt-2"
+                          >
+                            {copied ? 'Copiado!' : 'Copiar e-mail'}
+                            <Copy size={18} className="group-hover:scale-110 transition-transform" />
                           </button>
                         </div>
-                        <button
-                          onClick={() => {
-                            if (isTransitioning) return;
-                            setIsTransitioning(true);
-                            handleCopy(ctaEmail || '');
-                            setTimeout(() => setIsTransitioning(false), 2000);
-                          }}
-                          disabled={isTransitioning}
-                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50"
-                        >
-                          {copied ? 'Copiado!' : 'Copiar e-mail'}
-                          <Copy size={18} className="group-hover:scale-110 transition-transform" />
-                        </button>
                       </div>
                     )}
 
                     {primaryCTA === 'address' && (
                       <div className="w-full space-y-3">
-                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
-                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                            <MapPin className="text-red-500" size={20} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
-                            <p className="text-zinc-800 font-bold text-[11px] select-text leading-tight line-clamp-2">
-                              {ctaEndereco}
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3 transition-all hover:border-blue-200">
+                          {ctaObservationsEndereco && (
+                            <p className="text-[11px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                              {ctaObservationsEndereco}
                             </p>
+                          )}
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                              <MapPin className="text-red-500" size={20} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
+                              <p className="text-zinc-800 font-bold text-[11px] select-text leading-tight line-clamp-2">
+                                {ctaEndereco}
+                              </p>
+                            </div>
+                            <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                              {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                            </button>
                           </div>
-                          <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                          <button
+                            onClick={() => {
+                              if (isTransitioning) return;
+                              setIsTransitioning(true);
+                              window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco || '')}`, '_blank');
+                              setTimeout(() => setIsTransitioning(false), 2000);
+                            }}
+                            disabled={isTransitioning}
+                            className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50 mt-2"
+                          >
+                            <MapPin size={20} className="group-hover:scale-110 transition-transform" />
+                            <span>Abrir mapa</span>
                           </button>
                         </div>
-                        <button
-                          onClick={() => {
-                            if (isTransitioning) return;
-                            setIsTransitioning(true);
-                            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco || '')}`, '_blank');
-                            setTimeout(() => setIsTransitioning(false), 2000);
-                          }}
-                          disabled={isTransitioning}
-                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10 disabled:opacity-50"
-                        >
-                          <MapPin size={20} className="group-hover:scale-110 transition-transform" />
-                          <span>Abrir mapa</span>
-                        </button>
                       </div>
                     )}
 
                     {primaryCTA === 'link' && (
-                      <button
-                        onClick={() => {
-                          if (isTransitioning) return;
-                          setIsTransitioning(true);
-                          window.open(ctaLink, '_blank');
-                          setTimeout(() => setIsTransitioning(false), 2000);
-                        }}
-                        disabled={isTransitioning}
-                        className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm disabled:opacity-50"
-                      >
-                        <Rocket size={20} />
-                        <span>Abrir link de candidatura</span>
-                      </button>
+                      <div className="w-full space-y-3">
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3 hover:border-blue-200">
+                          {ctaObservationsLink && (
+                            <p className="text-[11px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                              {ctaObservationsLink}
+                            </p>
+                          )}
+                          <button
+                            onClick={() => {
+                              if (isTransitioning) return;
+                              setIsTransitioning(true);
+                              window.open(ctaLink, '_blank');
+                              setTimeout(() => setIsTransitioning(false), 2000);
+                            }}
+                            disabled={isTransitioning}
+                            className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm disabled:opacity-50"
+                          >
+                            <Rocket size={20} />
+                            <span>Abrir link de candidatura</span>
+                          </button>
+                        </div>
+                      </div>
                     )}
 
                     {/* Secondary CTAs */}
@@ -461,66 +452,102 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                               {secondaryCTAs.map(cta => (
                                 <React.Fragment key={cta.type}>
                                   {cta.type === 'whatsapp' && (
-                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
-                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                                        <OfficialWhatsAppIcon size={16} />
+                                    <div className="flex flex-col gap-2 w-full">
+                                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3">
+                                        {ctaObservationsWhatsapp && (
+                                          <p className="text-[10px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                                            {ctaObservationsWhatsapp}
+                                          </p>
+                                        )}
+                                        <div className="flex items-center gap-4 w-full">
+                                          <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                            <OfficialWhatsAppIcon size={16} />
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
+                                            <p className="text-zinc-900 font-bold text-sm select-text truncate">
+                                              {ctaContato}
+                                            </p>
+                                          </div>
+                                          <button onClick={() => handleCopy(ctaContato || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                            <Copy size={14} />
+                                          </button>
+                                        </div>
                                       </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
-                                        <p className="text-zinc-900 font-bold text-sm select-text truncate">
-                                          {ctaContato}
-                                        </p>
-                                      </div>
-                                      <button onClick={() => handleCopy(ctaContato || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                                        <Copy size={14} />
-                                      </button>
                                     </div>
                                   )}
                                   {cta.type === 'email' && (
-                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
-                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                                        <Mail className="text-blue-500" size={16} />
+                                    <div className="flex flex-col gap-2 w-full">
+                                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3">
+                                        {ctaObservationsEmail && (
+                                          <p className="text-[10px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                                            {ctaObservationsEmail}
+                                          </p>
+                                        )}
+                                        <div className="flex items-center gap-4 w-full">
+                                          <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                            <Mail className="text-blue-500" size={16} />
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
+                                            <p className="text-zinc-800 font-bold text-sm select-text truncate">
+                                              {ctaEmail}
+                                            </p>
+                                          </div>
+                                          <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                            <Copy size={14} />
+                                          </button>
+                                        </div>
                                       </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
-                                        <p className="text-zinc-800 font-bold text-sm select-text truncate">
-                                          {ctaEmail}
-                                        </p>
-                                      </div>
-                                      <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                                        <Copy size={14} />
-                                      </button>
                                     </div>
                                   )}
                                   {cta.type === 'address' && (
-                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
-                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                                        <MapPin className="text-red-500" size={16} />
+                                    <div className="flex flex-col gap-2 w-full">
+                                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3">
+                                        {ctaObservationsEndereco && (
+                                          <p className="text-[10px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                                            {ctaObservationsEndereco}
+                                          </p>
+                                        )}
+                                        <div className="flex items-center gap-4 w-full">
+                                          <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                            <MapPin className="text-red-500" size={16} />
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
+                                            <p className="text-zinc-800 font-bold text-[11px] select-text line-clamp-1">
+                                              {ctaEndereco}
+                                            </p>
+                                          </div>
+                                          <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                            <Copy size={14} />
+                                          </button>
+                                        </div>
                                       </div>
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
-                                        <p className="text-zinc-800 font-bold text-[11px] select-text line-clamp-1">
-                                          {ctaEndereco}
-                                        </p>
-                                      </div>
-                                      <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                                        <Copy size={14} />
-                                      </button>
                                     </div>
                                   )}
                                   {cta.type === 'link' && (
-                                    <button
-                                      onClick={() => {
-                                        if (isTransitioning) return;
-                                        setIsTransitioning(true);
-                                        window.open(ctaLink, '_blank');
-                                        setTimeout(() => setIsTransitioning(false), 2000);
-                                      }}
-                                      disabled={isTransitioning}
-                                      className="w-full h-12 bg-zinc-100 text-zinc-800 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                                    >
-                                      <Rocket size={14} /> Abrir link de candidatura
-                                    </button>
+                                    <div className="flex flex-col gap-2 w-full">
+                                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex flex-col gap-3 hover:border-blue-200">
+                                        {ctaObservationsLink && (
+                                          <p className="text-[10px] text-zinc-600 whitespace-pre-line leading-relaxed lowercase first-letter:uppercase pb-2 border-b border-zinc-200/50">
+                                            {ctaObservationsLink}
+                                          </p>
+                                        )}
+                                        <button
+                                          onClick={() => {
+                                            if (isTransitioning) return;
+                                            setIsTransitioning(true);
+                                            window.open(ctaLink, '_blank');
+                                            setTimeout(() => setIsTransitioning(false), 2000);
+                                          }}
+                                          disabled={isTransitioning}
+                                          className="w-full h-12 bg-zinc-900 text-white font-bold rounded-xl text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md"
+                                        >
+                                          <Rocket size={14} /> Abrir link de candidatura
+                                        </button>
+                                      </div>
+                                    </div>
                                   )}
                                 </React.Fragment>
                               ))}

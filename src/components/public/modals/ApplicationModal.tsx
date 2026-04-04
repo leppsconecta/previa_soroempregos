@@ -511,111 +511,111 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
                 <div className="w-full space-y-6 mt-4">
                     {hasPhone && (
-                        <div className="flex flex-col gap-2 w-full">
-                            {ctaObservationsWhatsapp && (
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left mb-2">
-                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                        <div className="flex flex-col w-full">
+                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left flex flex-col gap-2 shadow-sm">
+                                {ctaObservationsWhatsapp && (
+                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed pb-2 border-b border-slate-200/60 dark:border-slate-600 lowercase first-letter:uppercase">
                                         {ctaObservationsWhatsapp}
                                     </p>
+                                )}
+                                <div className="mb-2">
+                                    <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Phone size={16} className="text-green-500" /> WhatsApp:</p>
+                                    <p className="text-sm text-slate-600 leading-relaxed font-mono">
+                                        {ctaContato}
+                                    </p>
                                 </div>
-                            )}
-                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Phone size={16} className="text-green-500" /> WhatsApp:</p>
-                                <p className="text-sm text-slate-600 leading-relaxed font-mono">
-                                    {ctaContato}
-                                </p>
+                                <a
+                                    href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent((() => { const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`; return msg; })())}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
+                                >
+                                    <Phone size={18} /> Contatar via WhatsApp
+                                </a>
                             </div>
-                            <a
-                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent((() => { const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`; return msg; })())}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
-                            >
-                                <Phone size={18} /> Contatar via WhatsApp
-                            </a>
                         </div>
                     )}
 
                     {hasEmail && (
-                        <div className="flex flex-col gap-2 w-full">
-                            {ctaObservationsEmail && (
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left mb-2">
-                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                        <div className="flex flex-col w-full">
+                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left flex flex-col gap-2 shadow-sm">
+                                {ctaObservationsEmail && (
+                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed pb-2 border-b border-slate-200/60 dark:border-slate-600 lowercase first-letter:uppercase">
                                         {ctaObservationsEmail}
                                     </p>
+                                )}
+                                <div className="mb-2">
+                                    <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MessageCircle size={16} className="text-blue-500" /> E-mail:</p>
+                                    <p className="text-sm text-slate-600 leading-relaxed font-mono break-all">
+                                        {ctaEmail}
+                                    </p>
                                 </div>
-                            )}
-                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MessageCircle size={16} className="text-blue-500" /> E-mail:</p>
-                                <p className="text-sm text-slate-600 leading-relaxed font-mono break-all">
-                                    {ctaEmail}
-                                </p>
+                                <button
+                                    onClick={() => handleCopy(ctaEmail, 'e-mail')}
+                                    className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold tracking-wide shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
+                                >
+                                    <MessageCircle size={18} /> Copiar e-mail
+                                </button>
                             </div>
-                            <button
-                                onClick={() => handleCopy(ctaEmail, 'e-mail')}
-                                className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold tracking-wide shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
-                            >
-                                <MessageCircle size={18} /> Copiar e-mail
-                            </button>
                         </div>
                     )}
 
                     {hasLink && (
-                        <div className="flex flex-col gap-2 w-full">
-                            {ctaObservationsLink && (
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left mb-2">
-                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                        <div className="flex flex-col w-full">
+                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left flex flex-col gap-2 shadow-sm">
+                                {ctaObservationsLink && (
+                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed pb-2 border-b border-slate-200/60 dark:border-slate-600 lowercase first-letter:uppercase">
                                         {ctaObservationsLink}
                                     </p>
+                                )}
+                                <div className="mb-2">
+                                    <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500" /> Link externo:</p>
+                                    <p className="text-sm text-slate-600 leading-relaxed font-mono break-all line-clamp-2" title={ctaLink}>
+                                        {ctaLink}
+                                    </p>
                                 </div>
-                            )}
-                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500" /> Link externo:</p>
-                                <p className="text-sm text-slate-600 leading-relaxed font-mono break-all line-clamp-2" title={ctaLink}>
-                                    {ctaLink}
-                                </p>
+                                <a
+                                    href={ctaLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
+                                >
+                                    <Briefcase size={18} /> Acessar link externo
+                                </a>
                             </div>
-                            <a
-                                href={ctaLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
-                            >
-                                <Briefcase size={18} /> Acessar link externo
-                            </a>
                         </div>
                     )}
 
                     {hasEndereco && (
-                        <div className="flex flex-col gap-2 w-full">
-                            {ctaObservationsEndereco && (
-                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left mb-2">
-                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                        <div className="flex flex-col w-full">
+                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left flex flex-col gap-2 shadow-sm">
+                                {ctaObservationsEndereco && (
+                                    <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed pb-2 border-b border-slate-200/60 dark:border-slate-600 lowercase first-letter:uppercase">
                                         {ctaObservationsEndereco}
                                     </p>
+                                )}
+                                <div className="mb-2">
+                                    <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MapPin size={16} className="text-orange-500" /> Endereço:</p>
+                                    <p className="text-sm text-slate-600 leading-relaxed font-mono">
+                                        {ctaEndereco}
+                                    </p>
                                 </div>
-                            )}
-                            <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MapPin size={16} className="text-orange-500" /> Endereço:</p>
-                                <p className="text-sm text-slate-600 leading-relaxed font-mono">
-                                    {ctaEndereco}
-                                </p>
-                            </div>
-                            <div className="flex flex-col gap-2 w-full mt-1">
-                                <a
-                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm"
-                                >
-                                    <MapPin size={18} /> Abrir mapa
-                                </a>
-                                <button
-                                    onClick={() => handleCopy(ctaEndereco, 'endereço')}
-                                    className="w-full py-2 rounded-xl text-slate-400 font-bold hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider"
-                                >
-                                    Copiar endereço
-                                </button>
+                                <div className="flex flex-col gap-2 w-full mt-1">
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ctaEndereco)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full py-3.5 rounded-xl bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700 transition-all flex items-center justify-center gap-2 text-sm"
+                                    >
+                                        <MapPin size={18} /> Abrir mapa
+                                    </a>
+                                    <button
+                                        onClick={() => handleCopy(ctaEndereco, 'endereço')}
+                                        className="w-full py-2 rounded-xl text-slate-400 font-bold hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider"
+                                    >
+                                        Copiar endereço
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}
