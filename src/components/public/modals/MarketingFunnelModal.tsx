@@ -151,6 +151,17 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const hasLink = checkVisible(ctaLink);
   const hasEndereco = checkVisible(ctaEndereco);
 
+  // CTA Priority Logic
+  const allAvailable = [
+    { type: 'whatsapp', exists: hasPhone },
+    { type: 'email', exists: hasEmail },
+    { type: 'address', exists: hasEndereco },
+    { type: 'link', exists: hasLink },
+  ].filter(c => c.exists);
+
+  const primaryCTA = allAvailable[0]?.type || null;
+  const secondaryCTAs = allAvailable.slice(1);
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -324,8 +335,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     <p className="text-xs text-zinc-400">Escolha um dos canais oficiais do anunciante abaixo:</p>
                   </div>
                   
-                  <div className="w-full space-y-3">
-                    {hasPhone && (
+                  <div className="w-full space-y-4">
+                    {/* Primary CTA */}
+                    {primaryCTA === 'whatsapp' && (
                       <div className="w-full space-y-3">
                         <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
                           <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
@@ -362,13 +374,76 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                       </div>
                     )}
 
-                    {(hasEmail || hasEndereco || hasLink) && (
+                    {primaryCTA === 'email' && (
+                      <div className="w-full space-y-3">
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
+                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                            <Mail className="text-blue-500" size={20} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
+                            <p className="text-zinc-800 font-bold text-sm select-text truncate">
+                              {ctaEmail}
+                            </p>
+                          </div>
+                          <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => handleCopy(ctaEmail || '')}
+                          className="w-full h-16 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-2 group shadow-xl shadow-blue-500/10"
+                        >
+                          {copied ? 'Copiado!' : 'Copiar e-mail'}
+                          <Copy size={18} className="group-hover:scale-110 transition-transform" />
+                        </button>
+                      </div>
+                    )}
+
+                    {primaryCTA === 'address' && (
+                      <div className="w-full space-y-3">
+                        <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
+                          <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                            <MapPin className="text-red-500" size={20} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
+                            <p className="text-zinc-800 font-bold text-[11px] select-text leading-tight line-clamp-2">
+                              {ctaEndereco}
+                            </p>
+                          </div>
+                          <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                            {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => handleCopy(ctaEndereco || '')}
+                          className="w-full h-16 bg-zinc-800 text-white font-bold rounded-2xl hover:bg-zinc-900 transition-all flex items-center justify-center gap-2 group shadow-xl"
+                        >
+                          {copied ? 'Copiado!' : 'Copiar endereço'}
+                          <Copy size={18} className="group-hover:scale-110 transition-transform" />
+                        </button>
+                      </div>
+                    )}
+
+                    {primaryCTA === 'link' && (
+                      <button 
+                        onClick={() => window.open(ctaLink, '_blank')}
+                        className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm"
+                      >
+                        <Rocket size={20} />
+                        <span>Abrir link de candidatura</span>
+                      </button>
+                    )}
+
+                    {/* Secondary CTAs */}
+                    {secondaryCTAs.length > 0 && (
                       <div className="pt-2">
                         <button 
                           onClick={() => setIsExpanded(!isExpanded)}
                           className="flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-600 transition-colors mx-auto"
                         >
-                          {isExpanded ? 'Ocultar opções extra' : 'Ver mais opções de contato'}
+                          {isExpanded ? 'Ocultar opções de envio' : 'Ver mais opções de envio'}
                           <ChevronDown size={12} className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                         </button>
 
@@ -380,48 +455,66 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                               exit={{ height: 0, opacity: 0 }}
                               className="overflow-hidden space-y-3 pt-4"
                             >
-                              {hasEmail && (
-                                <div className="w-full p-4 bg-zinc-100/50 border border-zinc-200/50 rounded-2xl text-left flex items-center gap-4">
-                                  <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                                    <Mail className="text-blue-500" size={20} />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
-                                    <p className="text-zinc-800 font-bold text-sm select-text truncate">
-                                      {ctaEmail}
-                                    </p>
-                                  </div>
-                                  <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                                    <Copy size={16} />
-                                  </button>
-                                </div>
-                              )}
-
-                              {hasEndereco && (
-                                <div className="w-full p-4 bg-zinc-100/50 border border-zinc-200/50 rounded-2xl text-left flex items-center gap-4">
-                                  <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                                    <MapPin className="text-red-500" size={20} />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
-                                    <p className="text-zinc-800 font-bold text-[11px] select-text leading-tight line-clamp-2">
-                                      {ctaEndereco}
-                                    </p>
-                                  </div>
-                                  <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
-                                    <Copy size={16} />
-                                  </button>
-                                </div>
-                              )}
-
-                              {hasLink && (
-                                <button 
-                                  onClick={() => window.open(ctaLink, '_blank')}
-                                  className="w-full h-14 bg-zinc-900 text-white font-bold rounded-2xl text-sm hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3"
-                                >
-                                  <Rocket size={18} /> Abrir link de candidatura
-                                </button>
-                              )}
+                              {secondaryCTAs.map(cta => (
+                                <React.Fragment key={cta.type}>
+                                  {cta.type === 'whatsapp' && (
+                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
+                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                        <OfficialWhatsAppIcon size={16} />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
+                                        <p className="text-zinc-900 font-bold text-sm select-text truncate">
+                                          {ctaContato}
+                                        </p>
+                                      </div>
+                                      <button onClick={() => handleCopy(ctaContato || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                        <Copy size={14} />
+                                      </button>
+                                    </div>
+                                  )}
+                                  {cta.type === 'email' && (
+                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
+                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                        <Mail className="text-blue-500" size={16} />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
+                                        <p className="text-zinc-800 font-bold text-sm select-text truncate">
+                                          {ctaEmail}
+                                        </p>
+                                      </div>
+                                      <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                        <Copy size={14} />
+                                      </button>
+                                    </div>
+                                  )}
+                                  {cta.type === 'address' && (
+                                    <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4">
+                                      <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                                        <MapPin className="text-red-500" size={16} />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
+                                        <p className="text-zinc-800 font-bold text-[11px] select-text line-clamp-1">
+                                          {ctaEndereco}
+                                        </p>
+                                      </div>
+                                      <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                        <Copy size={14} />
+                                      </button>
+                                    </div>
+                                  )}
+                                  {cta.type === 'link' && (
+                                    <button 
+                                      onClick={() => window.open(ctaLink, '_blank')}
+                                      className="w-full h-12 bg-zinc-100 text-zinc-800 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2"
+                                    >
+                                      <Rocket size={14} /> Abrir link de candidatura
+                                    </button>
+                                  )}
+                                </React.Fragment>
+                              ))}
                             </motion.div>
                           )}
                         </AnimatePresence>
