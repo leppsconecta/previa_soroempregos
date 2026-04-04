@@ -55,6 +55,33 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const [step, setStep] = useState<ModalStep>('intro');
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(10);
+
+  // Timer logic
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isOpen && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => {
+          const next = prev - 1;
+          // Sub-trigger steps based on time (5s each)
+          if (next >= 6) setStep('intro');
+          else if (next >= 1) setStep('exclusive');
+          else if (next === 0) setStep('final');
+          return next;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isOpen, timeLeft]);
+
+  // Reset timer if reopened
+  React.useEffect(() => {
+    if (isOpen) {
+      setTimeLeft(10);
+      setStep('intro');
+    }
+  }, [isOpen]);
 
 
 
@@ -135,13 +162,13 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 1.05, y: -20 }}
             transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 min-h-[520px] flex flex-col z-10"
+            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 max-h-[85vh] flex flex-col z-10"
           >
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center">
-              <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
+              <div className="w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img 
                   src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Pessoa estressada no trabalho"
+                  alt="pessoa estressada no trabalho"
                   className="w-full h-full object-cover grayscale brightness-75 contrast-110"
                   referrerPolicy="no-referrer"
                 />
@@ -152,26 +179,21 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <h2 className="text-3xl font-black text-white mb-3 leading-none tracking-tighter">
-                  seja dono do seu <br/>
+                <h2 className="text-3xl font-bold text-white mb-3 leading-none tracking-tight">
+                  Seja dono do seu <br/>
                   <span className="text-orange-500">próprio negócio</span>
                 </h2>
-                <p className="text-white/90 text-lg font-bold italic tracking-tight">
-                  "alimente seu sonho, e não do seu patrão"
+                <p className="text-white/90 text-lg font-medium italic tracking-tight">
+                  "Alimente seu sonho, e não do seu patrão"
                 </p>
+                <div className="mt-4 flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
+                        {timeLeft}
+                    </div>
+                </div>
               </motion.div>
 
-              <div className="mt-6 flex flex-col items-center gap-4 w-full">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setStep('exclusive')}
-                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
-                >
-                  enviar currículo
-                  <Send size={16} />
-                </motion.button>
-              </div>
+              <div className="mt-6 flex flex-col items-center gap-4 w-full h-14" />
             </div>
           </motion.div>
         )}
@@ -183,13 +205,13 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 min-h-[520px] flex flex-col z-10"
+            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 max-h-[85vh] flex flex-col z-10"
           >
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center">
-              <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
+              <div className="w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img 
                   src="/real_brasileiro.png" 
-                  alt="Cédulas de Real brasileiro, notas de 100, 50 e 20"
+                  alt="cédulas de real brasileiro, notas de 100, 50 e 20"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
@@ -201,24 +223,21 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 transition={{ delay: 0.2 }}
                 className="space-y-4"
               >
-                <h2 className="text-2xl font-black text-white leading-[1.1] tracking-tighter">
-                  nós desenvolvemos um <span className="text-orange-500">curso pra você!</span>
+                <h2 className="text-2xl font-bold text-white leading-[1.1] tracking-tight">
+                  Preparamos um <span className="text-orange-500">curso exclusivo</span><br/> para quem quer mudar de vida.
                 </h2>
-                <p className="text-white/80 text-sm font-medium leading-relaxed">
-                  nosso curso é exclusivo, acessível, e sem dúvidas você vai sair da condição de funcionário para ser dono do seu próprio negócio.
+                <p className="text-white/80 text-sm font-normal leading-relaxed">
+                  Clique no botão "Quero mudar de vida."
                 </p>
+                <div className="mt-4 flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
+                        {timeLeft}
+                    </div>
+                </div>
               </motion.div>
 
               <div className="mt-8 flex flex-col items-center gap-6 w-full">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setStep('final')}
-                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
-                >
-                  enviar currículo
-                  <Send size={16} />
-                </motion.button>
+                <div className="h-14" /> {/* Spacer for delayed button */}
 
                 <div className="flex gap-2">
                   <div className="w-1.5 h-1.5 bg-white/20 rounded-full" />
@@ -239,15 +258,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             key="final"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative w-full max-w-md bg-white rounded-[40px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.4)] z-10"
+            className="relative w-full max-w-2xl bg-white rounded-[40px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.4)] max-h-[90vh] flex flex-col z-10"
           >
-            <div className="p-6 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-100">
-                  <Briefcase className="text-white" size={18} />
-                </div>
-                <h2 className="text-lg font-bold text-zinc-900 tracking-tight">instruções da vaga</h2>
-              </div>
+            <div className="p-4 border-b border-zinc-100 flex items-center justify-end bg-zinc-50/50">
               <button 
                 onClick={onClose}
                 className="p-2 hover:bg-zinc-200 rounded-full text-zinc-400 transition-all active:scale-90"
@@ -256,202 +269,154 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               </button>
             </div>
 
-            <div className="p-8 flex flex-col items-center text-center flex-1">
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 shadow-inner relative shrink-0">
-                <Briefcase className="text-blue-600" size={28} />
-                <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto">
+              {/* Container 1: Vaga */}
+              <div className="p-8 flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-zinc-100 bg-white">
+                <span className="text-[10px] font-light text-zinc-400 uppercase tracking-[0.2em] mb-2">
+                  Vaga
+                </span>
+                <h3 className="text-2xl font-black text-zinc-900 mb-2 tracking-tight leading-none">
+                  {jobTitle}
+                </h3>
+                <p className="text-xs text-zinc-500 font-medium mb-8">
+                  {jobLocation} • {jobPostedAt}
+                </p>
 
-              <h3 className="text-xl font-bold text-zinc-900 mb-1 tracking-tight leading-none">
-                {jobTitle}
-              </h3>
-              <p className="text-xs text-zinc-400 mb-6">
-                {jobLocation} • {jobPostedAt}
-              </p>
-
-              <div className="w-full space-y-4 mb-8">
-                {/* Primary CTA: WhatsApp */}
-                {hasPhone && (
-                  <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 shadow-sm">
-                    <div className="p-2 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
-                      <OfficialWhatsAppIcon size={20} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      {checkVisible(ctaObservationsWhatsapp) && (
-                        <p className="text-zinc-500 text-[10px] mb-1 italic leading-tight">{ctaObservationsWhatsapp}</p>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <p className="text-zinc-900 font-black text-xl select-text tracking-tight flex-1 truncate">
-                          {ctaContato}
-                        </p>
+                <div className="w-full pt-4 border-t border-zinc-50">
+                  <p className="text-[11px] font-semibold text-zinc-400 mb-6 uppercase tracking-wider">
+                    Como enviar seu currículo
+                  </p>
+                  
+                  <div className="w-full space-y-3 mb-4">
+                    {hasPhone && (
+                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
+                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                          <OfficialWhatsAppIcon size={16} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-zinc-900 font-bold text-lg select-text tracking-tight truncate">
+                            {ctaContato}
+                          </p>
+                        </div>
                         <button
                           onClick={() => handleCopy(ctaContato || '')}
-                          className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
-                          title="Copiar número"
+                          className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 transition-all active:scale-90 shrink-0"
                         >
-                          {copied ? (
-                            <Check size={14} className="text-green-500" />
-                          ) : (
-                            <Copy size={14} />
-                          )}
+                          {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
                         </button>
                       </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Secondaries Action - Show More */}
-                {(hasPhone && (hasEmail || hasLink || hasEndereco)) && (
-                  <button 
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center justify-center gap-2 w-full py-1 text-zinc-400 hover:text-blue-600 transition-colors text-[10px] font-bold tracking-widest"
-                  >
-                    {isExpanded ? (
-                      <>ocultar outras formas <ChevronUp size={12} /></>
-                    ) : (
-                      <>mais formas de enviar <ChevronDown size={12} /></>
                     )}
-                  </button>
-                )}
 
-                {/* Expanded Sections */}
-                <AnimatePresence>
-                  {(isExpanded || !hasPhone) && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="space-y-3 overflow-hidden"
-                    >
-                      {hasEmail && (
-                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
-                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
-                            <Mail size={12} className="text-blue-500" />
-                            <span className="text-[8px] font-black tracking-widest">e-mail</span>
-                          </div>
-                          {checkVisible(ctaObservationsEmail) && (
-                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEmail}</p>
-                          )}
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-zinc-900 font-bold text-xs select-text truncate flex-1">
-                              {ctaEmail}
-                            </p>
-                            <button onClick={() => handleCopy(ctaEmail || '')} className="p-1 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
-                              <Copy size={12} />
-                            </button>
-                          </div>
+                    {hasEmail && (
+                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
+                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                          <Mail className="text-blue-500" size={16} />
                         </div>
-                      )}
-
-                      {hasEndereco && (
-                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
-                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
-                            <MapPin size={12} className="text-red-500" />
-                            <span className="text-[8px] font-black tracking-widest">endereço</span>
-                          </div>
-                          {checkVisible(ctaObservationsEndereco) && (
-                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEndereco}</p>
-                          )}
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-zinc-900 font-bold text-xs select-text truncate flex-1 leading-tight">
-                              {ctaEndereco}
-                            </p>
-                            <button onClick={() => handleCopy(ctaEndereco || '')} className="p-1 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
-                              <Copy size={12} />
-                            </button>
-                          </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-zinc-900 font-bold text-xs select-text truncate">
+                            {ctaEmail}
+                          </p>
                         </div>
-                      )}
+                        <button onClick={() => handleCopy(ctaEmail || '')} className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
+                          <Copy size={12} />
+                        </button>
+                      </div>
+                    )}
 
-                      {hasLink && (
-                        <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
-                          <div className="flex items-center gap-2 mb-1.5 opacity-50">
-                            <Rocket size={12} className="text-purple-500" />
-                            <span className="text-[8px] font-black tracking-widest">link externo</span>
-                          </div>
-                          {checkVisible(ctaObservationsLink) && (
-                            <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsLink}</p>
-                          )}
-                          <button 
-                            onClick={() => window.open(ctaLink, '_blank')}
-                            className="w-full py-2 bg-blue-600 text-white font-bold rounded-lg text-[10px] hover:bg-blue-700 transition-colors shadow-sm"
-                          >
-                            abrir link de candidatura
-                          </button>
+                    {hasEndereco && (
+                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
+                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
+                          <MapPin className="text-red-500" size={16} />
                         </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-zinc-900 font-bold text-[10px] select-text truncate leading-tight">
+                            {ctaEndereco}
+                          </p>
+                        </div>
+                        <button onClick={() => handleCopy(ctaEndereco || '')} className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
+                          <Copy size={12} />
+                        </button>
+                      </div>
+                    )}
 
-              <div className="w-full flex flex-col gap-3 mt-auto">
-                {hasPhone && (
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                        const msg = `Olá, tudo bem ?
-Vi esta vaga na SoroEmpregos.com.br
+                    {hasLink && (
+                      <button 
+                        onClick={() => window.open(ctaLink, '_blank')}
+                        className="w-full py-3 bg-zinc-900 text-white font-semibold rounded-xl text-[10px] hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2"
+                      >
+                        <Rocket size={14} /> Abrir link de candidatura
+                      </button>
+                    )}
+
+                    {hasPhone && (
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                            const msg = `Olá, tudo bem ?
+Vivi esta vaga na SoroEmpregos.com.br
 —————————————
 Função: *${jobTitle}*
-Código: *${jobCode || 'N/A'}*
+Código: *${jobCode || 'n/a'}*
 --------------------------
 
-posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
-                        
-                        const encodedMsg = encodeURIComponent(msg);
-                        const phone = normalizeWhatsAppNumber(ctaContato || '');
-                        window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                    }}
-                    className="w-full h-14 bg-green-500 hover:bg-green-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-green-100 text-sm"
-                  >
-                    <OfficialWhatsAppIcon size={18} />
-                    <span className="leading-tight">enviar currículo via whatsapp</span>
-                  </motion.button>
-                )}
-
-                <div className="relative group w-full">
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.25, 1.4],
-                      opacity: [0.5, 0.3, 0],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeOut",
-                    }}
-                    className="absolute inset-0 bg-orange-400 rounded-xl"
-                  />
-                  
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={{ 
-                      scale: [1, 1.02, 1],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    onClick={handleMudarDeVida}
-                    className="relative w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-orange-500/40 text-sm z-10"
-                  >
-                    <TrendingUp size={18} />
-                    <span className="leading-tight">quero mudar de vida agora</span>
-                  </motion.button>
+Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+                            const encodedMsg = encodeURIComponent(msg);
+                            const phone = normalizeWhatsAppNumber(ctaContato || '');
+                            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                        }}
+                        className="w-full h-12 bg-green-500 hover:bg-green-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-green-100 text-xs"
+                      >
+                        <OfficialWhatsAppIcon size={16} />
+                        <span>Contatar WhatsApp</span>
+                      </motion.button>
+                    )}
+                  </div>
                 </div>
+
+                {advertiserName && (
+                  <p className="text-zinc-400 text-[8px] font-semibold tracking-widest mt-auto pt-4 border-t border-zinc-50 w-full">
+                    Vaga anunciada por {cleanAdvertiserName}
+                  </p>
+                )}
               </div>
 
-              {advertiserName && (
-                <p className="mt-8 text-zinc-400 text-[8px] font-black uppercase tracking-widest select-none pointer-events-none opacity-40">
-                  vaga anunciada por {cleanAdvertiserName}
+              {/* Container 2: Mudar de Vida (Purple Theme) */}
+              <div className="p-8 flex flex-col items-center text-center bg-purple-950 text-white">
+                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0">
+                  <TrendingUp className="text-orange-500" size={28} />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-white mb-2 tracking-tight leading-tight">
+                  Você teve 10 segundos para pensar!
+                </h3>
+                <p className="text-white/70 text-sm font-medium mb-8 leading-relaxed">
+                  Mude de vida, nós ensinamos você a abrir seu próprio negócio.
                 </p>
-              )}
+
+                <div className="w-full mt-auto">
+                  <div className="relative w-full">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1.4], opacity: [0.3, 0.15, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                      className="absolute inset-0 bg-orange-400/50 rounded-xl"
+                    />
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleMudarDeVida}
+                      className="relative w-full h-16 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-2xl shadow-orange-950/40 text-base z-10"
+                    >
+                      <Rocket size={20} />
+                      <span className="leading-tight">Quero mudar de vida.</span>
+                    </motion.button>
+                  </div>
+                </div>
+                
+                <p className="mt-8 text-white/20 text-[10px] font-semibold tracking-[0.2em] uppercase">
+                  SoroEmpregos exclusivo
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
