@@ -19,6 +19,7 @@ import {
   MapPin,
   Send,
   ChevronLeft,
+  ChevronRight,
   Eye,
   EyeOff,
   LogIn,
@@ -66,6 +67,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   // Floating WhatsApp Group Button States
   const [showFloatingWa, setShowFloatingWa] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [groupSelectionStep, setGroupSelectionStep] = useState<'choice' | 'view'>('choice');
   
   // Employer Group Guide States
   const [isEmpGroupGuideOpen, setIsEmpGroupGuideOpen] = useState(false);
@@ -518,14 +520,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
               <X size={24} />
             </button>
 
-            <h4 className="text-2xl font-bold text-blue-950 mb-6 text-center">Solicitar Contato</h4>
+            <h4 className="text-2xl font-bold text-blue-950 mb-6 text-center">Solicitar contato</h4>
 
             {contactSuccess ? (
               <div className="text-center py-10 animate-scaleUp">
                 <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-emerald-500/30">
                   <CheckCircle2 size={32} />
                 </div>
-                <h5 className="text-xl font-bold text-blue-950 mb-2">Mensagem Enviada!</h5>
+                <h5 className="text-xl font-bold text-blue-950 mb-2">Mensagem enviada!</h5>
                 <p className="text-slate-500 text-sm">Em breve nossa equipe entrará em contato.</p>
                 <button
                   onClick={() => { setContactSuccess(false); setContactName(''); setContactEmail(''); setContactPhone(''); setContactMessage(''); }}
@@ -537,7 +539,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
             ) : (
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nome</label>
+                  <label className="text-[10px] font-bold text-slate-400 ml-1">Nome</label>
                   <input
                     required
                     type="text"
@@ -549,7 +551,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">WhatsApp</label>
+                  <label className="text-[10px] font-bold text-slate-400 ml-1">WhatsApp</label>
                   <input
                     required
                     type="text"
@@ -562,7 +564,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">E-mail</label>
+                  <label className="text-[10px] font-bold text-slate-400 ml-1">E-mail</label>
                   <input
                     required
                     type="email"
@@ -573,7 +575,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Mensagem</label>
+                  <label className="text-[10px] font-bold text-slate-400 ml-1">Mensagem</label>
                   <textarea
                     required
                     value={contactMessage}
@@ -586,7 +588,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <button
                   disabled={contactLoading}
                   type="submit"
-                  className="w-full py-4 bg-blue-950 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-900 shadow-xl shadow-blue-900/20 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:pointer-events-none"
+                  className="w-full py-4 bg-blue-950 text-white rounded-2xl font-bold text-sm hover:bg-blue-900 shadow-xl shadow-blue-900/20 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:pointer-events-none"
                 >
                   {contactLoading ? 'Enviando...' : (<>Enviar <Send size={18} /></>)}
                 </button>
@@ -637,13 +639,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-blue-600 shadow-sm mx-auto">
                   <Megaphone size={32} />
                 </div>
-                <h4 className="text-xl md:text-2xl font-bold text-blue-950 text-center mb-4 leading-tight">
-                  Olá! Antes de redirecionarmos você ao grupo, precisamos alinhar como funciona.
+                <h4 className="text-2xl font-bold text-blue-950 text-center mb-6 leading-tight">
+                  Aviso para empresas
                 </h4>
                 <div className="text-slate-500 text-sm space-y-4 mb-8">
-                  <p>
-                    Você está prestes a entrar em nossos grupos de divulgação gratuitos. 
-                  </p>
                   <p>
                     Para garantir a qualidade, <strong>todas as vagas são analisadas</strong>. Elas precisam ter no mínimo a cidade informada, com isso conseguimos filtrar e ajudar você a divulgar a vaga para as pessoas certas.
                   </p>
@@ -671,12 +670,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <div className="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center mb-4 text-yellow-600 shadow-sm mx-auto">
                   <CheckCircle2 size={32} />
                 </div>
-                <h4 className="text-xl font-bold text-blue-950 text-center mb-3">
-                  Estrutura Mínima Obrigatória
+                <h4 className="text-2xl font-bold text-blue-950 text-center mb-6">
+                  Estrutura dos anúncios
                 </h4>
-                <p className="text-slate-500 text-sm text-center mb-6">
-                  Seu anúncio deve seguir este padrão. Isso ajuda os candidatos e reduz perguntas indesejadas no seu WhatsApp.
-                </p>
                 
                 <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs text-slate-600 space-y-3 mb-8">
                   <div className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0" /><div><strong>Título:</strong> Nome claro da vaga.</div></div>
@@ -708,12 +704,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <div className="w-16 h-16 bg-[#25D366]/10 rounded-2xl flex items-center justify-center mb-6 text-[#25D366] shadow-sm mx-auto">
                   <WhatsAppIcon size={32} />
                 </div>
-                <h4 className="text-xl font-bold text-blue-950 text-center mb-2">
+                <h4 className="text-2xl font-bold text-blue-950 text-center mb-8">
                   Escolha o grupo
                 </h4>
-                <p className="text-slate-500 text-sm text-center mb-8">
-                  Onde você deseja anunciar sua oportunidade?
-                </p>
                 
                 <div className="space-y-3">
                   <a
@@ -724,10 +717,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                        setIsEmpGroupGuideOpen(false);
                        setTimeout(() => setEmpGroupGuideStep(1), 300);
                     }}
-                    className="w-full p-4 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
+                    className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
                   >
-                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors mb-1">Anunciar vaga CLT</span>
-                    <span className="text-xs text-slate-400">Grupo exclusivo para agências e empresas</span>
+                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors">Anunciar vaga clt</span>
                   </a>
 
                   <a
@@ -738,10 +730,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                        setIsEmpGroupGuideOpen(false);
                        setTimeout(() => setEmpGroupGuideStep(1), 300);
                     }}
-                    className="w-full p-4 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
+                    className="w-full p-6 bg-white border-2 border-slate-100 rounded-xl hover:border-[#25D366] transition-all flex flex-col items-center group cursor-pointer text-center"
                   >
-                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors mb-1">Anunciar Freelance ou Bico</span>
-                    <span className="text-xs text-slate-400">Anunciar vagas flexíveis e pontuais</span>
+                    <span className="font-bold text-blue-950 group-hover:text-[#25D366] transition-colors">Anunciar freelance ou bico</span>
                   </a>
                 </div>
               </div>
@@ -750,11 +741,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         </div>
       )}
 
-      {/* Group Selection Modal (Simplified & Fast) */}
       {isGroupModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-blue-950/40" onClick={() => setIsGroupModalOpen(false)} />
-          <div className="relative bg-white w-full max-w-lg rounded-[2rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[90vh]">
+          <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans max-h-[90vh]">
             <button
               onClick={() => setIsGroupModalOpen(false)}
               className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors z-10"
@@ -762,74 +752,135 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
               <X size={24} />
             </button>
 
-            <div className="text-center mb-6 pt-2 shrink-0">
-              <h4 className="text-xl text-blue-950 tracking-tight">Escolha a Categoria</h4>
-            </div>
-
-            {/* Categories */}
-            <div className="grid grid-cols-2 gap-3 mb-6 px-1 shrink-0">
-              <button
-                onClick={() => { setSelectedGroupVinculo('CLT'); }}
-                className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border ${selectedGroupVinculo === 'CLT' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
-              >
-                <Briefcase size={20} />
-                <p className="text-[10px] tracking-wide text-center leading-tight">Vagas CLT,<br/>Estágio, Pj</p>
-              </button>
-              <button
-                onClick={() => { setSelectedGroupVinculo('FREELANCE'); }}
-                className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border ${selectedGroupVinculo === 'FREELANCE' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
-              >
-                <Zap size={20} />
-                <p className="text-[10px] tracking-wide text-center leading-tight">Freelancer</p>
-              </button>
-            </div>
-
-            {/* Search */}
-            <div className="relative mb-4 px-1 shrink-0">
-              <Search size={16} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
-              <input
-                type="text"
-                value={groupSearch}
-                onChange={e => setGroupSearch(e.target.value)}
-                placeholder="Pesquisar cidade..."
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 ring-green-500 transition-all text-slate-800"
-              />
-            </div>
-
-            {/* List */}
-            <div className="flex-1 overflow-y-auto space-y-2 px-1 pb-2">
-              {groupsLoading && filteredGroups.length === 0 ? (
-                <div className="text-center py-10 text-slate-400 text-[10px] tracking-widest">Carregando...</div>
-              ) : filteredGroups.length === 0 ? (
-                <div className="text-center py-10 text-slate-400 text-xs italic">Nenhum grupo encontrado.</div>
-              ) : (
-                <div className={`space-y-2 transition-opacity ${groupsLoading ? 'opacity-50' : 'opacity-100'}`}>
-                  {filteredGroups.map(g => (
-                    <div key={g.id} className="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-transparent hover:border-slate-200 transition-colors">
-                      <div className="min-w-0 pr-2">
-                        <p className="text-blue-950 text-xs truncate tracking-tight">{g.nome_grupo}</p>
-                        <p className="text-[9px] text-slate-400 leading-none mt-0.5">{g.cidade || 'Geral'}</p>
-                      </div>
-                      <button
-                        onClick={() => {
-                          if (landingMode === 'CAND') {
-                            navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
-                            return;
-                          }
-                          setSelectedGroup(g);
-                          setIsGroupModalOpen(false);
-                          setLeadStep(1);
-                          setIsLeadModalOpen(true);
-                        }}
-                        className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-[9px] rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95"
-                      >
-                        Entrar
-                      </button>
-                    </div>
-                  ))}
+            {groupSelectionStep === 'choice' ? (
+              <div className="flex flex-col animate-fadeIn">
+                <div className="text-center mb-8 pt-4">
+                  <h4 className="text-2xl font-black text-blue-950 tracking-tight">O que você deseja?</h4>
                 </div>
-              )}
-            </div>
+
+                <div className="grid grid-cols-1 gap-4 mb-4">
+                  <button
+                    onClick={() => {
+                      setIsGroupModalOpen(false);
+                      setEmpGroupGuideStep(1);
+                      setIsEmpGroupGuideOpen(true);
+                      setGroupSelectionStep('choice');
+                    }}
+                    className="group p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 hover:border-blue-600 hover:bg-blue-50 transition-all text-left flex items-center gap-6"
+                  >
+                    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
+                      <Megaphone size={30} />
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="text-lg font-bold text-blue-950">Anunciar vagas de emprego</h5>
+                    </div>
+                    <ChevronRight size={20} className="text-slate-300 group-hover:text-blue-600 transition-colors" />
+                  </button>
+
+                  <button
+                    onClick={() => setGroupSelectionStep('view')}
+                    className="group p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 hover:border-green-600 hover:bg-green-50 transition-all text-left flex items-center gap-6"
+                  >
+                    <div className="w-16 h-16 bg-[#25D366] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-600/20 group-hover:scale-110 transition-transform">
+                      <Search size={30} />
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="text-lg font-bold text-blue-950">Ver vagas de emprego</h5>
+                    </div>
+                    <ChevronRight size={20} className="text-slate-300 group-hover:text-green-600 transition-colors" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col animate-fadeIn h-full">
+                <button
+                  onClick={() => setGroupSelectionStep('choice')}
+                  className="inline-flex items-center gap-1 text-[10px] text-slate-400 mb-6 hover:text-blue-950 transition-colors w-fit"
+                >
+                  <ChevronLeft size={14} /> Voltar para o início
+                </button>
+
+                <div className="flex items-center justify-between mb-8 px-1">
+                  <h4 className="text-2xl font-bold text-blue-950 tracking-tight">Escolha a categoria</h4>
+                  <button 
+                    onClick={() => {
+                      setIsGroupModalOpen(false);
+                      setEmpGroupGuideStep(1);
+                      setIsEmpGroupGuideOpen(true);
+                      setGroupSelectionStep('choice');
+                    }}
+                    className="text-[10px] font-bold text-blue-600 hover:text-blue-700 underline"
+                  >
+                    Quero anunciar vagas
+                  </button>
+                </div>
+
+                {/* Categories */}
+                <div className="grid grid-cols-2 gap-3 mb-6 px-1 shrink-0">
+                  <button
+                    onClick={() => { setSelectedGroupVinculo('CLT'); }}
+                    className={`p-4 rounded-2xl flex flex-col items-center gap-2 transition-all border ${selectedGroupVinculo === 'CLT' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
+                  >
+                    <Briefcase size={20} />
+                    <p className="text-[10px] tracking-wide text-center leading-tight">Vagas clt,<br/>estágio, pj</p>
+                  </button>
+                  <button
+                    onClick={() => { setSelectedGroupVinculo('FREELANCE'); }}
+                    className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border ${selectedGroupVinculo === 'FREELANCE' ? 'border-green-500 bg-green-50 text-green-600' : 'border-slate-100 bg-slate-50 text-slate-400'}`}
+                  >
+                    <Zap size={20} />
+                    <p className="text-[10px] tracking-wide text-center leading-tight">Freelancer</p>
+                  </button>
+                </div>
+
+                {/* Search */}
+                <div className="relative mb-4 px-1 shrink-0">
+                  <Search size={16} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" />
+                  <input
+                    type="text"
+                    value={groupSearch}
+                    onChange={e => setGroupSearch(e.target.value)}
+                    placeholder="Pesquisar cidade..."
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none focus:ring-2 ring-green-500 transition-all text-slate-800"
+                  />
+                </div>
+
+                {/* List */}
+                <div className="flex-1 overflow-y-auto space-y-2 px-1 pb-2">
+                  {groupsLoading && filteredGroups.length === 0 ? (
+                    <div className="text-center py-10 text-slate-400 text-[10px] tracking-widest">Carregando...</div>
+                  ) : filteredGroups.length === 0 ? (
+                    <div className="text-center py-10 text-slate-400 text-xs italic">Nenhum grupo encontrado.</div>
+                  ) : (
+                    <div className={`space-y-2 transition-opacity ${groupsLoading ? 'opacity-50' : 'opacity-100'}`}>
+                      {filteredGroups.map(g => (
+                        <div key={g.id} className="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-transparent hover:border-slate-200 transition-colors">
+                          <div className="min-w-0 pr-2">
+                            <p className="text-blue-950 text-xs truncate tracking-tight">{g.nome_grupo}</p>
+                            <p className="text-[9px] text-slate-400 leading-none mt-0.5">{g.cidade || 'Geral'}</p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (landingMode === 'CAND') {
+                                navigate(`/cursos/marketing?redirect=${encodeURIComponent(g.link_convite || '')}`);
+                                return;
+                              }
+                              setSelectedGroup(g);
+                              setIsGroupModalOpen(false);
+                              setLeadStep(1);
+                              setIsLeadModalOpen(true);
+                            }}
+                            className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-[9px] rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95"
+                          >
+                            Entrar
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -849,7 +900,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
             {leadStep === 1 ? (
               <div className="flex flex-col">
                 <div className="text-center mb-6 pt-2">
-                  <h4 className="text-xl font-bold text-blue-950 tracking-tight">Dados de Acesso</h4>
+                  <h4 className="text-2xl font-bold text-blue-950 tracking-tight">Dados de acesso</h4>
                 </div>
 
                 <form
