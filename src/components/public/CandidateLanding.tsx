@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Search, Loader2, ArrowRight, Clock } from 'lucide-react';
+import { Search, Loader2, ArrowRight, Clock, Info } from 'lucide-react';
 import JobDetailModal from './modals/JobDetailModal';
 import ApplicationModal from './modals/ApplicationModal';
 import { Job } from '../../types';
 import InactiveJobModal from './modals/InactiveJobModal';
 import ReportModal from './modals/ReportModal';
 
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import FeaturedCarousel from './FeaturedCarousel';
 
 export const CandidateLanding = () => {
-    const [jobCode, setJobCode] = useState('');
+    const { code } = useParams();
+    const navigate = useNavigate();
+    const [jobCode, setJobCode] = useState(code || '');
+    const [isExpired, setIsExpired] = useState(false);
     const [loading, setLoading] = useState(false);
     const [loadingRecent, setLoadingRecent] = useState(true);
     const [recentJobs, setRecentJobs] = useState<Job[]>([]);
@@ -97,14 +100,23 @@ export const CandidateLanding = () => {
         };
     }, []);
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const cleanJobCode = jobCode.replace(/\s+/g, '').toUpperCase();
+    // Auto-search if code in URL
+    React.useEffect(() => {
+        if (code) {
+            setJobCode(code.toUpperCase());
+            handleSearch(null, code.toUpperCase());
+        }
+    }, [code]);
+
+    const handleSearch = async (e: React.FormEvent | null, overrideCode?: string) => {
+        if (e) e.preventDefault();
+        const cleanJobCode = (overrideCode || jobCode).replace(/\s+/g, '').toUpperCase();
         if (!cleanJobCode) return;
 
         setLoading(true);
         setSearchError('');
         setFoundJob(null);
+        setIsExpired(false);
         setIsInactiveJobModalOpen(false);
 
         try {
@@ -122,6 +134,18 @@ export const CandidateLanding = () => {
             }
 
             const data = rpcData as any;
+
+            // 48h Expiration Logic
+            const thresholdDate = new Date();
+            thresholdDate.setDate(thresholdDate.getDate() - 2);
+            thresholdDate.setHours(0, 0, 0, 0);
+            
+            const jobDate = new Date(data.created_at);
+            
+            if (jobDate < thresholdDate) {
+                setIsExpired(true);
+                return;
+            }
 
             if (data.status !== 'active') {
                 setIsInactiveJobModalOpen(true);
@@ -308,6 +332,23 @@ export const CandidateLanding = () => {
                     {searchError && (
                         <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-xl inline-block font-medium animate-fadeIn">
                             {searchError}
+                        </div>
+                    )}
+
+                    {isExpired && (
+                        <div className="mt-6 p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-[2rem] inline-flex flex-col items-center animate-fadeIn max-w-sm">
+                            <div className="w-12 h-12 bg-yellow-400 text-blue-950 rounded-2xl flex items-center justify-center mb-4 shadow-lg rotate-3">
+                                <Info size={24} />
+                            </div>
+                            <p className="text-blue-950 font-bold text-lg mb-4">
+                                Olá, esta vaga já expirou do nosso sistema.
+                            </p>
+                            <button
+                                onClick={() => navigate('/vagas')}
+                                className="px-8 py-3 bg-blue-950 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-900 transition-all shadow-lg active:scale-95"
+                            >
+                                Ver mais vagas
+                            </button>
                         </div>
                     )}
                 </div>

@@ -53,7 +53,7 @@ const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number, className?
 const MOCK_GRUPOS: Grupo[] = [
   { id: 'm1', nome_grupo: 'Vagas CLT, Estágio, PJ - Itu', descricao_grupo: 'Vagas fixas e estágios na região de Itu', vinculo: 'CLT', categoria: 'Geral', cidade: 'Itu', total_participantes: 245, link_convite: 'https://chat.whatsapp.com/H4rn9lidzcuGaTcnptSpQ7' },
   { id: 'm2', nome_grupo: 'Vagas CLT, Estágio, PJ - Votorantim', descricao_grupo: 'Vagas fixas e estágios em Votorantim', vinculo: 'CLT', categoria: 'Geral', cidade: 'Votorantim', total_participantes: 180, link_convite: 'https://chat.whatsapp.com/GiZa4i3hPeOBvWuQfsdHoN' },
-  { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/HlQ1hLjAAbR35e5OFrNCvM' },
+  { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/B7GoXsfaWGLJQaqxmYDfON?mode=gi_t' },
   { id: 'm4', nome_grupo: 'Vagas CLT, Estágio, PJ - Araçoiaba', descricao_grupo: 'Vagas fixas e estágios em Araçoiaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Araçoiaba da Serra', total_participantes: 120, link_convite: 'https://chat.whatsapp.com/CZvybKFy9cI0PkqkkdcCLX' },
   { id: 'm5', nome_grupo: 'Vagas Freelancer - Geral', descricao_grupo: 'Trabalhos rápidos, bicos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Região', total_participantes: 200, link_convite: 'https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH' },
 ];

@@ -1,51 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Briefcase, Rocket, Target, Users, CheckCircle2, Phone, Loader2, Send, Mail, User, X } from "lucide-react";
+import { ArrowRight, Briefcase, Rocket, Target, Users, CheckCircle2, Phone, X } from "lucide-react";
 import { OfficialWhatsAppIcon } from "../../components/ui/OfficialWhatsAppIcon";
-import { InputMask } from "@react-input/mask";
-import { supabase } from "../../lib/supabase";
 
 const steps = [
   {
     id: 1,
-    title: "A realidade do mercado",
-    text: "Sabemos da luta que é conquistar um emprego e entendemos os sonhos de cada um que passa por aqui.",
+    title: "a realidade do mercado",
+    text: "sabemos da luta que é conquistar um emprego e entendemos os sonhos de cada um que passa por aqui.",
     image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=1000",
     icon: <Briefcase className="w-6 h-6 text-orange-500" />,
   },
   {
     id: 2,
-    title: "Além das vagas",
-    text: "Não nos limitamos a apenas mostrar vagas. Estamos empenhados em fazer você crescer e conquistar sua independência!",
+    title: "além das vagas",
+    text: "não nos limitamos a apenas mostrar vagas. estamos empenhados em fazer você crescer e conquistar sua independência!",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000",
     icon: <Target className="w-6 h-6 text-orange-500" />,
   },
   {
     id: 3,
-    title: "O próximo passo",
-    text: "Temos um curso onde ensinamos você a dar os primeiros passos como empreendedor, não importa o seu nicho.",
+    title: "o próximo passo",
+    text: "temos um curso onde ensinamos você a dar os primeiros passos como empreendedor, não importa o seu nicho.",
     image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000",
     icon: <Rocket className="w-6 h-6 text-orange-500" />,
   },
   {
     id: 4,
-    title: "Seu sonho, sua regra",
-    text: "Seja vendendo bolo de pote, roupas, abrindo uma hamburgueria ou uma mecânica: nós te ajudamos a se posicionar no mercado.",
+    title: "seu sonho, sua regra",
+    text: "seja vendendo bolo de pote, roupas, abrindo uma hamburgueria ou uma mecânica: nós te ajudamos a se posicionar no mercado.",
     image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1000",
     icon: <CheckCircle2 className="w-6 h-6 text-orange-500" />,
   },
   {
     id: 5,
-    title: "Domine a venda",
-    text: "Independentemente do seu sonho, ensinamos você a vender seja um produto ou um serviço.",
+    title: "domine a venda",
+    text: "independentemente do seu sonho, ensinamos você a vender seja um produto ou um serviço.",
     image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&q=80&w=1000",
     icon: <Users className="w-6 h-6 text-orange-500" />,
   },
   {
     id: 6,
-    title: "A decisão é sua",
-    text: "Escolha entre alimentar o sonho do seu patrão ou dar o primeiro passo para ser dono do seu próprio negócio.",
+    title: "a decisão é sua",
+    text: "escolha entre alimentar o sonho do seu patrão ou dar o primeiro passo para ser dono do seu próprio negócio.",
     image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1000",
     icon: <Target className="w-6 h-6 text-orange-500" />,
   },
@@ -62,12 +60,6 @@ export const MarketingCourse: React.FC = () => {
   const [countdown, setCountdown] = useState(5);
   const [isCourseClicked, setIsCourseClicked] = useState(false);
   const [isGroupClicked, setIsGroupClicked] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [showCaptureModal, setShowCaptureModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorHeader, setErrorHeader] = useState("");
-  const [email, setEmail] = useState("");
-  const [isCaptureSuccess, setIsCaptureSuccess] = useState(false);
 
   // Guard: only allow access when coming from a group click (with valid redirect)
   useEffect(() => {
@@ -93,53 +85,7 @@ export const MarketingCourse: React.FC = () => {
     }
   };
 
-  const handleCaptureSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorHeader("");
-    
-    if (!phone || phone.length < 14) {
-      setErrorHeader("Telefone inválido");
-      return;
-    }
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrorHeader("E-mail inválido");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const cleanPhone = phone.replace(/\D/g, '');
-      const ddd = cleanPhone.substring(0, 2);
-      const number = cleanPhone.substring(2);
-      const formattedPhone = `55${ddd}${number}`;
-
-      const { error } = await supabase
-        .rpc('insert_lead', {
-          p_name: name,
-          p_whatsapp: formattedPhone,
-          p_email: email.toLowerCase(),
-          p_type: 'marketing_course',
-          p_metadata: { source: 'marketing_course' }
-        });
-
-      if (error) {
-        console.error(error);
-        setErrorHeader('erro ao processar, tente novamente');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Success view
-      setIsCaptureSuccess(true);
-      setIsCourseClicked(true);
-    } catch (err) {
-      console.error(err);
-      setErrorHeader("erro ao processar, tente novamente");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -157,8 +103,8 @@ export const MarketingCourse: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl"
         >
-          <h2 className="text-3xl text-gray-900 dark:text-slate-100 mb-6 text-center tracking-tight">Boas-vindas!</h2>
-          <p className="text-gray-600 dark:text-slate-400 mb-8 text-center font-light">Para começarmos essa jornada, como podemos te chamar?</p>
+          <h2 className="text-3xl text-gray-900 dark:text-slate-100 mb-6 text-center tracking-tight">boas-vindas!</h2>
+          <p className="text-gray-600 dark:text-slate-400 mb-8 text-center font-light">para começarmos essa jornada, como podemos te chamar?</p>
           <form onSubmit={handleNameSubmit} className="space-y-4">
             <input
               autoFocus
@@ -177,7 +123,7 @@ export const MarketingCourse: React.FC = () => {
               disabled={!name.trim()}
               className="w-full bg-orange-500 hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 text-white py-4 rounded-2xl text-lg transition-all shadow-lg shadow-orange-100 dark:shadow-none"
             >
-              Começar agora
+              começar agora
             </button>
           </form>
         </motion.div>
@@ -231,7 +177,7 @@ export const MarketingCourse: React.FC = () => {
                 <div className="space-y-4">
                   {currentStep === 0 && (
                     <h1 className="text-2xl md:text-3xl font-light text-gray-500 dark:text-slate-400 italic">
-                      Oi <span className="text-orange-500 not-italic">{name}</span>, tudo bem?
+                      oi <span className="text-orange-500 not-italic">{name}</span>, tudo bem?
                     </h1>
                   )}
                   <h2 className="text-3xl md:text-4xl leading-tight tracking-tight">
@@ -246,7 +192,7 @@ export const MarketingCourse: React.FC = () => {
                   onClick={nextStep}
                   className="group w-full md:w-auto flex items-center justify-center gap-3 bg-orange-500 hover:bg-blue-600 active:bg-blue-700 text-white px-8 py-5 rounded-2xl text-lg transition-all duration-300 shadow-xl shadow-orange-100 dark:shadow-none"
                 >
-                  Continuar lendo
+                  continuar lendo
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
@@ -261,24 +207,24 @@ export const MarketingCourse: React.FC = () => {
                     <CheckCircle2 className="w-12 h-12 text-green-500" />
                   </div>
                   <h2 className="text-4xl leading-tight">
-                    A decisão final é sua.
+                    a decisão final é sua.
                   </h2>
                   <p className="text-xl text-gray-600 dark:text-slate-300 max-w-md mx-auto font-light">
-                    Você está a um passo de transformar sua realidade. Qual caminho você escolhe hoje?
+                    você está a um passo de transformar sua realidade. qual caminho você escolhe hoje?
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <button 
                     disabled={isCourseClicked}
-                    onClick={() => {
-                      setShowCaptureModal(true);
-                    }}
-                    className="w-full bg-orange-500 hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 text-white py-6 rounded-2xl text-xl transition-all shadow-xl shadow-orange-100 dark:shadow-none flex items-center justify-center gap-3"
-                  >
-                    <Rocket className="w-6 h-6" />
-                    Quero ser patrão
-                  </button>
+                  onClick={() => {
+                    window.open('https://curso.soroempregos.com.br/', '_blank');
+                  }}
+                  className="w-full bg-orange-500 hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50 text-white py-6 rounded-2xl text-xl transition-all shadow-xl shadow-orange-100 dark:shadow-none flex items-center justify-center gap-3"
+                >
+                  <Rocket className="w-6 h-6" />
+                  quero ser patrão
+                </button>
 
                   <button 
                     disabled={countdown > 0 || isGroupClicked}
@@ -294,20 +240,20 @@ export const MarketingCourse: React.FC = () => {
                       : "bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-green-100"
                     }`}
                   >
-                    <OfficialWhatsAppIcon className="w-6 h-6" />
-                    {countdown > 0 ? `Carregando link do grupo (${countdown}s)` : "Acessar grupo"}
+                    <OfficialWhatsAppIcon size={24} />
+                    {countdown > 0 ? `carregando link do grupo (${countdown}s)` : "acessar grupo"}
                   </button>
                 </div>
 
                 <div className="space-y-4">
                   <p className="text-sm text-gray-400 tracking-widest">
-                    Seja dono do seu próprio negócio
+                    seja dono do seu próprio negócio
                   </p>
                   <Link 
                     to="/" 
                     className="inline-block text-xs text-gray-400 dark:text-slate-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors tracking-widest underline-offset-4 hover:underline"
                   >
-                    Voltar a SoroEmpregos
+                    voltar a SoroEmpregos
                   </Link>
                 </div>
               </motion.div>
@@ -316,117 +262,7 @@ export const MarketingCourse: React.FC = () => {
         </motion.div>
       </main>
 
-      {/* Capture Modal */}
-      <AnimatePresence>
-        {showCaptureModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
-            >
-              <button 
-                onClick={() => { setShowCaptureModal(false); navigateTo('/'); }}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200"
-              >
-                <X className="w-6 h-6" />
-              </button>
 
-              <h2 className="text-3xl text-gray-900 dark:text-slate-100 mb-2 text-center tracking-tight">
-                {isCaptureSuccess ? "Sucesso!" : "Mais um passo..."}
-              </h2>
-              {!isCaptureSuccess && <div className="mb-4" />}
-              
-              {errorHeader && (
-                <div className="mb-4 p-3 bg-red-50 text-red-500 rounded-xl text-center text-sm font-medium">
-                  {errorHeader}
-                </div>
-              )}
-
-              {isCaptureSuccess ? (
-                <div className="space-y-6">
-                  <p className="text-center text-gray-600 dark:text-slate-300 leading-relaxed">
-                    Em breve você receberá mais informações sobre o curso.
-                  </p>
-                    <button
-                      onClick={() => window.open(redirectUrl, "_blank")}
-                      className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-5 rounded-2xl text-lg transition-all shadow-xl shadow-green-100 dark:shadow-none flex items-center justify-center gap-3"
-                    >
-                      <OfficialWhatsAppIcon className="w-6 h-6" />
-                      Entrar no grupo
-                    </button>
-                </div>
-              ) : (
-                <form onSubmit={handleCaptureSubmit} className="space-y-4">
-                  <div className="space-y-1.5">
-                    <div className="relative">
-                      <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        value={name}
-                        autoFocus
-                        onChange={(e) => {
-                          const raw = e.target.value;
-                          const formatted = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
-                          setName(formatted);
-                        }}
-                        className="w-full pl-14 pr-6 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-orange-500 focus:outline-none text-lg transition-all dark:text-slate-100 placeholder:text-gray-400"
-                        placeholder="Nome completo"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="relative">
-                      <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <InputMask
-                        mask="(__) _ ____-____"
-                        replacement={{ _: /\d/ }}
-                        placeholder="(15) 9 1234-1234"
-                        type="tel"
-                        inputMode="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-14 pr-6 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-orange-500 focus:outline-none text-lg transition-all dark:text-slate-100 placeholder:text-gray-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="relative">
-                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-14 pr-6 py-4 rounded-2xl border-2 border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-950 focus:border-orange-500 focus:outline-none text-lg transition-all dark:text-slate-100 placeholder:text-gray-400"
-                        placeholder="Seu melhor e-mail"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || phone.length < 14}
-                    className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 disabled:opacity-50 text-white py-5 rounded-2xl text-lg transition-all shadow-xl shadow-orange-100 dark:shadow-none flex items-center justify-center gap-3"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                    ) : (
-                      <>
-                        Acessar curso agora
-                        <Send className="w-5 h-5" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Progress Bar */}
       {!showModal && !isFinished && (

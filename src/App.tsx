@@ -31,6 +31,7 @@ const AppContent: React.FC = () => {
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/vagas" element={<PublicJobs />} />
+              <Route path="/vagas/:code" element={<LandingPage />} />
               <Route path="/grupos" element={<PublicGroups />} />
               <Route path="/cursos/marketing" element={<MarketingCourse />} />
               <Route path="/p/:username" element={<PublicPage />} />

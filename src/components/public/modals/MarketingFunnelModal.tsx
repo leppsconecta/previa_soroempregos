@@ -4,23 +4,16 @@ import {
   Briefcase, 
   TrendingUp, 
   Rocket,
-  MessageCircle,
   MapPin,
-  Phone,
   Copy,
   Check,
   X,
   Send,
   ChevronDown,
   ChevronUp,
-  Mail,
-  User,
-  Loader2,
-  CheckCircle2
+  Mail
 } from 'lucide-react';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
-import { InputMask } from "@react-input/mask";
-import { supabase } from '../../../lib/supabase';
 
 interface MarketingFunnelModalProps {
   isOpen: boolean;
@@ -40,7 +33,7 @@ interface MarketingFunnelModalProps {
   advertiserName?: string;
 }
 
-type ModalStep = 'intro' | 'exclusive' | 'final' | 'capture' | 'success';
+type ModalStep = 'intro' | 'exclusive' | 'final';
 
 export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({ 
   isOpen, 
@@ -63,67 +56,13 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Form states
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorHeader, setErrorHeader] = useState("");
+
 
   if (!isOpen) return null;
 
   const handleMudarDeVida = () => {
-    setStep('capture');
-  };
-
-  const handleCaptureSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorHeader("");
-    
-    if (!phone || phone.length < 14) {
-      setErrorHeader("Telefone inválido");
-      return;
-    }
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrorHeader("E-mail inválido");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const cleanPhone = phone.replace(/\D/g, '');
-      const ddd = cleanPhone.substring(0, 2);
-      const number = cleanPhone.substring(2);
-      const formattedPhone = `55${ddd}${number}`;
-
-      const { error } = await supabase
-        .rpc('insert_lead', {
-          p_name: name,
-          p_whatsapp: formattedPhone,
-          p_email: email.toLowerCase(),
-          p_type: 'marketing_course',
-          p_metadata: { 
-            source: 'marketing_funnel_modal',
-            job_title: jobTitle,
-            job_code: jobCode
-          }
-        });
-
-      if (error) {
-        console.error(error);
-        setErrorHeader('erro ao processar, tente novamente');
-        setIsSubmitting(false);
-        return;
-      }
-
-      setStep('success');
-    } catch (err) {
-      console.error(err);
-      setErrorHeader("erro ao processar, tente novamente");
-    } finally {
-      setIsSubmitting(false);
-    }
+    window.open('https://curso.soroempregos.com.br/', '_blank');
+    onClose();
   };
 
   const checkVisible = (val?: string) => {
@@ -213,12 +152,12 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <h2 className="text-3xl font-black text-white mb-3 leading-none tracking-tighter uppercase">
-                  Seja dono do seu <br/>
+                <h2 className="text-3xl font-black text-white mb-3 leading-none tracking-tighter">
+                  seja dono do seu <br/>
                   <span className="text-orange-500">próprio negócio</span>
                 </h2>
                 <p className="text-white/90 text-lg font-bold italic tracking-tight">
-                  "Alimente seu sonho, e não do seu patrão"
+                  "alimente seu sonho, e não do seu patrão"
                 </p>
               </motion.div>
 
@@ -229,7 +168,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   onClick={() => setStep('exclusive')}
                   className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
                 >
-                  Enviar currículo
+                  enviar currículo
                   <Send size={16} />
                 </motion.button>
               </div>
@@ -262,11 +201,11 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 transition={{ delay: 0.2 }}
                 className="space-y-4"
               >
-                <h2 className="text-2xl font-black text-white leading-[1.1] tracking-tighter uppercase">
-                  Nós desenvolvemos um <span className="text-orange-500">curso pra você!</span>
+                <h2 className="text-2xl font-black text-white leading-[1.1] tracking-tighter">
+                  nós desenvolvemos um <span className="text-orange-500">curso pra você!</span>
                 </h2>
                 <p className="text-white/80 text-sm font-medium leading-relaxed">
-                  Nosso curso é exclusivo, acessível, e sem dúvidas você vai sair da condição de funcionário para ser dono do seu próprio negócio.
+                  nosso curso é exclusivo, acessível, e sem dúvidas você vai sair da condição de funcionário para ser dono do seu próprio negócio.
                 </p>
               </motion.div>
 
@@ -277,7 +216,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   onClick={() => setStep('final')}
                   className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-orange-950/20 flex items-center justify-center gap-2"
                 >
-                  Enviar currículo
+                  enviar currículo
                   <Send size={16} />
                 </motion.button>
 
@@ -307,7 +246,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-100">
                   <Briefcase className="text-white" size={18} />
                 </div>
-                <h2 className="text-lg font-bold text-zinc-900 tracking-tight">Instruções da Vaga</h2>
+                <h2 className="text-lg font-bold text-zinc-900 tracking-tight">instruções da vaga</h2>
               </div>
               <button 
                 onClick={onClose}
@@ -367,12 +306,12 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 {(hasPhone && (hasEmail || hasLink || hasEndereco)) && (
                   <button 
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center justify-center gap-2 w-full py-1 text-zinc-400 hover:text-blue-600 transition-colors text-[10px] font-bold uppercase tracking-widest"
+                    className="flex items-center justify-center gap-2 w-full py-1 text-zinc-400 hover:text-blue-600 transition-colors text-[10px] font-bold tracking-widest"
                   >
                     {isExpanded ? (
-                      <>Ocultar outras formas <ChevronUp size={12} /></>
+                      <>ocultar outras formas <ChevronUp size={12} /></>
                     ) : (
-                      <>Mais formas de enviar <ChevronDown size={12} /></>
+                      <>mais formas de enviar <ChevronDown size={12} /></>
                     )}
                   </button>
                 )}
@@ -390,7 +329,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                         <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
                           <div className="flex items-center gap-2 mb-1.5 opacity-50">
                             <Mail size={12} className="text-blue-500" />
-                            <span className="text-[8px] font-black uppercase tracking-widest">E-mail</span>
+                            <span className="text-[8px] font-black tracking-widest">e-mail</span>
                           </div>
                           {checkVisible(ctaObservationsEmail) && (
                             <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEmail}</p>
@@ -410,7 +349,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                         <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
                           <div className="flex items-center gap-2 mb-1.5 opacity-50">
                             <MapPin size={12} className="text-red-500" />
-                            <span className="text-[8px] font-black uppercase tracking-widest">Endereço</span>
+                            <span className="text-[8px] font-black tracking-widest">endereço</span>
                           </div>
                           {checkVisible(ctaObservationsEndereco) && (
                             <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsEndereco}</p>
@@ -430,7 +369,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                         <div className="w-full p-3 bg-zinc-50/50 border border-zinc-100 rounded-xl text-left">
                           <div className="flex items-center gap-2 mb-1.5 opacity-50">
                             <Rocket size={12} className="text-purple-500" />
-                            <span className="text-[8px] font-black uppercase tracking-widest">Link Externo</span>
+                            <span className="text-[8px] font-black tracking-widest">link externo</span>
                           </div>
                           {checkVisible(ctaObservationsLink) && (
                             <p className="text-zinc-500 text-[10px] mb-1 italic">{ctaObservationsLink}</p>
@@ -439,7 +378,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                             onClick={() => window.open(ctaLink, '_blank')}
                             className="w-full py-2 bg-blue-600 text-white font-bold rounded-lg text-[10px] hover:bg-blue-700 transition-colors shadow-sm"
                           >
-                            Abrir Link de Candidatura
+                            abrir link de candidatura
                           </button>
                         </div>
                       )}
@@ -461,7 +400,7 @@ Função: *${jobTitle}*
 Código: *${jobCode || 'N/A'}*
 --------------------------
 
-Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                         
                         const encodedMsg = encodeURIComponent(msg);
                         const phone = normalizeWhatsAppNumber(ctaContato || '');
@@ -470,7 +409,7 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                     className="w-full h-14 bg-green-500 hover:bg-green-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-green-100 text-sm"
                   >
                     <OfficialWhatsAppIcon size={18} />
-                    <span className="leading-tight">Enviar Currículo via WhatsApp</span>
+                    <span className="leading-tight">enviar currículo via whatsapp</span>
                   </motion.button>
                 )}
 
@@ -503,176 +442,21 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                     className="relative w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-orange-500/40 text-sm z-10"
                   >
                     <TrendingUp size={18} />
-                    <span className="leading-tight">Quero mudar de vida agora</span>
+                    <span className="leading-tight">quero mudar de vida agora</span>
                   </motion.button>
                 </div>
               </div>
 
               {advertiserName && (
                 <p className="mt-8 text-zinc-400 text-[8px] font-black uppercase tracking-widest select-none pointer-events-none opacity-40">
-                  Vaga anunciada por {cleanAdvertiserName}
+                  vaga anunciada por {cleanAdvertiserName}
                 </p>
               )}
             </div>
           </motion.div>
         )}
 
-        {step === 'capture' && (
-          <motion.div
-            key="capture"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 min-h-[520px] flex flex-col z-10"
-          >
-            {/* Background Blur Effects */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-              <div className="absolute -top-32 -right-32 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl" />
-              <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
-            </div>
 
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center relative z-10">
-              <div className="w-full aspect-video rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
-                <img 
-                  src="/pessoa_com_dinheiro.png" 
-                  alt="Pessoa feliz comemorando com real brasileiro"
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              <div className="space-y-1 mb-6">
-                <h2 className="text-2xl font-black text-white leading-none tracking-tighter uppercase px-2">
-                  Você fez a melhor <span className="text-orange-500">escolha da sua vida!</span>
-                </h2>
-                <p className="text-orange-400 text-xs font-bold leading-tight">
-                  Acredite em você, seja um empresário de sucesso!
-                </p>
-              </div>
-              
-              {errorHeader && (
-                <div className="mb-4 p-2 bg-red-500/20 text-red-200 border border-red-500/30 rounded-xl text-center text-[10px] font-medium w-full">
-                  {errorHeader}
-                </div>
-              )}
-
-              <form onSubmit={handleCaptureSubmit} className="space-y-3 w-full">
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                  <input
-                    type="text"
-                    value={name}
-                    required
-                    onChange={(e) => {
-                      const raw = e.target.value;
-                      const formatted = raw.length > 0 ? raw.charAt(0).toUpperCase() + raw.slice(1) : "";
-                      setName(formatted);
-                    }}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
-                    placeholder="Seu nome completo"
-                  />
-                </div>
-
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                  <InputMask
-                    mask="(__) _ ____-____"
-                    replacement={{ _: /\d/ }}
-                    placeholder="Seu WhatsApp"
-                    type="tel"
-                    inputMode="tel"
-                    value={phone}
-                    required
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
-                  />
-                </div>
-
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                  <input
-                    type="email"
-                    value={email}
-                    required
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-orange-500 transition-all placeholder:text-white/20"
-                    placeholder="Seu melhor e-mail"
-                  />
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-black rounded-xl text-sm transition-all shadow-xl shadow-orange-950/40 flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      Acessar curso agora
-                      <Send size={16} />
-                    </>
-                  )}
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 'success' && (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 min-h-[520px] flex flex-col z-10"
-          >
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center relative z-10">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", damping: 12, stiffness: 200, delay: 0.2 }}
-                className="w-24 h-24 bg-orange-500/20 rounded-full flex items-center justify-center mb-8"
-              >
-                <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-orange-500/20">
-                  <CheckCircle2 className="text-white" size={32} />
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="space-y-4"
-              >
-                <h2 className="text-2xl font-black text-white leading-tight uppercase tracking-tight">
-                  Tudo certo!
-                </h2>
-                <div className="space-y-1">
-                  <p className="text-white/90 text-sm font-bold leading-relaxed px-4">
-                    Em breve você receberá as informações completas sobre este curso.
-                  </p>
-                  <p className="text-orange-500 text-xs font-black uppercase tracking-widest">
-                    Não fique ansioso
-                  </p>
-                </div>
-              </motion.div>
-
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                onClick={onClose}
-                className="mt-12 text-white/40 text-[10px] font-black uppercase tracking-[0.2em] hover:text-white transition-colors"
-              >
-                Fechar janela
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
       </AnimatePresence>
     </div>
   );
