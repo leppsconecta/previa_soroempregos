@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Briefcase, 
@@ -11,8 +11,10 @@ import {
   Send,
   ChevronDown,
   ChevronUp,
-  Mail
+  Mail,
+  CheckCircle2
 } from 'lucide-react';
+import { LeadCaptureModal } from './LeadCaptureModal';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
 
 interface MarketingFunnelModalProps {
@@ -56,6 +58,49 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [timeLeft, setTimeLeft] = useState(10);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const courseSectionRef = useRef<HTMLDivElement>(null);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
+
+  // Custom smooth scroll for controlled speed
+  const customSmoothScroll = (target: HTMLElement, duration: number) => {
+    const container = modalScrollRef.current;
+    if (!container) return;
+
+    const start = container.scrollTop;
+    const targetTop = target.offsetTop;
+    const distance = targetTop - start;
+    let startTime: number | null = null;
+
+    const animation = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = easeOutQuint(timeElapsed, start, distance, duration);
+      container.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    };
+
+    // Easing function for a premium feel
+    function easeOutQuint(t: number, b: number, c: number, d: number) {
+      t /= d;
+      t--;
+      return c * (t * t * t * t * t + 1) + b;
+    }
+
+    requestAnimationFrame(animation);
+  };
+
+  // Auto-scroll to course section in final step (for mobile/whatsapp mode)
+  useEffect(() => {
+    if (step === 'final' && isOpen) {
+      const timer = setTimeout(() => {
+        if (courseSectionRef.current) {
+          customSmoothScroll(courseSectionRef.current, 2000); // Slower, 2 seconds duration
+        }
+      }, 1200); // Slightly more delay to let the user see the job info first
+      return () => clearTimeout(timer);
+    }
+  }, [step, isOpen]);
 
   // Timer logic
   React.useEffect(() => {
@@ -88,8 +133,11 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   if (!isOpen) return null;
 
   const handleMudarDeVida = () => {
-    window.open('https://curso.soroempregos.com.br/', '_blank');
-    onClose();
+    setIsLeadModalOpen(true);
+  };
+
+  const handleLeadSuccess = () => {
+    setIsLeadModalOpen(false);
   };
 
   const checkVisible = (val?: string) => {
@@ -269,83 +317,117 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto">
+            <div ref={modalScrollRef} className="grid grid-cols-1 md:grid-cols-2 overflow-y-auto">
               {/* Container 1: Vaga */}
-              <div className="p-8 flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-zinc-100 bg-white">
-                <span className="text-[10px] font-light text-zinc-400 uppercase tracking-[0.2em] mb-2">
-                  Vaga
-                </span>
-                <h3 className="text-2xl font-black text-zinc-900 mb-2 tracking-tight leading-none">
-                  {jobTitle}
-                </h3>
-                <p className="text-xs text-zinc-500 font-medium mb-8">
-                  {jobLocation} • {jobPostedAt}
-                </p>
-
-                <div className="w-full pt-4 border-t border-zinc-50">
-                  <p className="text-[11px] font-semibold text-zinc-400 mb-6 uppercase tracking-wider">
-                    Como enviar seu currículo
-                  </p>
+              <div className="p-6 md:p-10 flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-zinc-100 bg-white">
+                <div className="mb-4 md:mb-8 w-full">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3 md:mb-4">
+                    <Briefcase size={12} />
+                    Informações da vaga
+                  </div>
                   
-                  <div className="w-full space-y-3 mb-4">
+                  <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 leading-[1.1] tracking-tight">
+                    {jobTitle}
+                  </h3>
+                  
+                  <div className="flex items-center justify-center gap-3 text-zinc-500 text-xs font-medium">
+                    <span>{jobLocation}</span>
+                    <span className="w-1 h-1 bg-zinc-300 rounded-full" />
+                    <span>Publicada {jobPostedAt}</span>
+                  </div>
+                </div>
+
+                <div className="w-full space-y-4 md:space-y-6 pt-4 md:pt-8 border-t border-zinc-50">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-zinc-900">Como se candidatar?</h4>
+                    <p className="text-xs text-zinc-400">Escolha um dos canais oficiais do anunciante abaixo:</p>
+                  </div>
+                  
+                  <div className="w-full space-y-3">
                     {hasPhone && (
-                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
-                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                          <OfficialWhatsAppIcon size={16} />
+                      <div className="w-full p-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-left flex items-center gap-4 transition-all hover:border-blue-200">
+                        <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                          <OfficialWhatsAppIcon size={20} />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-zinc-900 font-bold text-lg select-text tracking-tight truncate">
+                          <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">WhatsApp</p>
+                          <p className="text-zinc-900 font-black text-xl select-text tracking-tight truncate leading-none">
                             {ctaContato}
                           </p>
                         </div>
                         <button
                           onClick={() => handleCopy(ctaContato || '')}
-                          className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 transition-all active:scale-90 shrink-0"
+                          className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 transition-all active:scale-90 shrink-0"
                         >
-                          {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                          {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                         </button>
                       </div>
                     )}
 
-                    {hasEmail && (
-                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
-                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                          <Mail className="text-blue-500" size={16} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-zinc-900 font-bold text-xs select-text truncate">
-                            {ctaEmail}
-                          </p>
-                        </div>
-                        <button onClick={() => handleCopy(ctaEmail || '')} className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
-                          <Copy size={12} />
+                    {(hasEmail || hasEndereco || hasLink) && (
+                      <div className="pt-2">
+                        <button 
+                          onClick={() => setIsExpanded(!isExpanded)}
+                          className="flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-600 transition-colors mx-auto"
+                        >
+                          {isExpanded ? 'Ocultar opções extra' : 'Ver mais opções de contato'}
+                          <ChevronDown size={12} className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                         </button>
-                      </div>
-                    )}
 
-                    {hasEndereco && (
-                      <div className="w-full p-3 bg-zinc-50 border border-zinc-100 rounded-xl text-left flex items-center gap-3 shadow-sm">
-                        <div className="p-2 bg-white rounded-lg shadow-sm border border-zinc-100 shrink-0">
-                          <MapPin className="text-red-500" size={16} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-zinc-900 font-bold text-[10px] select-text truncate leading-tight">
-                            {ctaEndereco}
-                          </p>
-                        </div>
-                        <button onClick={() => handleCopy(ctaEndereco || '')} className="p-1.5 hover:bg-zinc-200 rounded text-zinc-400 shrink-0">
-                          <Copy size={12} />
-                        </button>
-                      </div>
-                    )}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div 
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden space-y-3 pt-4"
+                            >
+                              {hasEmail && (
+                                <div className="w-full p-4 bg-zinc-100/50 border border-zinc-200/50 rounded-2xl text-left flex items-center gap-4">
+                                  <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                                    <Mail className="text-blue-500" size={20} />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">E-mail</p>
+                                    <p className="text-zinc-800 font-bold text-sm select-text truncate">
+                                      {ctaEmail}
+                                    </p>
+                                  </div>
+                                  <button onClick={() => handleCopy(ctaEmail || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                    <Copy size={16} />
+                                  </button>
+                                </div>
+                              )}
 
-                    {hasLink && (
-                      <button 
-                        onClick={() => window.open(ctaLink, '_blank')}
-                        className="w-full py-3 bg-zinc-900 text-white font-semibold rounded-xl text-[10px] hover:bg-black transition-colors shadow-lg flex items-center justify-center gap-2"
-                      >
-                        <Rocket size={14} /> Abrir link de candidatura
-                      </button>
+                              {hasEndereco && (
+                                <div className="w-full p-4 bg-zinc-100/50 border border-zinc-200/50 rounded-2xl text-left flex items-center gap-4">
+                                  <div className="p-2.5 bg-white rounded-xl shadow-sm border border-zinc-100 shrink-0">
+                                    <MapPin className="text-red-500" size={20} />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Endereço</p>
+                                    <p className="text-zinc-800 font-bold text-[11px] select-text leading-tight line-clamp-2">
+                                      {ctaEndereco}
+                                    </p>
+                                  </div>
+                                  <button onClick={() => handleCopy(ctaEndereco || '')} className="p-2 hover:bg-zinc-200 rounded-lg text-zinc-400 shrink-0">
+                                    <Copy size={16} />
+                                  </button>
+                                </div>
+                              )}
+
+                              {hasLink && (
+                                <button 
+                                  onClick={() => window.open(ctaLink, '_blank')}
+                                  className="w-full h-14 bg-zinc-900 text-white font-bold rounded-2xl text-sm hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3"
+                                >
+                                  <Rocket size={18} /> Abrir link de candidatura
+                                </button>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     )}
 
                     {hasPhone && (
@@ -365,42 +447,56 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
                             const phone = normalizeWhatsAppNumber(ctaContato || '');
                             window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
                         }}
-                        className="w-full h-12 bg-green-500 hover:bg-green-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-green-100 text-xs"
+                        className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm"
                       >
-                        <OfficialWhatsAppIcon size={16} />
-                        <span>Contatar WhatsApp</span>
+                        <OfficialWhatsAppIcon size={20} />
+                        <span>Enviar currículo agora</span>
                       </motion.button>
                     )}
                   </div>
                 </div>
 
                 {advertiserName && (
-                  <p className="text-zinc-400 text-[8px] font-semibold tracking-widest mt-auto pt-4 border-t border-zinc-50 w-full">
+                  <p className="text-zinc-400 text-[10px] font-semibold tracking-widest mt-auto pt-8">
                     Vaga anunciada por {cleanAdvertiserName}
                   </p>
                 )}
               </div>
 
               {/* Container 2: Mudar de Vida (Purple Theme) */}
-              <div className="p-8 flex flex-col items-center text-center bg-purple-950 text-white">
+              <div 
+                ref={courseSectionRef}
+                className="p-8 flex flex-col items-center text-center bg-purple-950 text-white scroll-mt-4"
+              >
                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0">
                   <TrendingUp className="text-orange-500" size={28} />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-2 tracking-tight leading-tight">
+                <h3 className="text-2xl font-bold text-white mb-6 tracking-tight leading-tight">
                   Você teve 10 segundos para pensar!
                 </h3>
-                <p className="text-white/70 text-sm font-medium mb-8 leading-relaxed">
-                  Mude de vida, nós ensinamos você a abrir seu próprio negócio.
+                
+                <div className="w-full space-y-4 mb-8 text-left">
+                  <div className="flex gap-3 items-start">
+                    <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80 font-medium">Dê o primeiro passo para abrir o seu próprio negócio.</p>
+                  </div>
+                  <div className="flex gap-3 items-start">
+                    <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80 font-medium">Onde você quer estar daqui a um ano? A decisão que você toma hoje determina o seu futuro.</p>
+                  </div>
+                  <div className="flex gap-3 items-start">
+                    <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-white/80 font-medium">Conheça nosso curso de capacitação e transforme o sonho de ser empresário em realidade. A hora de começar é agora.</p>
+                  </div>
+                </div>
+
+                <p className="text-orange-500 text-lg font-bold mb-8 italic">
+                  A escolha é sua!
                 </p>
 
                 <div className="w-full mt-auto">
                   <div className="relative w-full">
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1.4], opacity: [0.3, 0.15, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                      className="absolute inset-0 bg-orange-400/50 rounded-xl"
-                    />
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -422,6 +518,16 @@ Posso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
         )}
 
 
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isLeadModalOpen && (
+          <LeadCaptureModal 
+            isOpen={isLeadModalOpen}
+            onClose={() => setIsLeadModalOpen(false)}
+            onSuccess={handleLeadSuccess}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
