@@ -7,9 +7,10 @@ interface JobContactActionsProps {
     email?: string | null;
     address?: string | null;
     jobTitle?: string;
+    jobCode?: string;
 }
 
-export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, email, address, jobTitle }) => {
+export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, email, address, jobTitle, jobCode }) => {
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const [isWhatsModalOpen, setIsWhatsModalOpen] = useState(false);
 
@@ -27,7 +28,7 @@ export const JobContactActions: React.FC<JobContactActionsProps> = ({ whatsapp, 
 
     const openWhatsApp = () => {
         if (!whatsapp) return;
-        const message = encodeURIComponent(`Olá, tudo bem ?\nVi esta vaga na SoroEmpregos.com.br\n—————————————\nFunção: *${jobTitle}*\n—————————————\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`);
+        const message = encodeURIComponent(`Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`);
         window.open(`https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
         setIsWhatsModalOpen(false);
     };

@@ -520,13 +520,13 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </div>
                             )}
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Phone size={16} className="text-green-500"/> WhatsApp:</p>
+                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Phone size={16} className="text-green-500" /> WhatsApp:</p>
                                 <p className="text-sm text-slate-600 leading-relaxed font-mono">
                                     {ctaContato}
                                 </p>
                             </div>
                             <a
-                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent(`olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nfunção: *${jobTitle}*\ncódigo: *${jobCode || ''}*\n—————————————\n\nposso enviar o currículo aqui mesmo ou tem outro canal para envio ?`)}`}
+                                href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent((() => { const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`; return msg; })())}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
@@ -546,7 +546,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </div>
                             )}
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MessageCircle size={16} className="text-blue-500"/> E-mail:</p>
+                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MessageCircle size={16} className="text-blue-500" /> E-mail:</p>
                                 <p className="text-sm text-slate-600 leading-relaxed font-mono break-all">
                                     {ctaEmail}
                                 </p>
@@ -570,7 +570,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </div>
                             )}
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500"/> Link externo:</p>
+                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500" /> Link externo:</p>
                                 <p className="text-sm text-slate-600 leading-relaxed font-mono break-all line-clamp-2" title={ctaLink}>
                                     {ctaLink}
                                 </p>
@@ -596,7 +596,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 </div>
                             )}
                             <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700 text-left">
-                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MapPin size={16} className="text-orange-500"/> Endereço:</p>
+                                <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><MapPin size={16} className="text-orange-500" /> Endereço:</p>
                                 <p className="text-sm text-slate-600 leading-relaxed font-mono">
                                     {ctaEndereco}
                                 </p>
@@ -632,7 +632,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
 
     if (isExternalJob) {
         return (
-            <MarketingFunnelModal 
+            <MarketingFunnelModal
                 isOpen={isOpen}
                 onClose={onClose}
                 jobTitle={jobTitle}

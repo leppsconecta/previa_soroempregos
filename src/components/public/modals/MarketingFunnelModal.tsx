@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Briefcase, 
-  TrendingUp, 
+import {
+  Briefcase,
+  TrendingUp,
   Rocket,
   MapPin,
   Copy,
@@ -37,10 +37,10 @@ interface MarketingFunnelModalProps {
 
 type ModalStep = 'intro' | 'exclusive' | 'final';
 
-export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  jobTitle, 
+export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
+  isOpen,
+  onClose,
+  jobTitle,
   jobCode,
   ctaContato,
   ctaEmail,
@@ -98,7 +98,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
         if (courseSectionRef.current) {
           customSmoothScroll(courseSectionRef.current, 1000); // Faster scroll
         }
-      }, 500); 
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [step, isOpen]);
@@ -189,7 +189,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 font-sans overflow-hidden">
       {/* Immersive Background Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
@@ -206,8 +206,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
               <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
-                <img 
-                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop" 
+                <img
+                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop"
                   alt="pessoa estressada no trabalho"
                   className="w-full h-full object-cover grayscale brightness-75 contrast-110"
                   referrerPolicy="no-referrer"
@@ -217,7 +217,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="space-y-2">
                   <h2 className="text-3xl font-bold text-white leading-tight tracking-tight">
-                    Seja dono do seu <br/>
+                    Seja dono do seu <br />
                     <span className="text-orange-500 text-4xl">próprio negócio</span>
                   </h2>
                   <p className="text-white/90 text-lg font-medium italic tracking-tight">
@@ -226,9 +226,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 </div>
 
                 <div className="pt-4 flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
-                        {timeLeft}
-                    </div>
+                  <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
+                    {timeLeft}
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,8 +246,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
           >
             <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
               <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
-                <img 
-                  src="/real_brasileiro.png" 
+                <img
+                  src="/real_brasileiro.png"
                   alt="cédulas de real brasileiro, notas de 100, 50 e 20"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
@@ -257,7 +257,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold text-white leading-[1.2] tracking-tight">
-                    Preparamos um <span className="text-orange-500">curso exclusivo</span><br/> para quem quer mudar de vida.
+                    Preparamos um <span className="text-orange-500">curso exclusivo</span><br /> para quem quer mudar de vida.
                   </h2>
                   <p className="text-white/80 text-sm font-normal leading-relaxed">
                     Clique no botão "Quero mudar de vida."
@@ -265,9 +265,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 </div>
 
                 <div className="pt-4 flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
-                        {timeLeft}
-                    </div>
+                  <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
+                    {timeLeft}
+                  </div>
                 </div>
               </div>
             </div>
@@ -282,7 +282,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             className="relative w-full max-w-2xl bg-white rounded-[40px] overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.4)] max-h-[90vh] flex flex-col z-10"
           >
             <div className="p-4 border-b border-zinc-100 flex items-center justify-end bg-zinc-50/50">
-              <button 
+              <button
                 onClick={onClose}
                 className="p-2 hover:bg-zinc-200 rounded-full text-zinc-400 transition-all active:scale-90"
               >
@@ -298,11 +298,11 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     <Briefcase size={12} />
                     Informações da vaga
                   </div>
-                  
+
                   <h3 className="text-2xl md:text-3xl font-black text-zinc-950 mb-2 leading-[1.1] tracking-tight">
                     {jobTitle}
                   </h3>
-                  
+
                   <div className="flex items-center justify-center gap-3 text-zinc-500 text-xs font-medium">
                     <span className="capitalize">{jobLocation}</span>
                     <span className="w-1 h-1 bg-zinc-300 rounded-full" />
@@ -315,7 +315,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     <h4 className="text-sm font-bold text-zinc-900">Como se candidatar?</h4>
                     <p className="text-xs text-zinc-400">Escolha um dos canais oficiais do anunciante abaixo:</p>
                   </div>
-                  
+
                   <div className="w-full space-y-4">
                     {/* Primary CTA */}
                     {primaryCTA === 'whatsapp' && (
@@ -338,17 +338,17 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                           </button>
                         </div>
 
-                        <motion.button 
+                        <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => {
-                              if (isTransitioning) return;
-                              setIsTransitioning(true);
-                              const msg = `olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nfunção: *${jobTitle}*\ncódigo: *${jobCode || 'n/a'}*\n--------------------------\n\nposso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
-                              const encodedMsg = encodeURIComponent(msg);
-                              const phone = normalizeWhatsAppNumber(ctaContato || '');
-                              window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                              setTimeout(() => setIsTransitioning(false), 2000);
+                            if (isTransitioning) return;
+                            setIsTransitioning(true);
+                            const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+                            const encodedMsg = encodeURIComponent(msg);
+                            const phone = normalizeWhatsAppNumber(ctaContato || '');
+                            window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                            setTimeout(() => setIsTransitioning(false), 2000);
                           }}
                           disabled={isTransitioning}
                           className="w-full h-16 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm disabled:opacity-50"
@@ -375,7 +375,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                             {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                           </button>
                         </div>
-                        <button 
+                        <button
                           onClick={() => {
                             if (isTransitioning) return;
                             setIsTransitioning(true);
@@ -407,7 +407,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                             {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                           </button>
                         </div>
-                        <button 
+                        <button
                           onClick={() => {
                             if (isTransitioning) return;
                             setIsTransitioning(true);
@@ -424,12 +424,12 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     )}
 
                     {primaryCTA === 'link' && (
-                      <button 
+                      <button
                         onClick={() => {
-                           if (isTransitioning) return;
-                           setIsTransitioning(true);
-                           window.open(ctaLink, '_blank');
-                           setTimeout(() => setIsTransitioning(false), 2000);
+                          if (isTransitioning) return;
+                          setIsTransitioning(true);
+                          window.open(ctaLink, '_blank');
+                          setTimeout(() => setIsTransitioning(false), 2000);
                         }}
                         disabled={isTransitioning}
                         className="w-full h-16 bg-zinc-900 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl text-sm disabled:opacity-50"
@@ -442,7 +442,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     {/* Secondary CTAs */}
                     {secondaryCTAs.length > 0 && (
                       <div className="pt-2">
-                        <button 
+                        <button
                           onClick={() => setIsExpanded(!isExpanded)}
                           className="flex items-center gap-2 text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-600 transition-colors mx-auto"
                         >
@@ -452,7 +452,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
                         <AnimatePresence>
                           {isExpanded && (
-                            <motion.div 
+                            <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: 'auto', opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
@@ -509,12 +509,12 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                                     </div>
                                   )}
                                   {cta.type === 'link' && (
-                                    <button 
+                                    <button
                                       onClick={() => {
-                                         if (isTransitioning) return;
-                                         setIsTransitioning(true);
-                                         window.open(ctaLink, '_blank');
-                                         setTimeout(() => setIsTransitioning(false), 2000);
+                                        if (isTransitioning) return;
+                                        setIsTransitioning(true);
+                                        window.open(ctaLink, '_blank');
+                                        setTimeout(() => setIsTransitioning(false), 2000);
                                       }}
                                       disabled={isTransitioning}
                                       className="w-full h-12 bg-zinc-100 text-zinc-800 font-bold rounded-xl text-xs hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
@@ -540,18 +540,18 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
               </div>
 
               {/* Container 2: Mudar de Vida (Purple Theme) */}
-              <div 
+              <div
                 ref={courseSectionRef}
                 className="p-8 flex flex-col items-center text-center bg-purple-950 text-white scroll-mt-4"
               >
                 <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0">
                   <TrendingUp className="text-orange-500" size={28} />
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-white mb-6 tracking-tight leading-tight">
                   Você teve 10 segundos para pensar!
                 </h3>
-                
+
                 <div className="w-full space-y-4 mb-8 text-left">
                   <div className="flex gap-3 items-start">
                     <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
@@ -573,7 +573,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
                 <div className="w-full mt-auto">
                   <div className="relative w-full">
-                    <motion.button 
+                    <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleMudarDeVida}
@@ -585,7 +585,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                     </motion.button>
                   </div>
                 </div>
-                
+
                 <p className="mt-8 text-white/20 text-[10px] font-semibold tracking-[0.2em] uppercase">
                   Soroempregos exclusivo
                 </p>
@@ -599,7 +599,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
       <AnimatePresence>
         {isLeadModalOpen && (
-          <LeadCaptureModal 
+          <LeadCaptureModal
             isOpen={isLeadModalOpen}
             onClose={() => {
               setIsLeadModalOpen(false);
