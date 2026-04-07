@@ -35,7 +35,7 @@ interface MarketingFunnelModalProps {
   advertiserName?: string;
 }
 
-type ModalStep = 'intro' | 'exclusive' | 'final';
+type ModalStep = 'question' | 'final';
 
 export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   isOpen,
@@ -54,10 +54,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   jobPostedAt,
   advertiserName
 }) => {
-  const [step, setStep] = useState<ModalStep>('intro');
+  const [step, setStep] = useState<ModalStep>('question');
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(10);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const courseSectionRef = useRef<HTMLDivElement>(null);
@@ -65,29 +64,10 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
   // Removed auto-scroll functionality per user request
 
-  // Timer logic
-  React.useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isOpen && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          const next = prev - 1;
-          // Sub-trigger steps based on time (5s each)
-          if (next >= 6) setStep('intro');
-          else if (next >= 1) setStep('exclusive');
-          else if (next === 0) setStep('final');
-          return next;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [isOpen, timeLeft]);
-
-  // Reset timer if reopened
+  // Reset step if reopened
   React.useEffect(() => {
     if (isOpen) {
-      setTimeLeft(10);
-      setStep('intro');
+      setStep('question');
       setIsTransitioning(false);
     }
   }, [isOpen]);
@@ -157,82 +137,60 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
       />
 
       <AnimatePresence mode="wait">
-        {step === 'intro' && (
+        {step === 'question' && (
           <motion.div
-            key="intro"
+            key="question"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.2 }}
             className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/20 max-h-[85vh] flex flex-col z-10"
           >
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
-              <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
+            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto pt-12">
+              <div className="w-full aspect-[4/5] max-h-[300px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
                 <img
-                  src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&auto=format&fit=crop"
-                  alt="pessoa estressada no trabalho"
+                  src="/pessoa_triste.png"
+                  alt="pessoa triste sem dinheiro"
                   className="w-full h-full object-cover grayscale brightness-75 contrast-110"
-                  referrerPolicy="no-referrer"
                 />
               </div>
 
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold text-white leading-tight tracking-tight">
-                    Seja dono do seu <br />
-                    <span className="text-orange-500 text-4xl">próprio negócio</span>
-                  </h2>
-                  <p className="text-white/90 text-lg font-medium italic tracking-tight">
-                    "Alimente seu sonho, e não do seu patrão"
+              <div className="flex flex-col items-center justify-center space-y-6">
+                <div className="space-y-4">
+                  <p className="text-white/80 text-lg font-medium leading-relaxed">
+                    Antes de mostrar as informações da vaga, me responda uma coisa
                   </p>
+                  <h2 className="text-2xl font-bold text-white leading-tight tracking-tight px-4">
+                    Onde você quer estar daqui <span className="text-orange-500">1 ano?</span>
+                  </h2>
                 </div>
 
-                <div className="pt-4 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
-                    {timeLeft}
-                  </div>
+                <div className="flex flex-col gap-3 w-full pt-4">
+                  <button
+                    onClick={() => setStep('final')}
+                    disabled={isTransitioning}
+                    className="w-full h-14 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all border border-white/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    Trabalhando pra alguém
+                  </button>
+                  <button
+                    onClick={() => setStep('final')}
+                    disabled={isTransitioning}
+                    className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-950/40 flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <TrendingUp size={20} />
+                    Trabalhando no meu negócio.
+                  </button>
                 </div>
               </div>
             </div>
-          </motion.div>
-        )}
 
-        {step === 'exclusive' && (
-          <motion.div
-            key="exclusive"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-            className="relative w-full max-w-md bg-purple-950 rounded-[40px] overflow-hidden shadow-2xl border border-white/10 max-h-[85vh] flex flex-col z-10"
-          >
-            <div className="p-8 flex flex-col items-center text-center flex-1 justify-center overflow-y-auto">
-              <div className="w-full aspect-[4/5] max-h-[350px] rounded-[24px] overflow-hidden mb-6 shadow-xl ring-1 ring-white/20">
-                <img
-                  src="/real_brasileiro.png"
-                  alt="cédulas de real brasileiro, notas de 100, 50 e 20"
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-white leading-[1.2] tracking-tight">
-                    Preparamos um <span className="text-orange-500">curso exclusivo</span><br /> para quem quer mudar de vida.
-                  </h2>
-                  <p className="text-white/80 text-sm font-normal leading-relaxed">
-                    Clique no botão "Quero mudar de vida."
-                  </p>
-                </div>
-
-                <div className="pt-4 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full border-4 border-orange-500 flex items-center justify-center text-white font-bold text-xl animate-pulse">
-                    {timeLeft}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-6 right-6 p-2 text-white/40 hover:text-white transition-all active:scale-90"
+            >
+              <X size={20} />
+            </button>
           </motion.div>
         )}
 
@@ -576,26 +534,26 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                 </div>
 
                 <h3 className="text-2xl font-bold text-white mb-6 tracking-tight leading-tight">
-                  Você teve 10 segundos para pensar!
+                  Quem decide o futuro é você mesmo!
                 </h3>
 
                 <div className="w-full space-y-4 mb-8 text-left">
                   <div className="flex gap-3 items-start">
                     <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80 font-medium">Dê o primeiro passo para abrir o seu próprio negócio.</p>
+                    <p className="text-sm text-white/80 font-medium lowercase first-letter:uppercase">
+                      Daqui 1 ano, você pode voltar aqui na soroempregos para anunciar uma vaga da sua empresa, já pensou nisso ?
+                    </p>
                   </div>
                   <div className="flex gap-3 items-start">
                     <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80 font-medium">Onde você quer estar daqui a um ano? A decisão que você toma hoje determina o seu futuro.</p>
-                  </div>
-                  <div className="flex gap-3 items-start">
-                    <CheckCircle2 size={18} className="text-orange-500 shrink-0 mt-0.5" />
-                    <p className="text-sm text-white/80 font-medium">Conheça nosso curso de capacitação e transforme o sonho de ser empresário em realidade. A hora de começar é agora.</p>
+                    <p className="text-sm text-white/80 font-medium lowercase first-letter:uppercase">
+                      Conheça nosso curso de capacitação e transforme o sonho de ser empresário em realidade. A hora de começar é agora.
+                    </p>
                   </div>
                 </div>
 
                 <p className="text-orange-500 text-lg font-bold mb-8 italic">
-                  A escolha é sua!
+                  A escolha é sua! Conheça nosso cursoo
                 </p>
 
                 <div className="w-full mt-auto">
@@ -608,7 +566,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                       className="relative w-full h-16 bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-2xl shadow-orange-950/40 text-base z-10 disabled:opacity-50"
                     >
                       <Rocket size={20} />
-                      <span className="leading-tight">quero mudar de vida.</span>
+                      <span className="leading-tight">Saber mais</span>
                     </motion.button>
                   </div>
                 </div>
