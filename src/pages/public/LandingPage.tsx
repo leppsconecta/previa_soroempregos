@@ -56,9 +56,9 @@ const WhatsAppIcon = ({ size = 20, className = "" }: { size?: number, className?
 const MOCK_GRUPOS: Grupo[] = [
   { id: 'm1', nome_grupo: 'Vagas CLT, Estágio, PJ - Itu', descricao_grupo: 'Vagas fixas e estágios na região de Itu', vinculo: 'CLT', categoria: 'Geral', cidade: 'Itu', total_participantes: 245, link_convite: 'https://chat.whatsapp.com/H4rn9lidzcuGaTcnptSpQ7' },
   { id: 'm2', nome_grupo: 'Vagas CLT, Estágio, PJ - Votorantim', descricao_grupo: 'Vagas fixas e estágios em Votorantim', vinculo: 'CLT', categoria: 'Geral', cidade: 'Votorantim', total_participantes: 180, link_convite: 'https://chat.whatsapp.com/GiZa4i3hPeOBvWuQfsdHoN' },
-  { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/B7GoXsfaWGLJQaqxmYDfON?mode=gi_t' },
+  { id: 'm3', nome_grupo: 'Vagas CLT, Estágio, PJ - Sorocaba', descricao_grupo: 'Vagas fixas e estágios em Sorocaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Sorocaba', total_participantes: 250, link_convite: 'https://chat.whatsapp.com/IGz80D1UArLL8FHKz1fyh6?s=sw&p=a&mlu=0&amv=1' },
   { id: 'm4', nome_grupo: 'Vagas CLT, Estágio, PJ - Araçoiaba', descricao_grupo: 'Vagas fixas e estágios em Araçoiaba', vinculo: 'CLT', categoria: 'Geral', cidade: 'Araçoiaba da Serra', total_participantes: 120, link_convite: 'https://chat.whatsapp.com/CZvybKFy9cI0PkqkkdcCLX' },
-  { id: 'm5', nome_grupo: 'Vagas Freelancer - Geral', descricao_grupo: 'Trabalhos rápidos, bicos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Região', total_participantes: 200, link_convite: 'https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH' },
+  { id: 'm5', nome_grupo: 'Vagas Freelancer - Geral', descricao_grupo: 'Trabalhos rápidos, bicos e diárias', vinculo: 'FREELANCE', categoria: 'Geral', cidade: 'Região', total_participantes: 200, link_convite: 'https://chat.whatsapp.com/BQSMemC30VMF8RgYWJZeZK?s=sw&p=a&mlu=0&amv=1' },
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false }) => {
@@ -106,35 +106,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   const [selectedGroupVinculo, setSelectedGroupVinculo] = useState<'CLT' | 'FREELANCE' | null>('CLT'); // Default to CLT
   const [selectedGroup, setSelectedGroup] = useState<Grupo | null>(null);
 
-  // Fetch Groups
+  // Mantém os grupos diretamente no código usando MOCK_GRUPOS
   React.useEffect(() => {
-    const fetchGroups = async () => {
-      try {
-        setGroupsLoading(true);
-        const { data, error } = await supabase
-          .from('grupos')
-          .select('*')
-          .eq('vinculo', selectedGroupVinculo)
-          .order('nome_grupo', { ascending: true });
-
-        if (error) throw error;
-
-        if (data && data.length > 0) {
-          setGrupos(data);
-        } else {
-          // Fallback to MOCK_GRUPOS if database is empty
-          setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
-        }
-      } catch (err) {
-        console.error("Error fetching groups:", err);
-        // Fallback on error
-        setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
-      } finally {
-        setGroupsLoading(false);
-      }
-    };
-
-    fetchGroups();
+    setGroupsLoading(true);
+    setGrupos(MOCK_GRUPOS.filter(g => g.vinculo === selectedGroupVinculo));
+    setGroupsLoading(false);
   }, [selectedGroupVinculo]);
 
   const filteredGroups = grupos.filter(g => {
@@ -652,8 +628,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                 <button
                   onClick={() => {
                     const url = selectedGroupVinculo === 'CLT' 
-                      ? "https://chat.whatsapp.com/Edff6QoH5jtKFfUOUTLgk3?mode=gi_t"
-                      : "https://chat.whatsapp.com/BF5ttx54CX45SQxr61wmbH?mode=gi_t";
+                      ? "https://chat.whatsapp.com/CP1vVxt3AiY4TmkaodprtB?s=sw&p=a&mlu=0&amv=1"
+                      : "https://chat.whatsapp.com/BQSMemC30VMF8RgYWJZeZK?s=sw&p=a&mlu=0&amv=1";
                     window.open(url, '_blank');
                     setIsEmpGroupGuideOpen(false);
                     setTimeout(() => setEmpGroupGuideStep(1), 300);
