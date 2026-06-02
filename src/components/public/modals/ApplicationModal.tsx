@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, CheckCircle, AlertCircle, Phone, Lock, UploadCloud, RefreshCw, Edit2, FileText, Paperclip, ArrowRight, User, MapPin, Calendar, ArrowLeft, Briefcase, Plus, Trash2, MessageCircle } from 'lucide-react';
 import { InputMask } from '@react-input/mask';
+import { MarketingFunnelModal } from './MarketingFunnelModal';
 
 import { supabase } from '../../../lib/supabase';
 
@@ -142,6 +143,28 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
     }, [timeLeft]);
 
     if (!isOpen) return null;
+
+    if (isExternalJob) {
+        return (
+            <MarketingFunnelModal
+                isOpen={isOpen}
+                onClose={onClose}
+                jobTitle={jobTitle}
+                jobCode={jobCode}
+                ctaContato={ctaContato}
+                ctaEmail={ctaEmail}
+                ctaLink={ctaLink}
+                ctaEndereco={ctaEndereco}
+                ctaObservationsWhatsapp={ctaObservationsWhatsapp}
+                ctaObservationsEmail={ctaObservationsEmail}
+                ctaObservationsLink={ctaObservationsLink}
+                ctaObservationsEndereco={ctaObservationsEndereco}
+                advertiserName={advertiserName}
+                jobLocation={jobLocation}
+                jobPostedAt={jobPostedAt}
+            />
+        );
+    }
 
     const startTimer = () => {
         setTimeLeft(30);
