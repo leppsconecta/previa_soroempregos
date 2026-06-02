@@ -12,7 +12,7 @@ interface GroupAccessModalProps {
   groupId: string;
 }
 
-type Step = 'info' | 'region' | 'success';
+type Step = 'loading' | 'phone_check' | 'info' | 'region' | 'success';
 
 const inferZona = (bairro: string, cidade: string): string => {
   const cityLower = cidade.toLowerCase();
@@ -63,7 +63,7 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
   groupId,
 }) => {
   const cityName = groupCity || 'sua cidade';
-  const [step, setStep] = useState<Step>('info');
+  const [step, setStep] = useState<Step>('loading');
   const [formData, setFormData] = useState({
     nome: '',
     telefone: '',
@@ -77,26 +77,38 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
   const [loadingCep, setLoadingCep] = useState(false);
   const [error, setError] = useState('');
   const [checkingPhone, setCheckingPhone] = useState(false);
-  const [isPhoneChecked, setIsPhoneChecked] = useState(false);
-  const [checkedPhoneValue, setCheckedPhoneValue] = useState('');
   const [isExistingLead, setIsExistingLead] = useState(false);
+  
+  // Controle de rate limit local
+  const [lastPhoneRequestTime, setLastPhoneRequestTime] = useState(0);
+  const [lastCepRequestTime, setLastCepRequestTime] = useState(0);
 
-  // Busca silenciosa pelo telefone
+  // Carrega telefone do cache ou inicia fluxo de verificação ao abrir o modal
   useEffect(() => {
-    const { clean, formatted } = sanitizeAndFormatPhone(formData.telefone);
-    
-    // Se mudou o telefone em relação ao último verificado, reseta as flags
-    if (formatted !== checkedPhoneValue) {
-      setIsPhoneChecked(false);
-      setIsExistingLead(false);
-    }
+    if (!isOpen) return;
 
-    if ((clean.length === 10 || clean.length === 11) && step !== 'success') {
-      if (formatted === checkedPhoneValue) return;
+    setError('');
+    setIsExistingLead(false);
+    setBairro('');
+    setLastPhoneRequestTime(0);
+    setLastCepRequestTime(0);
 
-      const checkExistingLead = async () => {
+    const cachedPhone = localStorage.getItem('soroempregos_cached_phone') || '';
+    if (cachedPhone) {
+      setStep('loading');
+      setFormData({
+        nome: '',
+        telefone: cachedPhone,
+        email: '',
+        sexo: '',
+        cep: '',
+        regiao: '',
+        cidade: '',
+      });
+
+      const verifyCachedPhone = async () => {
         setCheckingPhone(true);
-        setError('');
+        const { formatted } = sanitizeAndFormatPhone(cachedPhone);
         try {
           const { data, error: fetchError } = await supabaseCaptura
             .schema('soroempregos')
@@ -105,54 +117,116 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
             .eq('whatsapp', formatted)
             .maybeSingle();
 
-          if (fetchError) {
-            console.error('Erro na busca silenciosa do lead:', fetchError);
-            setError(`Erro de conexão com o banco de dados: ${fetchError.message || 'Por favor, tente novamente.'}`);
-            setCheckingPhone(false);
-            return;
-          }
-
-          if (data) {
+          if (!fetchError && data) {
+            // Usuário existente no banco! Atualiza os grupos
             let groupList: string[] = Array.isArray(data.grupos) ? (data.grupos as string[]) : [];
             if (groupId && !groupList.includes(groupId)) {
               groupList.push(groupId);
-              const { error: updateError } = await supabaseCaptura
+              await supabaseCaptura
                 .schema('soroempregos')
                 .from('usuarios_grupos')
                 .update({ grupos: groupList })
                 .eq('whatsapp', formatted);
-                
-              if (updateError) {
-                console.error('Erro ao atualizar grupos do lead:', updateError);
-                setError(`Erro ao atualizar cadastro: ${updateError.message || 'Verifique sua conexão.'}`);
-                setCheckingPhone(false);
-                return;
-              }
             }
             setIsExistingLead(true);
+            setStep('success');
           } else {
-            setIsPhoneChecked(true);
-            setIsExistingLead(false);
-            setCheckedPhoneValue(formatted);
+            // Não localizado no banco, solicita confirmação manual
+            setStep('phone_check');
           }
-        } catch (err: any) {
-          console.error('Erro ao realizar busca silenciosa:', err);
-          setError(`Erro inesperado: ${err.message || 'Verifique sua conexão.'}`);
+        } catch (e) {
+          // Erro de conexão, inicia no campo manual
+          setStep('phone_check');
         } finally {
           setCheckingPhone(false);
         }
       };
 
-      checkExistingLead();
-    } else if (clean.length < 10) {
-      setIsPhoneChecked(false);
-      setIsExistingLead(false);
-      setCheckedPhoneValue('');
+      verifyCachedPhone();
+    } else {
+      setStep('phone_check');
+      setFormData({
+        nome: '',
+        telefone: '',
+        email: '',
+        sexo: '',
+        cep: '',
+        regiao: '',
+        cidade: '',
+      });
     }
-  }, [formData.telefone, groupId, step, checkedPhoneValue]);
+  }, [isOpen, groupId]);
 
   if (!isOpen) return null;
 
+  // Primeiro passo: verificação do telefone ao submeter o formulário (com Rate Limit)
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    // Rate limiting: mínimo de 2 segundos entre envios
+    const now = Date.now();
+    if (now - lastPhoneRequestTime < 2000) {
+      setError('Por favor, aguarde um momento antes de realizar outra verificação.');
+      return;
+    }
+    setLastPhoneRequestTime(now);
+
+    const { clean, formatted } = sanitizeAndFormatPhone(formData.telefone);
+    if (clean.length < 10 || clean.length > 11) {
+      setError('Por favor, insira um telefone válido com DDD.');
+      return;
+    }
+
+    setCheckingPhone(true);
+    try {
+      const { data, error: fetchError } = await supabaseCaptura
+        .schema('soroempregos')
+        .from('usuarios_grupos')
+        .select('grupos')
+        .eq('whatsapp', formatted)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error('Erro ao verificar telefone:', fetchError);
+        setError(`Erro de conexão com o banco de dados: ${fetchError.message || 'Por favor, tente novamente.'}`);
+        return;
+      }
+
+      if (data) {
+        // Usuário existente encontrado! Adiciona o grupo atual se não estiver na lista
+        let groupList: string[] = Array.isArray(data.grupos) ? (data.grupos as string[]) : [];
+        if (groupId && !groupList.includes(groupId)) {
+          groupList.push(groupId);
+          const { error: updateError } = await supabaseCaptura
+            .schema('soroempregos')
+            .from('usuarios_grupos')
+            .update({ grupos: groupList })
+            .eq('whatsapp', formatted);
+            
+          if (updateError) {
+            console.error('Erro ao vincular grupo ao usuário existente:', updateError);
+            setError(`Erro ao atualizar cadastro: ${updateError.message || 'Verifique sua conexão.'}`);
+            return;
+          }
+        }
+        localStorage.setItem('soroempregos_cached_phone', formatted);
+        setIsExistingLead(true);
+        setStep('success');
+      } else {
+        // Usuário não existe no banco. O telefone fica salvo em cache (state) e abre o cadastro
+        setIsExistingLead(false);
+        setStep('info');
+      }
+    } catch (err: any) {
+      console.error('Erro ao realizar busca silenciosa:', err);
+      setError(`Erro inesperado: ${err.message || 'Verifique sua conexão.'}`);
+    } finally {
+      setCheckingPhone(false);
+    }
+  };
+
+  // Segundo passo: validação dos dados de cadastro (nome, sexo, e-mail)
   const handleInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -168,17 +242,9 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
       return;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Por favor, insira um e-mail válido.');
-      return;
-    }
-
-    // Validate phone length
-    const { clean } = sanitizeAndFormatPhone(formData.telefone);
-    if (clean.length < 10 || clean.length > 11) {
-      setError('Por favor, insira um telefone válido com DDD.');
       return;
     }
 
@@ -192,6 +258,14 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
     
     const cleanCep = value.replace(/\D/g, '');
     if (cleanCep.length === 8) {
+      // Rate limit CEP: mínimo de 2 segundos entre pesquisas de CEP
+      const now = Date.now();
+      if (now - lastCepRequestTime < 2000) {
+        setError('Por favor, aguarde um momento antes de buscar outro CEP.');
+        return;
+      }
+      setLastCepRequestTime(now);
+
       setLoadingCep(true);
       try {
         const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
@@ -218,6 +292,7 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
     }
   };
 
+  // Terceiro passo: confirmação da região e envio dos dados ao banco
   const handleRegionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bairro) {
@@ -229,33 +304,18 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
     setError('');
 
     try {
-      const { clean, formatted } = sanitizeAndFormatPhone(formData.telefone);
+      const { formatted } = sanitizeAndFormatPhone(formData.telefone);
       const cleanCep = formData.cep.replace(/\D/g, '');
 
-      // Fetch existing lead to avoid losing other group references
-      const { data: existingUser, error: fetchError } = await supabaseCaptura
-        .schema('soroempregos')
-        .from('usuarios_grupos')
-        .select('grupos')
-        .eq('whatsapp', formatted)
-        .maybeSingle();
-
-      if (fetchError) {
-        console.error('Erro ao buscar lead existente:', fetchError);
-        throw new Error(`Erro ao conectar ao banco de dados: ${fetchError.message || 'Verifique sua conexão.'}`);
-      }
-
       let groupList: string[] = [];
-      if (existingUser && Array.isArray(existingUser.grupos)) {
-        groupList = existingUser.grupos as string[];
-      }
-
-      if (groupId && !groupList.includes(groupId)) {
+      if (groupId) {
         groupList.push(groupId);
       }
 
-      // Upsert lead data
+      // Salva o cadastro completo no banco de dados
       const currentCity = formData.cidade || groupCity || 'Sorocaba';
+      const zonaCalculada = inferZona(bairro, currentCity);
+
       const { error: upsertError } = await supabaseCaptura
         .schema('soroempregos')
         .from('usuarios_grupos')
@@ -267,17 +327,18 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
           cep: cleanCep,
           cidade: currentCity,
           bairro: bairro,
-          zona: '',
+          zona: zonaCalculada,
           grupos: groupList,
         }, {
           onConflict: 'whatsapp'
         });
 
       if (upsertError) {
-        console.error('Erro no upsert do lead:', upsertError);
+        console.error('Erro no salvamento final do usuário:', upsertError);
         throw new Error(`Erro ao salvar dados no banco: ${upsertError.message || 'Erro de conexão.'}`);
       }
 
+      localStorage.setItem('soroempregos_cached_phone', formatted);
       setStep('success');
     } catch (err: any) {
       console.error('Erro ao salvar lead:', err);
@@ -304,20 +365,66 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
           <X size={20} />
         </button>
 
-        {step === 'info' && (
-          <form onSubmit={isExistingLead ? (e) => { e.preventDefault(); handleAccessGroup(); } : handleInfoSubmit} className="space-y-5">
+        {step === 'loading' && (
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-500 text-sm font-bold animate-pulse">Carregando...</p>
+          </div>
+        )}
+
+        {step === 'phone_check' && (
+          <form onSubmit={handlePhoneSubmit} className="space-y-5">
             <div className="text-center mb-6">
               <h3 className="text-xl font-bold text-blue-950">Acesso ao grupo</h3>
               <p className="text-slate-500 text-sm mt-1">
-                {isExistingLead 
-                  ? <>Seu cadastro foi localizado. Clique abaixo para entrar no grupo <strong className="font-bold">{groupName}</strong>.</>
-                  : <>Preencha os dados abaixo para liberar o acesso ao grupo <strong className="font-bold">{groupName}</strong>.</>
-                }
+                Digite seu número de WhatsApp para entrar no grupo <strong className="font-bold">{groupName}</strong>.
               </p>
             </div>
 
-            {!isExistingLead && (
-              <div className="space-y-4">
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 ml-1">WhatsApp</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <InputMask
+                    mask="(__) _____-____"
+                    replacement={{ _: /\d/ }}
+                    type="text"
+                    required
+                    placeholder="(15) 99999-9999"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800 font-medium"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-xs font-bold text-center mt-2">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={checkingPhone}
+              className="w-full py-3.5 text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-blue-500/10 disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <span>{checkingPhone ? 'Verificando...' : 'Continuar'}</span>
+              <ArrowRight size={16} />
+            </button>
+          </form>
+        )}
+
+        {step === 'info' && (
+          <form onSubmit={handleInfoSubmit} className="space-y-5">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-bold text-blue-950">Seja bem-vindo(a)!</h3>
+              <p className="text-slate-500 text-sm mt-1">
+                Por favor, complete as informações abaixo para liberar o acesso ao grupo <strong className="font-bold">{groupName}</strong>.
+              </p>
+            </div>
+
+            <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 ml-1">Primeiro nome</label>
                 <div className="relative">
@@ -368,23 +475,6 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 ml-1">Telefone</label>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <InputMask
-                    mask="(__) _____-____"
-                    replacement={{ _: /\d/ }}
-                    type="text"
-                    required
-                    placeholder="(15) 99999-9999"
-                    value={formData.telefone}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800 font-medium"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 ml-1">E-mail</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -399,31 +489,16 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
                 </div>
               </div>
             </div>
-          )}
 
             {error && (
               <p className="text-red-500 text-xs font-bold text-center mt-2">{error}</p>
             )}
 
             <button
-              type={isExistingLead ? "button" : "submit"}
-              onClick={isExistingLead ? handleAccessGroup : undefined}
-              disabled={!isExistingLead && (checkingPhone || (sanitizeAndFormatPhone(formData.telefone).clean.length >= 10 && !isPhoneChecked))}
-              className={`w-full py-3.5 text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none ${
-                isExistingLead 
-                  ? 'bg-[#25D366] hover:bg-green-600 shadow-green-500/10' 
-                  : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/10'
-              }`}
+              type="submit"
+              className="w-full py-3.5 text-white rounded-xl font-bold text-sm transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-blue-500/10"
             >
-              <span>
-                {checkingPhone 
-                  ? 'Verificando telefone...' 
-                  : isExistingLead 
-                    ? 'Entrar no grupo'
-                    : (sanitizeAndFormatPhone(formData.telefone).clean.length >= 10 && !isPhoneChecked)
-                      ? 'Aguarde verificação...'
-                      : 'Entrar no grupo'}
-              </span>
+              <span>Continuar</span>
               <ArrowRight size={16} />
             </button>
           </form>
