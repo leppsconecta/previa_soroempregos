@@ -27,8 +27,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '../../components/ui/Logo';
 import { CandidateLanding } from '../../components/public/CandidateLanding';
-import { GroupFunnelModal } from '../../components/public/modals/GroupFunnelModal';
-import { LeadCaptureModal } from '../../components/public/modals/LeadCaptureModal';
+import { GroupAccessModal } from '../../components/public/modals/GroupAccessModal';
 
 // Removed Supabase/Auth imports as they are no longer needed for public landing
 
@@ -69,6 +68,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   // Floating WhatsApp Group Button States
   const [showFloatingWa, setShowFloatingWa] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  // Intermediate selection modal state
+  const [isGroupChoiceModalOpen, setIsGroupChoiceModalOpen] = useState(false);
+
+  // Group access screen states
+  const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
+  const [accessGroupLink, setAccessGroupLink] = useState('');
+  const [accessGroupCity, setAccessGroupCity] = useState('');
+  const [accessGroupName, setAccessGroupName] = useState('');
+  const [accessGroupId, setAccessGroupId] = useState('');
   const [whatsappTabAction, setWhatsappTabAction] = useState<'VER' | 'ANUNCIAR'>('VER');
 
   // Employer Group Guide States
@@ -85,11 +93,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
   const [waitlistLoading, setWaitlistLoading] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
 
-  // New Group Funnel States
-  const [isFunnelModalOpen, setIsFunnelModalOpen] = useState(false);
-  const [funnelGroupLink, setFunnelGroupLink] = useState('');
-  const [funnelGroupCity, setFunnelGroupCity] = useState('');
-  const [funnelGroupName, setFunnelGroupName] = useState('');
+
 
   // Floating WhatsApp Group Button States
   React.useEffect(() => {
@@ -412,8 +416,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
 
           <button
             onClick={() => {
-              setWhatsappTabAction('VER');
-              setIsGroupModalOpen(true);
+              setIsGroupChoiceModalOpen(true);
             }}
             className="inline-flex items-center gap-3 bg-white text-[#25D366] text-sm px-8 py-3.5 rounded-2xl hover:scale-105 transition-all font-bold shadow-xl shadow-green-900/20 active:scale-95"
           >
@@ -422,6 +425,116 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
           </button>
         </div>
       </section>
+
+      {/* Choice Modal (Anunciar vs Procurar Emprego) */}
+      {isGroupChoiceModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-blue-950/40 backdrop-blur-sm" onClick={() => setIsGroupChoiceModalOpen(false)} />
+          <div className="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans animate-scaleUp">
+            <button
+              onClick={() => setIsGroupChoiceModalOpen(false)}
+              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <h4 className="text-xl font-bold text-blue-950 text-center mb-6 mt-2">
+              Selecione o que você deseja:
+            </h4>
+
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  setWhatsappTabAction('VER');
+                  setIsGroupModalOpen(true);
+                  setIsGroupChoiceModalOpen(false);
+                }}
+                className="w-full py-4 px-6 bg-slate-50 border border-slate-200 hover:border-yellow-400 hover:bg-yellow-50/30 text-slate-800 rounded-2xl font-bold text-sm transition-all text-center"
+              >
+                Estou procurando emprego
+              </button>
+
+              <button
+                onClick={() => {
+                  setWhatsappTabAction('ANUNCIAR');
+                  setIsGroupModalOpen(true);
+                  setIsGroupChoiceModalOpen(false);
+                }}
+                className="w-full py-4 px-6 bg-slate-50 border border-slate-200 hover:border-blue-400 hover:bg-blue-50/30 text-slate-800 rounded-2xl font-bold text-sm transition-all text-center"
+              >
+                Quero anunciar uma vaga
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Access Flow Modal */}
+      {isAccessModalOpen && (
+        <GroupAccessModal
+          isOpen={isAccessModalOpen}
+          onClose={() => setIsAccessModalOpen(false)}
+          groupLink={accessGroupLink}
+          groupCity={accessGroupCity}
+          groupName={accessGroupName}
+          groupId={accessGroupId}
+        />
+      )}
+
+      {/* Choice Modal (Anunciar vs Procurar Emprego) */}
+      {isGroupChoiceModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-blue-950/40 backdrop-blur-sm" onClick={() => setIsGroupChoiceModalOpen(false)} />
+          <div className="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-6 md:p-8 flex flex-col font-sans animate-scaleUp">
+            <button
+              onClick={() => setIsGroupChoiceModalOpen(false)}
+              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <h4 className="text-xl font-bold text-blue-950 text-center mb-6 mt-2">
+              Selecione o que você deseja:
+            </h4>
+
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  setWhatsappTabAction('VER');
+                  setIsGroupModalOpen(true);
+                  setIsGroupChoiceModalOpen(false);
+                }}
+                className="w-full py-4 px-6 bg-slate-50 border border-slate-200 hover:border-yellow-400 hover:bg-yellow-50/30 text-slate-800 rounded-2xl font-bold text-sm transition-all text-center"
+              >
+                Estou procurando emprego
+              </button>
+
+              <button
+                onClick={() => {
+                  setWhatsappTabAction('ANUNCIAR');
+                  setIsGroupModalOpen(true);
+                  setIsGroupChoiceModalOpen(false);
+                }}
+                className="w-full py-4 px-6 bg-slate-50 border border-slate-200 hover:border-blue-400 hover:bg-blue-50/30 text-slate-800 rounded-2xl font-bold text-sm transition-all text-center"
+              >
+                Quero anunciar uma vaga
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Access Flow Modal */}
+      {isAccessModalOpen && (
+        <GroupAccessModal
+          isOpen={isAccessModalOpen}
+          onClose={() => setIsAccessModalOpen(false)}
+          groupLink={accessGroupLink}
+          groupCity={accessGroupCity}
+          groupName={accessGroupName}
+          groupId={accessGroupId}
+        />
+      )}
 
       {/* Simplified Footer */}
       <footer className="bg-blue-950 text-white py-6 px-6 mt-auto">
@@ -435,15 +548,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         </div>
       </footer>
 
-      {isFunnelModalOpen && (
-        <GroupFunnelModal 
-          isOpen={isFunnelModalOpen}
-          onClose={() => setIsFunnelModalOpen(false)}
-          groupLink={funnelGroupLink}
-          groupCity={funnelGroupCity}
-          groupName={funnelGroupName}
-        />
-      )}
+
 
 
       {/* Contact Modal */}
@@ -690,14 +795,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
                                  </div>
                                  <button
                                    onClick={() => {
-                                     if (g.link_convite) {
-                                       setSelectedGroup(g);
-                                       setFunnelGroupLink(g.link_convite);
-                                       setFunnelGroupCity(g.cidade || '');
-                                       setFunnelGroupName(g.nome_grupo || '');
-                                       setIsFunnelModalOpen(true);
-                                     }
-                                   }}
+                                      if (g.link_convite) {
+                                        setAccessGroupLink(g.link_convite);
+                                        setAccessGroupCity(g.cidade || '');
+                                        setAccessGroupName(g.nome_grupo || '');
+                                        setAccessGroupId(g.id);
+                                        setIsAccessModalOpen(true);
+                                        setIsGroupModalOpen(false);
+                                      }
+                                    }}
                                    className="shrink-0 px-4 py-2 bg-[#25D366] text-white text-xs rounded-lg hover:bg-green-600 transition-colors shadow-sm active:scale-95 font-bold"
                                  >
                                    Entrar

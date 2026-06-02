@@ -9,3 +9,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const supabaseCapturaUrl = import.meta.env.VITE_SUPABASE_CAPTURA_URL;
+const supabaseCapturaAnonKey = import.meta.env.VITE_SUPABASE_CAPTURA_ANON_KEY;
+
+export const supabaseCaptura = supabaseCapturaUrl && supabaseCapturaAnonKey
+    ? createClient(supabaseCapturaUrl, supabaseCapturaAnonKey)
+    : supabase;
