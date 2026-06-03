@@ -587,6 +587,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 >
                                     <Phone size={18} /> Contatar via WhatsApp
                                 </a>
+                                <p className="text-[11px] text-slate-400 text-center mt-1 font-semibold">
+                                    Verifique se o contato possui o 9º dígito
+                                </p>
                             </div>
                         </div>
                     )}
@@ -790,6 +793,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                                 required
                                             />
                                         </div>
+                                        <p className="text-[11px] text-slate-400 ml-1 mt-1">
+                                            Verifique se o número possui o 9º dígito
+                                        </p>
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">E-mail *</label>

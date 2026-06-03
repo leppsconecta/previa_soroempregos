@@ -542,6 +542,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                         className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-zinc-800 font-medium"
                       />
                     </div>
+                    <p className="text-[11px] text-zinc-400 ml-1 mt-1">
+                      Verifique se o número possui o 9º dígito
+                    </p>
                   </div>
                 </div>
 
@@ -781,6 +784,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                             <OfficialWhatsAppIcon size={20} />
                             <span>Enviar currículo agora</span>
                           </motion.button>
+                          <p className="text-[11px] text-zinc-400 text-center mt-1 font-semibold">
+                            Verifique se o contato possui o 9º dígito
+                          </p>
                         </div>
                       </div>
                     )}

@@ -229,6 +229,9 @@ export const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
                         required
                       />
                     </div>
+                    <p className="text-[10px] text-white/40 ml-1 mt-1 font-medium">
+                      Verifique se o número possui o 9º dígito
+                    </p>
                   </div>
 
                   <div className="space-y-1.5">

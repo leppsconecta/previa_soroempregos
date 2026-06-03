@@ -397,6 +397,9 @@ export const GroupAccessModal: React.FC<GroupAccessModalProps> = ({
                     className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-800 font-medium"
                   />
                 </div>
+                <p className="text-[11px] text-slate-400 ml-1 mt-1">
+                  Verifique se o número possui o 9º dígito
+                </p>
               </div>
             </div>
 
