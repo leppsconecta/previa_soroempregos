@@ -948,6 +948,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                   <MessageCircle size={16} />
                   <span>Enviar mensagem no WhatsApp</span>
                 </button>
+                <p className="text-[11px] text-zinc-400 text-center font-semibold">
+                  Verifique se o contato possui o 9º dígito
+                </p>
 
                 <button
                   onClick={() => {
