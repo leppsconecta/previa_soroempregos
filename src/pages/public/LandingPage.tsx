@@ -165,6 +165,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ autoOpenLogin = false 
         p_type: 'Contact Form'
       });
 
+      // Envia os dados para o webhook de contato
+      try {
+        await fetch('https://webhook.leppsconecta.com.br/webhook/9e6b8cc5-f854-4a67-99af-6e33ecd8d4b7', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            titulo: 'contato',
+            name: contactName,
+            email: contactEmail,
+            phone: contactPhone,
+            message: contactMessage
+          })
+        });
+      } catch (webhookErr) {
+        console.error('Erro ao enviar webhook de contato:', webhookErr);
+      }
+
       setContactSuccess(true);
     } catch (error) {
       console.error(error);

@@ -60,6 +60,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, jobTitle, us
             const formattedPhone = `55${ddd}${number}`;
 
             const payload = {
+                titulo: 'report',
                 name: formData.name,
                 phone: formattedPhone,
                 email: formData.email,
@@ -70,7 +71,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, jobTitle, us
                 name_job: jobTitle
             };
 
-            const response = await fetch('https://webhook.leppsconecta.com.br/webhook/38a97491-c52b-4378-8024-7cd2c90959e4', {
+            const response = await fetch('https://webhook.leppsconecta.com.br/webhook/9e6b8cc5-f854-4a67-99af-6e33ecd8d4b7', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
