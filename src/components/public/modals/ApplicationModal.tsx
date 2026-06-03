@@ -29,6 +29,38 @@ interface ApplicationModalProps {
 
 type Step = 'contact_info' | 'personal_info' | 'professional_info' | 'verification' | 'success';
 
+const ensureAbsoluteUrl = (url?: string): string => {
+    if (!url) return '';
+    const trimmed = url.trim();
+    if (/^(https?:)?\/\//i.test(trimmed)) {
+        return trimmed;
+    }
+    return `https://${trimmed}`;
+};
+
+const cleanPhone = (phone?: string): string => {
+    if (!phone) return '';
+    let cleaned = phone.replace(/\D/g, '');
+    if (cleaned.startsWith('55') && (cleaned.length === 12 || cleaned.length === 13)) {
+        cleaned = cleaned.substring(2);
+    }
+    if (cleaned.startsWith('0')) {
+        cleaned = cleaned.substring(1);
+    }
+    return cleaned;
+};
+
+const formatPhoneNumber = (phone?: string) => {
+    if (!phone) return '';
+    const cleaned = cleanPhone(phone);
+    if (cleaned.length === 11) {
+        return `(${cleaned.substring(0, 2)}) ${cleaned.substring(2, 7)}-${cleaned.substring(7)}`;
+    } else if (cleaned.length === 10) {
+        return `(${cleaned.substring(0, 2)}) ${cleaned.substring(2, 6)}-${cleaned.substring(6)}`;
+    }
+    return phone;
+};
+
 const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jobTitle, jobCode, jobOwnerId, jobId, companyId, isAdvertiser, advertiserName, ctaContato, ctaEmail, ctaLink, ctaEndereco, ctaObservationsWhatsapp, ctaObservationsEmail, ctaObservationsLink, ctaObservationsEndereco, jobLocation, jobPostedAt }) => {
     const [step, setStep] = useState<Step>('contact_info');
     const [formData, setFormData] = useState({
@@ -544,11 +576,11 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 <div className="mb-2">
                                     <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Phone size={16} className="text-green-500" /> WhatsApp:</p>
                                     <p className="text-sm text-slate-600 leading-relaxed font-mono">
-                                        {ctaContato}
+                                        {formatPhoneNumber(ctaContato)}
                                     </p>
                                 </div>
                                 <a
-                                    href={`https://wa.me/${ctaContato.replace(/\D/g, '')}?text=${encodeURIComponent((() => { const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`; return msg; })())}`}
+                                    href={`https://wa.me/55${cleanPhone(ctaContato)}?text=${encodeURIComponent((() => { const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`; return msg; })())}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full py-3.5 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
@@ -594,11 +626,11 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, jo
                                 <div className="mb-2">
                                     <p className="text-sm font-medium text-slate-800 mb-1 flex items-center gap-1.5"><Briefcase size={16} className="text-indigo-500" /> Link externo:</p>
                                     <p className="text-sm text-slate-600 leading-relaxed font-mono break-all line-clamp-2" title={ctaLink}>
-                                        {ctaLink}
+                                        {ensureAbsoluteUrl(ctaLink)}
                                     </p>
                                 </div>
                                 <a
-                                    href={ctaLink}
+                                    href={ensureAbsoluteUrl(ctaLink)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-bold tracking-wide shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 text-sm mt-1"
