@@ -12,7 +12,8 @@ import {
   User,
   Phone,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  MessageCircle
 } from 'lucide-react';
 import { InputMask } from '@react-input/mask';
 import { OfficialWhatsAppIcon } from '../../ui/OfficialWhatsAppIcon';
@@ -122,6 +123,7 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
   const [copied, setCopied] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showWhatsappModal, setShowWhatsappModal] = useState(false);
   const modalScrollRef = useRef<HTMLDivElement>(null);
 
   // Controle de rate limit local
@@ -202,6 +204,56 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
   const hasEmail = checkVisible(ctaEmail);
   const hasLink = checkVisible(ctaLink);
   const hasEndereco = checkVisible(ctaEndereco);
+
+  const getCtaInstructions = () => {
+    const active = [];
+    if (hasPhone) active.push('whatsapp');
+    if (hasEmail) active.push('email');
+    if (hasLink) active.push('link');
+    if (hasEndereco) active.push('address');
+
+    if (active.length > 1) {
+      return {
+        title: 'Como deseja se candidatar?',
+        subtitle: 'Escolha uma das opções abaixo para enviar seu currículo.'
+      };
+    }
+
+    if (active[0] === 'whatsapp') {
+      return {
+        title: 'Envie seu currículo via WhatsApp',
+        subtitle: 'Clique no botão abaixo para iniciar a conversa.'
+      };
+    }
+
+    if (active[0] === 'email') {
+      return {
+        title: 'Envie seu currículo por e-mail',
+        subtitle: 'Copie o e-mail ou envie diretamente o seu currículo.'
+      };
+    }
+
+    if (active[0] === 'link') {
+      return {
+        title: 'Candidate-se pelo site oficial',
+        subtitle: 'Clique no botão abaixo para acessar a página de candidatura.'
+      };
+    }
+
+    if (active[0] === 'address') {
+      return {
+        title: 'Compareça ao local de seleção',
+        subtitle: 'Veja o endereço abaixo para entrega de currículo ou entrevista.'
+      };
+    }
+
+    return {
+      title: 'Como se candidatar?',
+      subtitle: 'Escolha um dos canais disponíveis abaixo.'
+    };
+  };
+
+  const { title: ctaTitle, subtitle: ctaSubtitle } = getCtaInstructions();
 
   // CTA Priority Logic
   const allAvailable = [
@@ -440,10 +492,14 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
           {/* Header */}
           <div className="p-4 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
             <div className="flex items-center gap-2 pl-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">
-                {step === 'success' ? 'Candidatura Externa' : 'Autenticação'}
-              </span>
+              {step !== 'success' ? (
+                <>
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-zinc-500 text-xs font-bold uppercase tracking-wider">
+                    Autenticação
+                  </span>
+                </>
+              ) : null}
             </div>
             <button
               onClick={onClose}
@@ -684,8 +740,8 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
 
                 <div className="w-full space-y-6 pt-6 border-t border-zinc-100">
                   <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-zinc-950">Como se candidatar?</h4>
-                    <p className="text-xs text-zinc-400">Escolha um dos canais oficiais do anunciante abaixo:</p>
+                    <h4 className="text-sm font-bold text-zinc-950">{ctaTitle}</h4>
+                    <p className="text-xs text-zinc-400">{ctaSubtitle}</p>
                   </div>
 
                   <div className="w-full space-y-4">
@@ -718,16 +774,9 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => {
-                              if (isTransitioning) return;
-                              setIsTransitioning(true);
-                              const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
-                              const encodedMsg = encodeURIComponent(msg);
-                              const phone = normalizeWhatsAppNumber(ctaContato || '');
-                              window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
-                              setTimeout(() => setIsTransitioning(false), 2000);
+                              setShowWhatsappModal(true);
                             }}
-                            disabled={isTransitioning}
-                            className="w-full h-14 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm disabled:opacity-50 mt-2"
+                            className="w-full h-14 bg-green-500 hover:bg-green-600 text-white font-black px-8 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-green-100 text-sm mt-2"
                           >
                             <OfficialWhatsAppIcon size={20} />
                             <span>Enviar currículo agora</span>
@@ -850,6 +899,71 @@ export const MarketingFunnelModal: React.FC<MarketingFunnelModalProps> = ({
             )}
           </div>
         </motion.div>
+      </AnimatePresence>
+
+      {/* WhatsApp Options Modal Overlay */}
+      <AnimatePresence>
+        {showWhatsappModal && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={() => setShowWhatsappModal(false)}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl z-10 flex flex-col items-center text-center gap-5"
+            >
+              <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-green-500">
+                <OfficialWhatsAppIcon size={24} />
+              </div>
+
+              <div className="space-y-1">
+                <h4 className="text-base font-bold text-zinc-900">Contato por WhatsApp</h4>
+                <p className="text-xs text-zinc-400">Escolha como deseja prosseguir com o número {formatPhoneNumber(ctaContato)}:</p>
+              </div>
+
+              <div className="w-full flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    const msg = `Olá, tudo bem ?\nvi esta vaga na soroempregos.com.br\n—————————————\nFunção: *${jobTitle}*\nCódigo: *${jobCode || '---'}*\n--------------------------\n\nPosso enviar o currículo aqui mesmo ou tem outro canal para envio ?`;
+                    const encodedMsg = encodeURIComponent(msg);
+                    const phone = normalizeWhatsAppNumber(ctaContato || '');
+                    window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+                    setShowWhatsappModal(false);
+                  }}
+                  className="w-full h-12 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all text-xs"
+                >
+                  <MessageCircle size={16} />
+                  <span>Enviar mensagem no WhatsApp</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    handleCopy(ctaContato || '');
+                    setShowWhatsappModal(false);
+                  }}
+                  className="w-full h-12 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold rounded-xl flex items-center justify-center gap-2 transition-all text-xs"
+                >
+                  <Copy size={16} />
+                  <span>Copiar número de telefone</span>
+                </button>
+
+                <button
+                  onClick={() => setShowWhatsappModal(false)}
+                  className="w-full h-10 text-zinc-400 hover:text-zinc-600 font-bold transition-all text-[11px] uppercase tracking-wider mt-1"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
     </div>
   );
